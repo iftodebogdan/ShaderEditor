@@ -3,12 +3,10 @@
 // are changed infrequently
 //
 
-#ifndef STD_AFX_H
-#define STD_AFX_H
+#ifndef STDAFX_H
+#define STDAFX_H
 
-#define WIN32_LEAN_AND_MEAN
-#include <stdio.h>
-
-#endif //STD_AFX_H
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
 // TODO: reference additional headers your program requires here
+#endif //STDAFX_H
