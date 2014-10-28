@@ -14,6 +14,9 @@ namespace LibRendererDll
 {
 	class Renderer
 	{
+	protected:
+		virtual		~Renderer();
+
 	public:
 		enum API
 		{
@@ -24,8 +27,13 @@ namespace LibRendererDll
 		{
 			Vec2i		backBufferSize;
 			
-			struct { Vec2i topLeft; Vec2i bottomRight; }
+			struct tDestRect
+			{ Vec2i topLeft; Vec2i bottomRight; }
 						dstRect;
+
+			struct tViewport
+			{ Vec2i topLeft; Vec2i sizeWH; Vec2f minMaxZ; }
+						viewport;
 		};
 
 		/* Create an instance of the Renderer object based on API of choice */
@@ -38,20 +46,21 @@ namespace LibRendererDll
 		/* After you create an application window, you are ready to initialize the graphics
 		object that you will use to render the scene. This process includes creating the
 		object, setting the presentation parameters, and finally creating the device. */
-		virtual	LIBRENDERER_DLL	const	bool					Initialize(void* hWnd) = 0;
-		virtual	LIBRENDERER_DLL			void					Cleanup() const = 0;
+		virtual	LIBRENDERER_DLL	const	bool					Initialize(void* hWnd, int backBufferWidth = 0, int backBufferHeight = 0) = 0;
 
 		virtual	LIBRENDERER_DLL	const	tRenderParameters&		GetRenderParameters() const;
 		virtual	LIBRENDERER_DLL	const	bool					SetRenderParameters(const tRenderParameters& renderParams) = 0;
 
-		virtual	LIBRENDERER_DLL			void					RenderScene() const = 0;
+		virtual	LIBRENDERER_DLL	const	bool					RenderScene() = 0;
 
 protected:
 		static	Renderer*		m_pInstance;
 		tRenderParameters		m_renderParams;
 
-		virtual	const	bool	GetBackBufferSize(int& sizeX, int& sizeY) = 0;
-		virtual	const	bool	SetBackBufferSize(int sizeX, int sizeY) = 0;
+		virtual		const	bool	GetBackBufferSize(Vec2i& backBufferSize) = 0;
+		virtual		const	bool	SetBackBufferSize(const Vec2i& backBufferSize) = 0;
+		virtual		const	bool	GetViewport(tRenderParameters::tViewport& viewport) = 0;
+		virtual		const	bool	SetViewport(const tRenderParameters::tViewport& viewport) = 0;
 	};
 }
 

@@ -10,6 +10,10 @@ using namespace LibRendererDll;
 
 Renderer* Renderer::m_pInstance = nullptr;
 
+Renderer::~Renderer()
+{
+}
+
 const bool Renderer::CreateInstance(API eApi)
 {
 	if(m_pInstance)

@@ -15,8 +15,6 @@ public:
 protected:
 	// Called when the window has been created
 			void				OnCreate();
-	// Called when the window has been destroyed
-			void				OnDestroy();
 	// Called every frame
 			bool				OnUpdate();
 

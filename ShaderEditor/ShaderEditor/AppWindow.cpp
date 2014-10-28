@@ -8,12 +8,6 @@ using namespace LibRendererDll;
 
 AppWindow::AppWindow()
 {
-	// Set up a window creation callback
-	signal_realize().connect(sigc::mem_fun(this, &AppWindow::OnCreate));
-
-	// Set up a window destruction callback
-	signal_unrealize().connect(sigc::mem_fun(this, &AppWindow::OnDestroy));
-
 	// Set window properties
 	set_title("ShdEd");
 	set_border_width(10);
@@ -47,14 +41,16 @@ AppWindow::AppWindow()
 	m_PreviewDrawingArea.set_app_paintable(true);
 	m_PreviewFrame.add(m_PreviewDrawingArea);
 
+	// Set up callbacks
+	m_PreviewDrawingArea.signal_realize().connect(sigc::mem_fun(this, &AppWindow::OnCreate));
+
 	// Show all children
 	show_all_children();
 }
 
 AppWindow::~AppWindow()
 {
-	Renderer::GetInstance()->Cleanup();
-	//Renderer::GetInstance()->De
+	Renderer::GetInstance()->DestroyInstance();
 }
 
 void AppWindow::OnCreate()
@@ -63,18 +59,15 @@ void AppWindow::OnCreate()
 
 	Renderer::CreateInstance(Renderer::API_DX9);
 	HGDIOBJ handle = GDK_WINDOW_HWND(get_window()->gobj());
-	Renderer::GetInstance()->Initialize((void*)handle);
-}
-
-void AppWindow::OnDestroy()
-{
-
+	Renderer::GetInstance()->Initialize((void*)handle,
+		m_PreviewDrawingArea.get_allocation().get_width(),
+		m_PreviewDrawingArea.get_allocation().get_height());
 }
 
 bool AppWindow::OnUpdate()
 {
 	Renderer::tRenderParameters renderParams = Renderer::GetInstance()->GetRenderParameters();
-
+	
 	renderParams.backBufferSize = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_width(),
 		m_PreviewDrawingArea.get_allocation().get_height());
@@ -85,18 +78,9 @@ bool AppWindow::OnUpdate()
 	renderParams.dstRect.bottomRight = renderParams.dstRect.topLeft +
 			Vec2i(	m_PreviewDrawingArea.get_allocation().get_width(),
 					m_PreviewDrawingArea.get_allocation().get_height());
-
+	
 	Renderer::GetInstance()->SetRenderParameters(renderParams);
 
-	//Renderer::GetInstance()->SetBackBufferSize(
-	//	m_PreviewDrawingArea.get_allocation().get_width(),
-	//	m_PreviewDrawingArea.get_allocation().get_height());
-	//Renderer::GetInstance()->SetDestRect(
-	//	m_PreviewDrawingArea.get_allocation().get_x(),
-	//	m_PreviewDrawingArea.get_allocation().get_x() + m_PreviewDrawingArea.get_allocation().get_width(),
-	//	m_PreviewDrawingArea.get_allocation().get_y(),
-	//	m_PreviewDrawingArea.get_allocation().get_y() + m_PreviewDrawingArea.get_allocation().get_height());
-	
 	Renderer::GetInstance()->RenderScene();
 
 	return true;
