@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{997FC731-07F0-4D8A-872B-0190380645A0}</ProjectGuid>
+    <RootNamespace>LibMath</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="gmtl\AABox.h" />
+    <ClInclude Include="gmtl\AABoxOps.h" />
+    <ClInclude Include="gmtl\AxisAngle.h" />
+    <ClInclude Include="gmtl\AxisAngleOps.h" />
+    <ClInclude Include="gmtl\Comparitors.h" />
+    <ClInclude Include="gmtl\Config.h" />
+    <ClInclude Include="gmtl\Containment.h" />
+    <ClInclude Include="gmtl\Coord.h" />
+    <ClInclude Include="gmtl\CoordOps.h" />
+    <ClInclude Include="gmtl\Defines.h" />
+    <ClInclude Include="gmtl\EulerAngle.h" />
+    <ClInclude Include="gmtl\EulerAngleOps.h" />
+    <ClInclude Include="gmtl\External\OpenSGConvert.h" />
+    <ClInclude Include="gmtl\Fit\GaussPointsFit.h" />
+    <ClInclude Include="gmtl\Frustum.h" />
+    <ClInclude Include="gmtl\FrustumOps.h" />
+    <ClInclude Include="gmtl\Generate.h" />
+    <ClInclude Include="gmtl\gmtl.h" />
+    <ClInclude Include="gmtl\Helpers.h" />
+    <ClInclude Include="gmtl\Intersection.h" />
+    <ClInclude Include="gmtl\LineSeg.h" />
+    <ClInclude Include="gmtl\LineSegOps.h" />
+    <ClInclude Include="gmtl\Math.h" />
+    <ClInclude Include="gmtl\Matrix.h" />
+    <ClInclude Include="gmtl\MatrixOps.h" />
+    <ClInclude Include="gmtl\Misc\MatrixConvert.h" />
+    <ClInclude Include="gmtl\Numerics\Eigen.h" />
+    <ClInclude Include="gmtl\OOBox.h" />
+    <ClInclude Include="gmtl\Output.h" />
+    <ClInclude Include="gmtl\ParametricCurve.h" />
+    <ClInclude Include="gmtl\Plane.h" />
+    <ClInclude Include="gmtl\PlaneOps.h" />
+    <ClInclude Include="gmtl\Point.h" />
+    <ClInclude Include="gmtl\Quat.h" />
+    <ClInclude Include="gmtl\QuatOps.h" />
+    <ClInclude Include="gmtl\Ray.h" />
+    <ClInclude Include="gmtl\RayOps.h" />
+    <ClInclude Include="gmtl\Sphere.h" />
+    <ClInclude Include="gmtl\SphereOps.h" />
+    <ClInclude Include="gmtl\Tri.h" />
+    <ClInclude Include="gmtl\TriOps.h" />
+    <ClInclude Include="gmtl\Util\Assert.h" />
+    <ClInclude Include="gmtl\Util\Meta.h" />
+    <ClInclude Include="gmtl\Util\StaticAssert.h" />
+    <ClInclude Include="gmtl\Vec.h" />
+    <ClInclude Include="gmtl\VecBase.h" />
+    <ClInclude Include="gmtl\VecExprMeta.h" />
+    <ClInclude Include="gmtl\VecOps.h" />
+    <ClInclude Include="gmtl\VecOpsMeta.h" />
+    <ClInclude Include="gmtl\Version.h" />
+    <ClInclude Include="gmtl\Xforms.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

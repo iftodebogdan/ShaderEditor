@@ -9,6 +9,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <stdio.h>
 
-#endif //STD_AFX_H
-
 // TODO: reference additional headers your program requires here
+
+#endif //STD_AFX_H

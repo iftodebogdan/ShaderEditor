@@ -10,7 +10,7 @@ using namespace LibRendererDll;
 
 Renderer* Renderer::m_pInstance = nullptr;
 
-bool Renderer::CreateInstance(API eApi)
+const bool Renderer::CreateInstance(API eApi)
 {
 	if(m_pInstance)
 		return false;
@@ -24,7 +24,21 @@ bool Renderer::CreateInstance(API eApi)
 	return m_pInstance != nullptr;
 }
 
+void Renderer::DestroyInstance()
+{
+	if (m_pInstance)
+	{
+		delete m_pInstance;
+		m_pInstance = nullptr;
+	}
+}
+
 Renderer* Renderer::GetInstance()
 {
 	return m_pInstance;
+}
+
+const Renderer::tRenderParameters& Renderer::GetRenderParameters() const
+{
+	return m_renderParams;
 }

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <d3dx9.h>
+
 #include "RendererDX9.h"
 using namespace LibRendererDll;
 
@@ -7,12 +9,7 @@ RendererDX9::RendererDX9()
 	:
 	m_pD3D(nullptr),
 	m_pd3dDevice(nullptr)
-{
-	m_pDstRect.bottom = 0;
-	m_pDstRect.left = 0;
-	m_pDstRect.right = 0;
-	m_pDstRect.top = 0;
-}
+{}
 
 RendererDX9::~RendererDX9()
 {
@@ -23,7 +20,7 @@ RendererDX9::~RendererDX9()
 		m_pD3D->Release();
 }
 
-bool RendererDX9::Initialize(void* hWnd)
+const bool RendererDX9::Initialize(void* hWnd)
 {
 	// Create the D3D object, which is needed to create the D3DDevice.
 	if (NULL == (m_pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
@@ -82,13 +79,31 @@ bool RendererDX9::Initialize(void* hWnd)
 
 	// Device state would normally be set here
 
+	// Set render parameters
+	int sizeX, sizeY;
+	if (GetBackBufferSize(sizeX, sizeY) != true)
+		return false;
+	m_renderParams.backBufferSize = Vec2i(sizeX, sizeY);
+
+	m_renderParams.dstRect.topLeft = Vec2i(0, 0);
+	m_renderParams.dstRect.bottomRight = Vec2i(MAXINT, MAXINT);
+
 	return true;
 }
 
-void RendererDX9::SetBackBufferSize(int sizeX, int sizeY)
+void RendererDX9::Cleanup() const
+{
+	if (m_pd3dDevice != nullptr)
+		m_pd3dDevice->Release();
+
+	if (m_pD3D != nullptr)
+		m_pD3D->Release();
+}
+
+const bool RendererDX9::GetBackBufferSize(int& sizeX, int& sizeY)
 {
 	if (m_pd3dDevice == nullptr)
-		return;
+		return false;
 
 	// Get swap chain
 	LPDIRECT3DSWAPCHAIN9 sc;
@@ -98,23 +113,54 @@ void RendererDX9::SetBackBufferSize(int sizeX, int sizeY)
 	D3DPRESENT_PARAMETERS pp;
 	sc->GetPresentParameters(&pp);
 
-	// Set back bufer size
-	pp.BackBufferHeight = sizeX;
-	pp.BackBufferWidth = sizeY;
+	// Get back buffer size
+	sizeX = pp.BackBufferWidth;
+	sizeY = pp.BackBufferHeight;
+
+	return true;
+}
+
+const bool RendererDX9::SetBackBufferSize(int sizeX, int sizeY)
+{
+	if (m_pd3dDevice == nullptr)
+		return false;
+
+	// Get swap chain
+	LPDIRECT3DSWAPCHAIN9 sc;
+	m_pd3dDevice->GetSwapChain(0, &sc);
+
+	// Get present parameters
+	D3DPRESENT_PARAMETERS pp;
+	sc->GetPresentParameters(&pp);
+
+	// Set back buffer size
+	pp.BackBufferWidth = sizeX;
+	pp.BackBufferHeight = sizeY;
+
+	//D3DXMATRIX projMat;
+	//m_pd3dDevice->GetTransform(D3DTS_PROJECTION, &projMat);
+	//float fov = Math::aTan(1.f / projMat._22) * 2.f;
+	//D3DXMatrixPerspectiveFovLH(&projMat, fov, sizeX / sizeY, 1.0f, 500.0f);
+	//m_pd3dDevice->SetTransform(D3DTS_PROJECTION, &projMat);
 
 	// Reset the device
 	m_pd3dDevice->Reset(&pp);
+
+	return true;
 }
 
-void RendererDX9::SetDestRect(int left, int right, int top, int bottom)
+const bool RendererDX9::SetRenderParameters(const tRenderParameters& renderParams)
 {
-	m_pDstRect.bottom = bottom;
-	m_pDstRect.left = left;
-	m_pDstRect.right = right;
-	m_pDstRect.top = top;
+	if (renderParams.backBufferSize != m_renderParams.backBufferSize)
+		if (SetBackBufferSize(renderParams.backBufferSize[0], renderParams.backBufferSize[1]) !=  true)
+			return false;
+
+	m_renderParams = renderParams;
+
+	return true;
 }
 
-void RendererDX9::RenderScene()
+void RendererDX9::RenderScene() const
 {
 	if (m_pd3dDevice == nullptr)
 		return;
@@ -166,8 +212,10 @@ void RendererDX9::RenderScene()
 	}
 
 	// Present the backbuffer contents to the display
-	if (m_pDstRect.bottom == 0 && m_pDstRect.left == 0 && m_pDstRect.right == 0 && m_pDstRect.top == 0)
-		m_pd3dDevice->Present(NULL, NULL, NULL, NULL);
-	else
-		m_pd3dDevice->Present(NULL, &m_pDstRect, NULL, NULL);
+	RECT dstRect;
+	dstRect.left = m_renderParams.dstRect.topLeft[0];
+	dstRect.top = m_renderParams.dstRect.topLeft[1];
+	dstRect.right = m_renderParams.dstRect.bottomRight[0];
+	dstRect.bottom = m_renderParams.dstRect.bottomRight[1];
+	m_pd3dDevice->Present(NULL, &dstRect, NULL, NULL);
 }

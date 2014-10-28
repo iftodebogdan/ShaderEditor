@@ -12,17 +12,18 @@ class RendererDX9 : public Renderer
 		LPDIRECT3D9         m_pD3D;
 		// Our rendering device
 		LPDIRECT3DDEVICE9   m_pd3dDevice;
-		// Destination rectangle
-		RECT				m_pDstRect;
+
+		const	bool		GetBackBufferSize(int& sizeX, int& sizeY);
+		const	bool		SetBackBufferSize(int sizeX, int sizeY);
 
 	public:
 							RendererDX9();
-		virtual				~RendererDX9();
+							~RendererDX9();
 
-		virtual	bool		Initialize(void* hWnd);
-		virtual	void		SetBackBufferSize(int sizeX, int sizeY);
-		virtual	void		SetDestRect(int left, int right, int top, int bottom);
-		virtual	void		RenderScene();
+		const	bool		Initialize(void* hWnd);
+				void		Cleanup() const;
+		const	bool		SetRenderParameters(const tRenderParameters& renderParams);
+				void		RenderScene() const;
 };
 
 #endif	//RENDERDX9_H

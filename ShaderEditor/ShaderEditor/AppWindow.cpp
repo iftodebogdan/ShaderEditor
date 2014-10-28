@@ -8,8 +8,11 @@ using namespace LibRendererDll;
 
 AppWindow::AppWindow()
 {
-	// Set up a signal to call a post-initialization function
-	signal_show().connect(sigc::mem_fun(this, &AppWindow::OnRealize));
+	// Set up a window creation callback
+	signal_realize().connect(sigc::mem_fun(this, &AppWindow::OnCreate));
+
+	// Set up a window destruction callback
+	signal_unrealize().connect(sigc::mem_fun(this, &AppWindow::OnDestroy));
 
 	// Set window properties
 	set_title("ShdEd");
@@ -49,9 +52,12 @@ AppWindow::AppWindow()
 }
 
 AppWindow::~AppWindow()
-{}
+{
+	Renderer::GetInstance()->Cleanup();
+	//Renderer::GetInstance()->De
+}
 
-void AppWindow::OnRealize()
+void AppWindow::OnCreate()
 {
 	Glib::signal_idle().connect(sigc::mem_fun(this, &AppWindow::OnUpdate));
 
@@ -60,16 +66,38 @@ void AppWindow::OnRealize()
 	Renderer::GetInstance()->Initialize((void*)handle);
 }
 
+void AppWindow::OnDestroy()
+{
+
+}
+
 bool AppWindow::OnUpdate()
 {
-	Renderer::GetInstance()->SetBackBufferSize(
+	Renderer::tRenderParameters renderParams = Renderer::GetInstance()->GetRenderParameters();
+
+	renderParams.backBufferSize = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_width(),
 		m_PreviewDrawingArea.get_allocation().get_height());
-	Renderer::GetInstance()->SetDestRect(
+
+	renderParams.dstRect.topLeft = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_x(),
-		m_PreviewDrawingArea.get_allocation().get_x() + m_PreviewDrawingArea.get_allocation().get_width(),
-		m_PreviewDrawingArea.get_allocation().get_y(),
-		m_PreviewDrawingArea.get_allocation().get_y() + m_PreviewDrawingArea.get_allocation().get_height());
+		m_PreviewDrawingArea.get_allocation().get_y());
+	renderParams.dstRect.bottomRight = renderParams.dstRect.topLeft +
+			Vec2i(	m_PreviewDrawingArea.get_allocation().get_width(),
+					m_PreviewDrawingArea.get_allocation().get_height());
+
+	Renderer::GetInstance()->SetRenderParameters(renderParams);
+
+	//Renderer::GetInstance()->SetBackBufferSize(
+	//	m_PreviewDrawingArea.get_allocation().get_width(),
+	//	m_PreviewDrawingArea.get_allocation().get_height());
+	//Renderer::GetInstance()->SetDestRect(
+	//	m_PreviewDrawingArea.get_allocation().get_x(),
+	//	m_PreviewDrawingArea.get_allocation().get_x() + m_PreviewDrawingArea.get_allocation().get_width(),
+	//	m_PreviewDrawingArea.get_allocation().get_y(),
+	//	m_PreviewDrawingArea.get_allocation().get_y() + m_PreviewDrawingArea.get_allocation().get_height());
+	
 	Renderer::GetInstance()->RenderScene();
+
 	return true;
 }
