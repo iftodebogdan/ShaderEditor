@@ -66,20 +66,20 @@ void AppWindow::OnCreate()
 
 bool AppWindow::OnUpdate()
 {
-	Renderer::tRenderParameters renderParams = Renderer::GetInstance()->GetRenderParameters();
+	RenderData renderData = Renderer::GetInstance()->GetRenderData();
 	
-	renderParams.backBufferSize = Vec2i(
+	renderData.backBufferSize = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_width(),
 		m_PreviewDrawingArea.get_allocation().get_height());
 
-	renderParams.dstRect.topLeft = Vec2i(
+	renderData.dstRect.topLeft = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_x(),
 		m_PreviewDrawingArea.get_allocation().get_y());
-	renderParams.dstRect.bottomRight = renderParams.dstRect.topLeft +
+	renderData.dstRect.bottomRight = renderData.dstRect.topLeft +
 			Vec2i(	m_PreviewDrawingArea.get_allocation().get_width(),
 					m_PreviewDrawingArea.get_allocation().get_height());
 	
-	Renderer::GetInstance()->SetRenderParameters(renderParams);
+	Renderer::GetInstance()->SetRenderData(renderData);
 
 	Renderer::GetInstance()->RenderScene();
 

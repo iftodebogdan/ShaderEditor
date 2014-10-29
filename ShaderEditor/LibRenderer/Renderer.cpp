@@ -42,7 +42,7 @@ Renderer* Renderer::GetInstance()
 	return m_pInstance;
 }
 
-const Renderer::tRenderParameters& Renderer::GetRenderParameters() const
+const RenderData& Renderer::GetRenderData() const
 {
-	return m_renderParams;
+	return m_RenderData;
 }

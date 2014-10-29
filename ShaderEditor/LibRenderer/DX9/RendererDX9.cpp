@@ -11,15 +11,18 @@ struct CUSTOMVERTEX
 {
 	D3DXVECTOR3 position; // The 3D position for the vertex
 	D3DXVECTOR3 normal;   // The surface normal for the vertex
+	D3DCOLOR	color;    // The color
+	FLOAT		u, v;   // The texture coordinates
 };
 
 // Our custom FVF, which describes our custom vertex structure
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_NORMAL)
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
 RendererDX9::RendererDX9()
 	: m_pD3D(nullptr)
 	, m_pd3dDevice(nullptr)
 	, m_pVertexBuffer(nullptr)
+	, m_pTexture(nullptr)
 {}
 
 RendererDX9::~RendererDX9()
@@ -101,6 +104,14 @@ const bool RendererDX9::Initialize(void* hWnd, int backBufferWidth, int backBuff
 
 const bool RendererDX9::CreateResources()
 {
+	// Use D3DX to create a texture from a file based image
+	if (FAILED(D3DXCreateTextureFromFile(m_pd3dDevice, L"banana.bmp", &m_pTexture)))
+	{
+		// If texture is not in current folder, try parent folder
+		if (FAILED(D3DXCreateTextureFromFile(m_pd3dDevice, L"..\\banana.bmp", &m_pTexture)))
+			return false;
+	}
+
 	// Create the vertex buffer.
 	if (FAILED(m_pd3dDevice->CreateVertexBuffer(50 * 2 * sizeof(CUSTOMVERTEX),
 		0, D3DFVF_CUSTOMVERTEX,
@@ -113,20 +124,27 @@ const bool RendererDX9::CreateResources()
 	// Turn on the zbuffer
 	if (FAILED(m_pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE)))
 		return false;
+	// Normalize normals
+	if (FAILED(m_pd3dDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE)))
+		return false;
 
 	// Set render parameters
-	if (!GetBackBufferSize(m_renderParams.backBufferSize))
+	if (!GetBackBufferSize(m_RenderData.backBufferSize))
 		return false;
-	if (!GetViewport(m_renderParams.viewport))
+	if (!GetViewport(m_RenderData.viewport))
 		return false;
-	m_renderParams.dstRect.topLeft = Vec2i(0, 0);
-	m_renderParams.dstRect.bottomRight = Vec2i(MAXINT, MAXINT);
+	m_RenderData.dstRect.topLeft = Vec2i(0, 0);
+	m_RenderData.dstRect.bottomRight = Vec2i(MAXINT, MAXINT);
 
 	return true;
 }
 
 const bool RendererDX9::ReleaseResources()
 {
+
+	if (m_pTexture && FAILED(m_pTexture->Release()))
+		return false;
+
 	if (m_pVertexBuffer && FAILED(m_pVertexBuffer->Release()))
 		return false;
 
@@ -190,7 +208,7 @@ const bool RendererDX9::SetBackBufferSize(const Vec2i& backBufferSize)
 	return true;
 }
 
-const bool RendererDX9::GetViewport(tRenderParameters::tViewport& viewport)
+const bool RendererDX9::GetViewport(RenderData::Viewport& viewport)
 {
 	D3DVIEWPORT9 vp;
 	if (FAILED(m_pd3dDevice->GetViewport(&vp)))
@@ -203,7 +221,7 @@ const bool RendererDX9::GetViewport(tRenderParameters::tViewport& viewport)
 	return true;
 }
 
-const bool RendererDX9::SetViewport(const tRenderParameters::tViewport& viewport)
+const bool RendererDX9::SetViewport(const RenderData::Viewport& viewport)
 {
 	if (m_pd3dDevice == nullptr)
 		return false;
@@ -220,21 +238,21 @@ const bool RendererDX9::SetViewport(const tRenderParameters::tViewport& viewport
 	return SUCCEEDED(m_pd3dDevice->SetViewport(&vp));
 }
 
-const bool RendererDX9::SetRenderParameters(const tRenderParameters& renderParams)
+const bool RendererDX9::SetRenderData(const RenderData& renderParams)
 {
 	// Update the backbuffer
-	if (renderParams.backBufferSize != m_renderParams.backBufferSize)
+	if (renderParams.backBufferSize != m_RenderData.backBufferSize)
 		if (!SetBackBufferSize(renderParams.backBufferSize))
 			return false;
 
 	// Update the viewport
-	if (m_renderParams.viewport.topLeft != renderParams.viewport.topLeft ||
-		m_renderParams.viewport.sizeWH != renderParams.viewport.sizeWH ||
-		m_renderParams.viewport.minMaxZ != renderParams.viewport.minMaxZ)
-		if (!SetViewport(m_renderParams.viewport))
+	if (m_RenderData.viewport.topLeft != renderParams.viewport.topLeft ||
+		m_RenderData.viewport.sizeWH != renderParams.viewport.sizeWH ||
+		m_RenderData.viewport.minMaxZ != renderParams.viewport.minMaxZ)
+		if (!SetViewport(m_RenderData.viewport))
 			return false;
 
-	m_renderParams = renderParams;
+	m_RenderData = renderParams;
 
 	return true;
 }
@@ -248,18 +266,26 @@ const bool RendererDX9::RenderScene()
 	m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
 						D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
 
-	// Fill the vertex buffer. We are algorithmically generating a cylinder
-	// here, including the normals, which are used for lighting.
+	// Fill the vertex buffer. We are setting the tu and tv texture
+	// coordinates, which range from 0.0 to 1.0
 	CUSTOMVERTEX* pVertices;
 	if (FAILED(m_pVertexBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 		return false;
 	for (DWORD i = 0; i < 50; i++)
 	{
 		FLOAT theta = (2 * D3DX_PI * i) / (50 - 1);
+
 		pVertices[2 * i + 0].position = D3DXVECTOR3(sinf(theta), -1.0f, cosf(theta));
 		pVertices[2 * i + 0].normal = D3DXVECTOR3(sinf(theta), 0.0f, cosf(theta));
+		pVertices[2 * i + 0].color = 0xffffffff;
+		pVertices[2 * i + 0].u = ((FLOAT)i) / (50 - 1);
+		pVertices[2 * i + 0].v = 1.0f;
+
 		pVertices[2 * i + 1].position = D3DXVECTOR3(sinf(theta), 1.0f, cosf(theta));
 		pVertices[2 * i + 1].normal = D3DXVECTOR3(sinf(theta), 0.0f, cosf(theta));
+		pVertices[2 * i + 1].color = 0xff808080;
+		pVertices[2 * i + 1].u = ((FLOAT)i) / (50 - 1);
+		pVertices[2 * i + 1].v = 0.0f;
 	}
 	m_pVertexBuffer->Unlock();
 
@@ -302,7 +328,7 @@ const bool RendererDX9::RenderScene()
 		// Set up world matrix
 		D3DXMATRIXA16 matWorld;
 		D3DXMatrixIdentity(&matWorld);
-		D3DXMatrixRotationX(&matWorld, GetTickCount() / 500.0f);
+		D3DXMatrixRotationX(&matWorld, GetTickCount() / 1000.0f);
 		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
 		// Set up our view matrix. A view matrix can be defined given an eye point,
@@ -323,9 +349,19 @@ const bool RendererDX9::RenderScene()
 		// the aspect ratio, and the near and far clipping planes (which define at
 		// what distances geometry should be no longer be rendered).
 		D3DXMATRIXA16 matProj;
-		float aspectRatio = (float)m_renderParams.backBufferSize[0] / (float)m_renderParams.backBufferSize[1];
+		float aspectRatio = (float)m_RenderData.backBufferSize[0] / (float)m_RenderData.backBufferSize[1];
 		D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, aspectRatio, 1.0f, 100.0f);
 		m_pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+
+		// Setup our texture. Using Textures introduces the texture stage states,
+		// which govern how Textures get blended together (in the case of multiple
+		// Textures) and lighting information. In this case, we are modulating
+		// (blending) our texture with the diffuse color of the vertices.
+		m_pd3dDevice->SetTexture(0, m_pTexture);
+		m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+		m_pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
 		// Render the vertex buffer contents
 		m_pd3dDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
@@ -341,10 +377,10 @@ const bool RendererDX9::RenderScene()
 
 	// Present the backbuffer contents to the display
 	RECT dstRect;
-	dstRect.left = m_renderParams.dstRect.topLeft[0];
-	dstRect.top = m_renderParams.dstRect.topLeft[1];
-	dstRect.right = m_renderParams.dstRect.bottomRight[0];
-	dstRect.bottom = m_renderParams.dstRect.bottomRight[1];
+	dstRect.left = m_RenderData.dstRect.topLeft[0];
+	dstRect.top = m_RenderData.dstRect.topLeft[1];
+	dstRect.right = m_RenderData.dstRect.bottomRight[0];
+	dstRect.bottom = m_RenderData.dstRect.bottomRight[1];
 	
 	if (FAILED(m_pd3dDevice->Present(NULL, &dstRect, NULL, NULL)))
 		return false;

@@ -7,8 +7,7 @@
 #define LIBRENDERER_DLL __declspec(dllimport) 
 #endif
 
-#include <gmtl/gmtl.h>
-using namespace gmtl;
+#include "RenderData.h"
 
 namespace LibRendererDll
 {
@@ -23,19 +22,6 @@ namespace LibRendererDll
 			API_DX9,
 		};
 
-		struct tRenderParameters
-		{
-			Vec2i		backBufferSize;
-			
-			struct tDestRect
-			{ Vec2i topLeft; Vec2i bottomRight; }
-						dstRect;
-
-			struct tViewport
-			{ Vec2i topLeft; Vec2i sizeWH; Vec2f minMaxZ; }
-						viewport;
-		};
-
 		/* Create an instance of the Renderer object based on API of choice */
 		static	LIBRENDERER_DLL	const	bool					CreateInstance(API eApi);
 		/* Destroys the instance of the Renderer object */
@@ -48,19 +34,19 @@ namespace LibRendererDll
 		object, setting the presentation parameters, and finally creating the device. */
 		virtual	LIBRENDERER_DLL	const	bool					Initialize(void* hWnd, int backBufferWidth = 0, int backBufferHeight = 0) = 0;
 
-		virtual	LIBRENDERER_DLL	const	tRenderParameters&		GetRenderParameters() const;
-		virtual	LIBRENDERER_DLL	const	bool					SetRenderParameters(const tRenderParameters& renderParams) = 0;
+		virtual	LIBRENDERER_DLL	const	RenderData&				GetRenderData() const;
+		virtual	LIBRENDERER_DLL	const	bool					SetRenderData(const RenderData& renderData) = 0;
 
 		virtual	LIBRENDERER_DLL	const	bool					RenderScene() = 0;
 
-protected:
-		static	Renderer*		m_pInstance;
-		tRenderParameters		m_renderParams;
+	protected:
+		static	Renderer*			m_pInstance;
+				RenderData			m_RenderData;
 
 		virtual		const	bool	GetBackBufferSize(Vec2i& backBufferSize) = 0;
 		virtual		const	bool	SetBackBufferSize(const Vec2i& backBufferSize) = 0;
-		virtual		const	bool	GetViewport(tRenderParameters::tViewport& viewport) = 0;
-		virtual		const	bool	SetViewport(const tRenderParameters::tViewport& viewport) = 0;
+		virtual		const	bool	GetViewport(RenderData::Viewport& viewport) = 0;
+		virtual		const	bool	SetViewport(const RenderData::Viewport& viewport) = 0;
 	};
 }
 

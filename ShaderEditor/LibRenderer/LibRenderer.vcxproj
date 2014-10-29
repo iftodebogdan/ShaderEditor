@@ -159,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX9\RendererDX9.h" />
+    <ClInclude Include="RenderData.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -185,6 +186,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\banana.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
