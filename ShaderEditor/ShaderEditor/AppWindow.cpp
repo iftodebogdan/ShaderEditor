@@ -67,7 +67,7 @@ void AppWindow::OnCreate()
 bool AppWindow::OnUpdate()
 {
 	RenderData renderData = Renderer::GetInstance()->GetRenderData();
-	
+
 	renderData.backBufferSize = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_width(),
 		m_PreviewDrawingArea.get_allocation().get_height());
@@ -76,9 +76,9 @@ bool AppWindow::OnUpdate()
 		m_PreviewDrawingArea.get_allocation().get_x(),
 		m_PreviewDrawingArea.get_allocation().get_y());
 	renderData.dstRect.bottomRight = renderData.dstRect.topLeft +
-			Vec2i(	m_PreviewDrawingArea.get_allocation().get_width(),
-					m_PreviewDrawingArea.get_allocation().get_height());
-	
+		Vec2i(m_PreviewDrawingArea.get_allocation().get_width(),
+		m_PreviewDrawingArea.get_allocation().get_height());
+
 	Renderer::GetInstance()->SetRenderData(renderData);
 
 	Renderer::GetInstance()->RenderScene();

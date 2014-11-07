@@ -2,36 +2,45 @@
 #define RENDERERDX9_H
 
 #include "../Renderer.h"
-using namespace LibRendererDll;
 
 #include <d3d9.h>
+#include <d3dx9.h>
 
-class RendererDX9 : public Renderer
+namespace LibRendererDll
+{
+	class VertexFormatDX9;
+	class VertexBufferDX9;
+
+	class RendererDX9 : public Renderer
 	{
 		// Used to create the D3DDevice
-		LPDIRECT3D9         m_pD3D;
+		IDirect3D9*			m_pD3D;
 		// Our rendering device
-		LPDIRECT3DDEVICE9   m_pd3dDevice;
-		// Buffer to hold vertices
-		LPDIRECT3DVERTEXBUFFER9 m_pVertexBuffer;
-		// Our texture
-		LPDIRECT3DTEXTURE9      m_pTexture;
+		IDirect3DDevice9*	m_pd3dDevice;
 
-		const	bool		CreateResources();
-		const	bool		ReleaseResources();
+		VertexFormatDX9*	vf;
+		VertexBufferDX9*	vb;
 
-		const	bool		GetBackBufferSize(Vec2i& backBufferSize);
-		const	bool		SetBackBufferSize(const Vec2i& backBufferSize);
-		const	bool		GetViewport(RenderData::Viewport& viewport);
-		const	bool		SetViewport(const RenderData::Viewport& viewport);
+		void						CreateResources();
+		void						ReleaseResources();
+
+		void						GetBackBufferSize(Vec2i& backBufferSize);
+		void						SetBackBufferSize(const Vec2i& backBufferSize);
+		void						GetViewport(RenderData::Viewport& viewport);
+		void						SetViewport(const RenderData::Viewport& viewport);
 
 	public:
-							RendererDX9();
-							~RendererDX9();
+		RendererDX9();
+		~RendererDX9();
 
-		const	bool		Initialize(void* hWnd, int backBufferWidth = 0, int backBufferHeight = 0);
-		const	bool		SetRenderData(const RenderData& renderData);
-		const	bool		RenderScene();
-};
+		static	RendererDX9*		GetInstance() { return (RendererDX9*)m_pInstance; };
+
+		void						Initialize(void* hWnd, int backBufferWidth = 0, int backBufferHeight = 0);
+		void						SetRenderData(const RenderData& renderData);
+		void						RenderScene();
+
+		IDirect3DDevice9*			GetDevice() const { return m_pd3dDevice; };
+	};
+}
 
 #endif	//RENDERDX9_H

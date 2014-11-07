@@ -14,18 +14,13 @@ Renderer::~Renderer()
 {
 }
 
-const bool Renderer::CreateInstance(API eApi)
+void Renderer::CreateInstance(API eApi)
 {
-	if(m_pInstance)
-		return false;
-
 	switch (eApi)
 	{
 		case API_DX9:
 			m_pInstance = new RendererDX9;
 	}
-
-	return m_pInstance != nullptr;
 }
 
 void Renderer::DestroyInstance()
