@@ -1,3 +1,21 @@
+//////////////////////////////////////////////////////////////////////////
+// This file is part of the "LibRenderer" 3D graphics library           //
+//                                                                      //
+// Copyright (C) 2014 - Iftode Bogdan-Marius <iftode.bogdan@gmail.com>  //
+//                                                                      //
+// This program is free software: you can redistribute it and/or modify //
+// it under the terms of the GNU General Public License as published by //
+// the Free Software Foundation, either version 3 of the License, or    //
+// (at your option) any later version.                                  //
+//                                                                      //
+// This program is distributed in the hope that it will be useful,      //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of       //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         //
+// GNU General Public License for more details.                         //
+//                                                                      //
+// You should have received a copy of the GNU General Public License    //
+// along with this program. If not, see <http://www.gnu.org/licenses/>. //
+//////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
 #include "../RendererDX9.h"
@@ -12,7 +30,7 @@ VertexBufferDX9::VertexBufferDX9(VertexFormatDX9* vertexFormat, unsigned int ver
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 	HRESULT hr = device->CreateVertexBuffer((UINT)m_nSize, BufferUsageDX9[usage], 0, D3DPOOL_DEFAULT, &m_pVertexBuffer, 0);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 }
 
 VertexBufferDX9::~VertexBufferDX9()
@@ -30,7 +48,7 @@ void VertexBufferDX9::Enable(unsigned int offset)
 
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 	HRESULT hr = device->SetStreamSource(0, m_pVertexBuffer, offset, m_pVertexFormat->GetStride());
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 }
 
 void VertexBufferDX9::Disable()
@@ -51,7 +69,7 @@ void VertexBufferDX9::Disable()
 #endif
 
 	HRESULT hr = device->SetStreamSource(0, 0, 0, 0);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 
 	//Disable our vertex format
 	assert(m_pVertexFormat != nullptr);
@@ -63,7 +81,7 @@ void VertexBufferDX9::Lock(BufferLocking lockMode)
 	//The pointer to the locked data is saved for future use
 	assert(m_pTempBuffer == nullptr);
 	HRESULT hr = m_pVertexBuffer->Lock(0, 0, &m_pTempBuffer, BufferLockingDX9[lockMode]);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 }
 
 void VertexBufferDX9::Unlock()
@@ -71,7 +89,7 @@ void VertexBufferDX9::Unlock()
 	//Unlock the vertex data
 	assert(m_pTempBuffer != nullptr);
 	HRESULT hr = m_pVertexBuffer->Unlock();
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 	m_pTempBuffer = nullptr;
 }
 

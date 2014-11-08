@@ -46,9 +46,15 @@
     <ClInclude Include="DX9\Resources\VertexBufferDX9.h">
       <Filter>DX9\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\VertexFormat.h" />
-    <ClInclude Include="DX9\Resources\VertexFormatDX9.h" />
-    <ClInclude Include="DX9\Resources\PlatformSpecificMappingsDX9.h" />
+    <ClInclude Include="DX9\Resources\VertexFormatDX9.h">
+      <Filter>DX9\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\VertexFormat.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9\Resources\PlatformSpecificMappingsDX9.h">
+      <Filter>DX9\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -70,14 +76,20 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Platform Independent</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\VertexFormat.cpp" />
-    <ClCompile Include="DX9\Resources\VertexFormatDX9.cpp" />
-    <ClCompile Include="DX9\Resources\PlatformSpecificMappingsDX9.cpp" />
+    <ClCompile Include="DX9\Resources\VertexFormatDX9.cpp">
+      <Filter>DX9\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\VertexFormat.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9\Resources\PlatformSpecificMappingsDX9.cpp">
+      <Filter>DX9\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\VertexBuffer.inl" />
-    <None Include="..\banana.bmp">
-      <Filter>Resource Files</Filter>
+    <None Include="Resources\VertexBuffer.inl">
+      <Filter>Resources</Filter>
     </None>
+    <None Include="LibRenderer.licenseheader" />
   </ItemGroup>
 </Project>

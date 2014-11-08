@@ -1,3 +1,21 @@
+//////////////////////////////////////////////////////////////////////////
+// This file is part of the "LibRenderer" 3D graphics library           //
+//                                                                      //
+// Copyright (C) 2014 - Iftode Bogdan-Marius <iftode.bogdan@gmail.com>  //
+//                                                                      //
+// This program is free software: you can redistribute it and/or modify //
+// it under the terms of the GNU General Public License as published by //
+// the Free Software Foundation, either version 3 of the License, or    //
+// (at your option) any later version.                                  //
+//                                                                      //
+// This program is distributed in the hope that it will be useful,      //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of       //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         //
+// GNU General Public License for more details.                         //
+//                                                                      //
+// You should have received a copy of the GNU General Public License    //
+// along with this program. If not, see <http://www.gnu.org/licenses/>. //
+//////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
 #include "RendererDX9.h"
@@ -90,15 +108,14 @@ void RendererDX9::Initialize(void* hWnd, int backBufferWidth, int backBufferHeig
 	CreateResources();
 }
 
-#include <DxErr.h>
 void RendererDX9::CreateResources()
 {
 	// Turn off culling, so we see the front and back of the triangle
 	HRESULT hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 	// Turn off lighting
 	hr = m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 
 	// Set render parameters
 	GetBackBufferSize(m_RenderData.backBufferSize);
@@ -113,8 +130,6 @@ void RendererDX9::CreateResources()
 	vf->Update();
 
 	vb = new VertexBufferDX9(vf, 3);
-	vb->HasPosition();
-	vb->Position<float>(0) = 1.f;
 	vb->Position<Vec3f>(0) = Vec3f(-1.f, 0.f, 0.f);
 	vb->Color<D3DCOLOR>(0, 0) = D3DCOLOR_XRGB(255, 0, 0);
 	vb->Position<Vec3f>(1) = Vec3f(1.f, 0.f, 0.f);
@@ -139,12 +154,12 @@ void RendererDX9::GetBackBufferSize(Vec2i& backBufferSize)
 	// Get swap chain
 	LPDIRECT3DSWAPCHAIN9 sc;
 	HRESULT hr = m_pd3dDevice->GetSwapChain(0, &sc);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 
 	// Get present parameters
 	D3DPRESENT_PARAMETERS pp;
 	hr = sc->GetPresentParameters(&pp);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 
 	// Get back buffer size
 	backBufferSize[0] = pp.BackBufferWidth;
@@ -162,12 +177,12 @@ void RendererDX9::SetBackBufferSize(const Vec2i& backBufferSize)
 	// Get swap chain
 	LPDIRECT3DSWAPCHAIN9 sc;
 	HRESULT hr = m_pd3dDevice->GetSwapChain(0, &sc);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 	
 	// Get present parameters
 	D3DPRESENT_PARAMETERS pp;
 	hr = sc->GetPresentParameters(&pp);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 
 	ULONG refCount = 0;
 	refCount = sc->Release();
@@ -182,7 +197,7 @@ void RendererDX9::SetBackBufferSize(const Vec2i& backBufferSize)
 
 	// Reset the device
 	hr = m_pd3dDevice->Reset(&pp);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 
 	CreateResources();
 }
@@ -191,7 +206,7 @@ void RendererDX9::GetViewport(RenderData::Viewport& viewport)
 {
 	D3DVIEWPORT9 vp;
 	HRESULT hr = m_pd3dDevice->GetViewport(&vp);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 
 	viewport.topLeft = Vec2i(vp.X, vp.Y);
 	viewport.sizeWH = Vec2i(vp.Width, vp.Height);
@@ -212,7 +227,7 @@ void RendererDX9::SetViewport(const RenderData::Viewport& viewport)
 	vp.MaxZ = viewport.minMaxZ[1];
 
 	HRESULT hr = m_pd3dDevice->SetViewport(&vp);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 }
 
 void RendererDX9::SetRenderData(const RenderData& renderParams)
@@ -246,7 +261,7 @@ void RendererDX9::RenderScene()
 		// Set up world matrix
 		D3DXMATRIXA16 matWorld;
 		D3DXMatrixIdentity(&matWorld);
-		D3DXMatrixRotationY(&matWorld, GetTickCount() / 1000.0f);
+		D3DXMatrixRotationY(&matWorld, (float)GetTickCount() / 1000.0f);
 		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
 		// Set up our view matrix. A view matrix can be defined given an eye point,
@@ -277,7 +292,7 @@ void RendererDX9::RenderScene()
 
 		// End the scene
 		hr = m_pd3dDevice->EndScene();
-		assert(hr == D3D_OK);
+		assert(SUCCEEDED(hr));
 	}
 
 	// Present the backbuffer contents to the display
@@ -288,5 +303,5 @@ void RendererDX9::RenderScene()
 	dstRect.bottom = m_RenderData.dstRect.bottomRight[1];
 	
 	hr = m_pd3dDevice->Present(NULL, &dstRect, NULL, NULL);
-	assert(hr == D3D_OK);
+	assert(SUCCEEDED(hr));
 }

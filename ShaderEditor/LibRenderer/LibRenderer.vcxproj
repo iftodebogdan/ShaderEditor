@@ -200,7 +200,7 @@
     <ClCompile Include="DX9\Resources\VertexBufferDX9.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\banana.bmp" />
+    <None Include="LibRenderer.licenseheader" />
     <None Include="Resources\VertexBuffer.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
