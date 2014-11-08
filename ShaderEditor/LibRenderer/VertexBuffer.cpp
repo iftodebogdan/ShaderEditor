@@ -16,21 +16,20 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-#ifndef FLAGMAPPINGDX9_H
-#define FLAGMAPPINGDX9_H
+#include "stdafx.h"
 
-#include <d3d9.h>
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+using namespace LibRendererDll;
 
-#include "../../Resources/Buffer.h"
-#include "../../Resources/VertexFormat.h"
-
-namespace LibRendererDll
+VertexBuffer::VertexBuffer(VertexFormat* vertexFormat, unsigned int vertexCount, IndexBuffer* indexBuffer, BufferUsage usage)
+	: Buffer(vertexCount, vertexFormat->GetStride(), usage)
+	, m_pVertexFormat(vertexFormat)
+	, m_pIndexBuffer(indexBuffer)
+	, m_pTempBuffer(nullptr)
 {
-	//These are used to translate platform independent flags to D3D9 format
-	extern DWORD BufferUsageDX9[Buffer::BU_MAX];
-	extern DWORD BufferLockingDX9[Buffer::BL_MAX];
-	extern BYTE VertexAttributeTypeDX9[VertexFormat::VAT_MAX];
-	extern BYTE VertexAttributeUsageDX9[VertexFormat::VAU_MAX];
+	assert(vertexFormat != nullptr);
 }
 
-#endif //FLAGMAPPINGDX9_H
+VertexBuffer::~VertexBuffer()
+{}

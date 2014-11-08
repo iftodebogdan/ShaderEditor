@@ -1,95 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="DX9">
       <UniqueIdentifier>{f471d7d9-5b9c-4eb7-945b-a481d1cc9f7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{91a1a4c4-488b-43c6-921d-7df909832c64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DX9\Resources">
-      <UniqueIdentifier>{379b085d-4536-4a3e-84e6-a96ab731ab96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Precompiled Headers">
       <UniqueIdentifier>{79a60a48-2e59-4113-82f3-277b80932e12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform Independent">
-      <UniqueIdentifier>{b763dbc6-3a60-4275-87ce-3f6aa0fc8926}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Resources\VertexBuffer.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\Buffer.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="DX9\RendererDX9.h">
       <Filter>DX9</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Precompiled Headers</Filter>
     </ClInclude>
-    <ClInclude Include="RenderData.h">
-      <Filter>Platform Independent</Filter>
+    <ClInclude Include="DX9\VertexFormatDX9.h">
+      <Filter>DX9</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Platform Independent</Filter>
+    <ClInclude Include="DX9\MappingsDX9.h">
+      <Filter>DX9</Filter>
     </ClInclude>
-    <ClInclude Include="DX9\Resources\VertexBufferDX9.h">
-      <Filter>DX9\Resources</Filter>
+    <ClInclude Include="DX9\VertexBufferDX9.h">
+      <Filter>DX9</Filter>
     </ClInclude>
-    <ClInclude Include="DX9\Resources\VertexFormatDX9.h">
-      <Filter>DX9\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\VertexFormat.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="DX9\Resources\PlatformSpecificMappingsDX9.h">
-      <Filter>DX9\Resources</Filter>
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderData.h" />
+    <ClInclude Include="VertexFormat.h" />
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="IndexBufferDX9.h">
+      <Filter>DX9</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Resources\VertexBuffer.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\Buffer.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="DX9\Resources\VertexBufferDX9.cpp">
-      <Filter>DX9\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="DX9\RendererDX9.cpp">
       <Filter>DX9</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Precompiled Headers</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Platform Independent</Filter>
+    <ClCompile Include="DX9\MappingsDX9.cpp">
+      <Filter>DX9</Filter>
     </ClCompile>
-    <ClCompile Include="DX9\Resources\VertexFormatDX9.cpp">
-      <Filter>DX9\Resources</Filter>
+    <ClCompile Include="DX9\VertexBufferDX9.cpp">
+      <Filter>DX9</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\VertexFormat.cpp">
-      <Filter>Resources</Filter>
+    <ClCompile Include="DX9\VertexFormatDX9.cpp">
+      <Filter>DX9</Filter>
     </ClCompile>
-    <ClCompile Include="DX9\Resources\PlatformSpecificMappingsDX9.cpp">
-      <Filter>DX9\Resources</Filter>
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="VertexFormat.cpp" />
+    <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="IndexBufferDX9.cpp">
+      <Filter>DX9</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\VertexBuffer.inl">
-      <Filter>Resources</Filter>
-    </None>
     <None Include="LibRenderer.licenseheader" />
+    <None Include="VertexBuffer.inl" />
   </ItemGroup>
 </Project>

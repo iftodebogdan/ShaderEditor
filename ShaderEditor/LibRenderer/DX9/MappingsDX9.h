@@ -16,47 +16,23 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
+#ifndef MAPPINGSDX9_H
+#define MAPPINGSDX9_H
 
-// LibRenderer.cpp : Defines the exported functions for the DLL application.
-//
+#include <d3d9.h>
 
-#include "stdafx.h"
+#include "Buffer.h"
+#include "VertexFormat.h"
+#include "IndexBufferDX9.h"
 
-#include "Renderer.h"
-#include "RendererDX9.h"
-
-using namespace LibRendererDll;
-
-Renderer* Renderer::m_pInstance = nullptr;
-
-Renderer::~Renderer()
+namespace LibRendererDll
 {
+	//These are used to translate platform independent flags to D3D9 format
+	extern DWORD BufferUsageDX9[Buffer::BU_MAX];
+	extern DWORD BufferLockingDX9[Buffer::BL_MAX];
+	extern BYTE VertexAttributeTypeDX9[VertexFormat::VAT_MAX];
+	extern BYTE VertexAttributeUsageDX9[VertexFormat::VAU_MAX];
+	extern D3DFORMAT IndexBufferFormatDX9[IndexBuffer::IBF_MAX];
 }
 
-void Renderer::CreateInstance(API eApi)
-{
-	switch (eApi)
-	{
-		case API_DX9:
-			m_pInstance = new RendererDX9;
-	}
-}
-
-void Renderer::DestroyInstance()
-{
-	if (m_pInstance)
-	{
-		delete m_pInstance;
-		m_pInstance = nullptr;
-	}
-}
-
-Renderer* Renderer::GetInstance()
-{
-	return m_pInstance;
-}
-
-const RenderData& Renderer::GetRenderData() const
-{
-	return m_RenderData;
-}
+#endif //FLAGMAPPINGDX9_H

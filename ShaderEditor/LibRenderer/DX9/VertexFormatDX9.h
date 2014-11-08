@@ -16,18 +16,29 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-#include "stdafx.h"
+#ifndef VERTEXFORMATDX9_H
+#define VERTEXFORMATDX9_H
 
-#include "VertexBuffer.h"
-using namespace LibRendererDll;
+#include <d3d9.h>
+#include "VertexFormat.h"
 
-VertexBuffer::VertexBuffer(VertexFormat* vertexFormat, unsigned int vertexCount, BufferUsage usage)
-	: Buffer(vertexCount, vertexFormat->GetStride(), usage)
-	, m_pVertexFormat(vertexFormat)
-	, m_pTempBuffer(nullptr)
+namespace LibRendererDll
 {
-	assert(vertexFormat != nullptr);
+	//This is the DX9 implementation of the VertexFormat class
+	class VertexFormatDX9 : public VertexFormat
+	{
+	public:
+						VertexFormatDX9(unsigned int attributeCount);
+						~VertexFormatDX9();
+
+		virtual void	Enable();
+		virtual void	Disable();
+		virtual	void	Update();
+
+	protected:
+		D3DVERTEXELEMENT9 m_pVertexElements[VertexFormat::VF_MAX_ATTRIBUTES + 1];
+		IDirect3DVertexDeclaration9* m_pVertexDeclaration;
+	};
 }
 
-VertexBuffer::~VertexBuffer()
-{}
+#endif //VERTEXFORMATDX9_H

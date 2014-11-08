@@ -20,8 +20,9 @@
 
 #include "RendererDX9.h"
 
-#include "Resources/VertexFormatDX9.h"
-#include "Resources/VertexBufferDX9.h"
+#include "VertexFormatDX9.h"
+#include "VertexBufferDX9.h"
+#include "IndexBufferDX9.h"
 using namespace LibRendererDll;
 
 RendererDX9::RendererDX9()
@@ -110,9 +111,10 @@ void RendererDX9::Initialize(void* hWnd, int backBufferWidth, int backBufferHeig
 
 void RendererDX9::CreateResources()
 {
+	HRESULT hr;
 	// Turn off culling, so we see the front and back of the triangle
-	HRESULT hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	assert(SUCCEEDED(hr));
+	//hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//assert(SUCCEEDED(hr));
 	// Turn off lighting
 	hr = m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 	assert(SUCCEEDED(hr));
@@ -129,14 +131,27 @@ void RendererDX9::CreateResources()
 		VertexFormat::VAU_COLOR, VertexFormat::VAT_UBYTE4, 0);
 	vf->Update();
 
-	vb = new VertexBufferDX9(vf, 3);
-	vb->Position<Vec3f>(0) = Vec3f(-1.f, 0.f, 0.f);
+	ib = new IndexBufferDX9(6, IndexBuffer::IBF_INDEX32);
+	unsigned int indices[6] = { 0, 1, 2, 3, 2, 1 };
+	ib->SetIndices(indices, 6);
+	ib->Lock(Buffer::BL_READ_WRITE);
+	ib->Update();
+	ib->Unlock();
+
+	vb = new VertexBufferDX9(vf, 6, ib);
+	vb->Position<Vec3f>(0) = Vec3f(-1.f, 1.f, 0.f);
 	vb->Color<D3DCOLOR>(0, 0) = D3DCOLOR_XRGB(255, 0, 0);
-	vb->Position<Vec3f>(1) = Vec3f(1.f, 0.f, 0.f);
+	vb->Position<Vec3f>(1) = Vec3f(-1.f, -1.f, 0.f);
 	vb->Color<D3DCOLOR>(1, 0) = D3DCOLOR_XRGB(0, 255, 0);
-	vb->Position<Vec3f>(2) = Vec3f(0.f, 1.f, 0.f);
+	vb->Position<Vec3f>(2) = Vec3f(1.f, 1.f, 0.f);
 	vb->Color<D3DCOLOR>(2, 0) = D3DCOLOR_XRGB(0, 0, 255);
-	vb->Lock(VertexBuffer::BL_READ_WRITE);
+	vb->Position<Vec3f>(3) = Vec3f(1.f, -1.f, 0.f);
+	vb->Color<D3DCOLOR>(3, 0) = D3DCOLOR_XRGB(255, 0, 0);
+	vb->Position<Vec3f>(4) = Vec3f(-1.f, -1.f, 0.f);
+	vb->Color<D3DCOLOR>(4, 0) = D3DCOLOR_XRGB(0, 255, 0);
+	vb->Position<Vec3f>(5) = Vec3f(1.f, 1.f, 0.f);
+	vb->Color<D3DCOLOR>(5, 0) = D3DCOLOR_XRGB(0, 0, 255);
+	vb->Lock(Buffer::BL_READ_WRITE);
 	vb->Update();
 	vb->Unlock();
 }
@@ -145,6 +160,7 @@ void RendererDX9::ReleaseResources()
 {
 	delete vb;
 	delete vf;
+	delete ib;
 }
 
 void RendererDX9::GetBackBufferSize(Vec2i& backBufferSize)
@@ -259,16 +275,16 @@ void RendererDX9::RenderScene()
 	if (SUCCEEDED(m_pd3dDevice->BeginScene()))
 	{
 		// Set up world matrix
-		D3DXMATRIXA16 matWorld;
-		D3DXMatrixIdentity(&matWorld);
-		D3DXMatrixRotationY(&matWorld, (float)GetTickCount() / 1000.0f);
-		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
+		D3DXMATRIXA16 matWorldRot, matWorldPos, matWorld;
+		D3DXMatrixIdentity(&matWorldRot);
+		D3DXMatrixRotationY(&matWorldRot, (float)GetTickCount() / 1000.0f);
+		//m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
 		// Set up our view matrix. A view matrix can be defined given an eye point,
 		// a point to lookat, and a direction for which way is up. Here, we set the
 		// eye five units back along the z-axis and up three units, look at the
 		// origin, and define "up" to be in the y-direction.
-		D3DXVECTOR3 vEyePt(0.0f, 3.0f, -5.0f);
+		D3DXVECTOR3 vEyePt(0.0f, 3.0f, -6.0f);
 		D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
 		D3DXMATRIXA16 matView;
@@ -287,7 +303,19 @@ void RendererDX9::RenderScene()
 		m_pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 		
 		vb->Enable();
-		m_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
+
+		D3DXMatrixTranslation(&matWorldPos, 1.5f, 0.f, 0.f);
+		D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
+		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+		m_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+
+		D3DXMatrixTranslation(&matWorldPos, -1.5f, 0.f, 0.f);
+		D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
+		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, 2);
+
 		vb->Disable();
 
 		// End the scene

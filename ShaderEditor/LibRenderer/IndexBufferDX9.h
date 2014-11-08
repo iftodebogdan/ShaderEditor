@@ -16,31 +16,29 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-#ifndef VERTEXBUFFERDX9_H
-#define VERTEXBUFFERDX9_H
+#ifndef INDEXBUFFERDX9_H
+#define INDEXBUFFERDX9_H
 
-#include "../../Resources/VertexBuffer.h"
+#include <d3d9.h>
+#include "IndexBuffer.h"
 
 namespace LibRendererDll
 {
-	class VertexFormatDX9;
-
-	//This is the DX9 implementation of the VertexBuffer class
-	class VertexBufferDX9 : public VertexBuffer
+	class IndexBufferDX9 : public IndexBuffer
 	{
 	public:
-						VertexBufferDX9(VertexFormatDX9* vertexFormat, unsigned int vertexCount, BufferUsage usage = BU_STATIC);
-						~VertexBufferDX9();
+				IndexBufferDX9::IndexBufferDX9(unsigned int indexCount, IndexBufferFormat indexFormat, BufferUsage usage = BU_STATIC);
+				IndexBufferDX9::~IndexBufferDX9();
 
-		virtual	void	Enable(unsigned int offset = 0);
-		virtual	void	Disable();
-		virtual	void	Lock(BufferLocking lockMode);
-		virtual	void	Unlock();
-		virtual	void	Update();
+		void	Enable();
+		void	Disable();
+		void	Lock(BufferLocking lockMode);
+		void	Unlock();
+		void	Update();
 
-	protected:
-		IDirect3DVertexBuffer9*		m_pVertexBuffer;
+	private:
+		IDirect3DIndexBuffer9* m_pIndexBuffer;
 	};
 }
 
-#endif //VERTEXBUFFERDX9_H
+#endif //INDEXBUFFERDX9_H

@@ -93,7 +93,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +108,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -125,7 +125,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,7 +144,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,21 +158,23 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DX9\Resources\PlatformSpecificMappingsDX9.h" />
-    <ClInclude Include="DX9\Resources\VertexFormatDX9.h" />
-    <ClInclude Include="Resources\Buffer.h" />
+    <ClInclude Include="DX9\MappingsDX9.h" />
+    <ClInclude Include="DX9\VertexFormatDX9.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="DX9\RendererDX9.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="IndexBufferDX9.h" />
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Resources\VertexFormat.h" />
+    <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Resources\VertexBuffer.h" />
-    <ClInclude Include="DX9\Resources\VertexBufferDX9.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="DX9\VertexBufferDX9.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DX9\Resources\PlatformSpecificMappingsDX9.cpp" />
-    <ClCompile Include="DX9\Resources\VertexFormatDX9.cpp" />
-    <ClCompile Include="Resources\Buffer.cpp" />
+    <ClCompile Include="DX9\MappingsDX9.cpp" />
+    <ClCompile Include="DX9\VertexFormatDX9.cpp" />
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
@@ -188,20 +190,22 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="DX9\RendererDX9.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="IndexBufferDX9.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Resources\VertexFormat.cpp" />
+    <ClCompile Include="VertexFormat.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Resources\VertexBuffer.cpp" />
-    <ClCompile Include="DX9\Resources\VertexBufferDX9.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="DX9\VertexBufferDX9.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />
-    <None Include="Resources\VertexBuffer.inl" />
+    <None Include="VertexBuffer.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -28,6 +28,7 @@ namespace LibRendererDll
 {
 	class VertexFormatDX9;
 	class VertexBufferDX9;
+	class IndexBufferDX9;
 
 	class RendererDX9 : public Renderer
 	{
@@ -38,6 +39,7 @@ namespace LibRendererDll
 
 		VertexFormatDX9*	vf;
 		VertexBufferDX9*	vb;
+		IndexBufferDX9*		ib;
 
 		void						CreateResources();
 		void						ReleaseResources();

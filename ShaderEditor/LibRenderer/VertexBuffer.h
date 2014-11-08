@@ -24,25 +24,30 @@
 
 namespace LibRendererDll
 {
+	class IndexBuffer;
+
 	//This is a platform independent class which allows the creation and manipulation of a vertex buffer.
 	class VertexBuffer : public Buffer
 	{
 	public:
-						VertexBuffer(VertexFormat* vertexFormat, unsigned int vertexCount, BufferUsage usage = BU_STATIC);
+						VertexBuffer(VertexFormat* vertexFormat, unsigned int vertexCount, IndexBuffer* indexBuffer = nullptr, BufferUsage usage = BU_STATIC);
 		virtual			~VertexBuffer();
 
-		//This also enables the proper vertex format for the vertex buffer so you don't have to
+		//Enable the vertex buffer. You can specify offset N to start from the (N+1)th vertex.
+		//This also enables the proper vertex format and index buffer (if it exists) for the vertex buffer so you don't have to.
 		virtual	void	Enable(unsigned int offset = 0) = 0;
-		//This also disabled the proper vertex format for the vertex buffer so you don't have to
+		//This also disabled the vertex format and index buffer (if it exists) for the vertex buffer so you don't have to.
 		virtual	void	Disable() = 0;
 		//Locking the buffer allows for modifications to be made to its' contents. The flow is Lock -> Update -> Unlock.
 		virtual	void	Lock(BufferLocking lockMode) = 0;
 		//Unlock our buffer
 		virtual	void	Unlock() = 0;
-		//Sync our local modifications to the buffer's content
+		//Sync our local modifications to the buffer's content.
 		virtual	void	Update() = 0;
 
 		VertexFormat*	GetVertexFormat() const { return m_pVertexFormat; }
+		void			SetIndexBuffer(IndexBuffer* indexBuffer) { m_pIndexBuffer = indexBuffer; }
+		IndexBuffer*	GetIndexBuffer() const { return m_pIndexBuffer; }
 
 		template <typename T>
 		//Position accessor for our vertex buffer
@@ -86,6 +91,7 @@ namespace LibRendererDll
 
 	protected:
 		VertexFormat*	m_pVertexFormat;
+		IndexBuffer*	m_pIndexBuffer;
 		void*			m_pTempBuffer;
 	};
 

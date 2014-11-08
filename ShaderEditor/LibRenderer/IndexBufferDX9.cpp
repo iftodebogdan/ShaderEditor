@@ -18,84 +18,71 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include "../RendererDX9.h"
-#include "PlatformSpecificMappingsDX9.h"
+#include "RendererDX9.h"
+#include "MappingsDX9.h"
 
-#include "VertexFormatDX9.h"
-#include "VertexBufferDX9.h"
+#include "IndexBufferDX9.h"
 using namespace LibRendererDll;
 
-VertexBufferDX9::VertexBufferDX9(VertexFormatDX9* vertexFormat, unsigned int vertexCount, BufferUsage usage)
-	: VertexBuffer(vertexFormat, vertexCount, usage)
+IndexBufferDX9::IndexBufferDX9(unsigned int indexCount, IndexBufferFormat indexFormat, BufferUsage usage)
+	: IndexBuffer(indexCount, indexFormat, usage)
+	, m_pIndexBuffer(nullptr)
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
-	HRESULT hr = device->CreateVertexBuffer((UINT)m_nSize, BufferUsageDX9[usage], 0, D3DPOOL_DEFAULT, &m_pVertexBuffer, 0);
+	HRESULT hr = device->CreateIndexBuffer((UINT)m_nSize, BufferUsageDX9[usage], IndexBufferFormatDX9[indexFormat], D3DPOOL_DEFAULT, &m_pIndexBuffer, 0);
 	assert(SUCCEEDED(hr));
 }
 
-VertexBufferDX9::~VertexBufferDX9()
+IndexBufferDX9::~IndexBufferDX9()
 {
 	ULONG refCount = 0;
-	refCount = m_pVertexBuffer->Release();
+	refCount = m_pIndexBuffer->Release();
 	assert(refCount == 0);
 }
 
-void VertexBufferDX9::Enable(unsigned int offset)
+void IndexBufferDX9::Enable()
 {
-	//Enable the proper vertex format for our vertex buffer
-	assert(m_pVertexFormat != nullptr);
-	m_pVertexFormat->Enable();
-
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
-	HRESULT hr = device->SetStreamSource(0, m_pVertexBuffer, offset, m_pVertexFormat->GetStride());
+	HRESULT hr = device->SetIndices(m_pIndexBuffer);
 	assert(SUCCEEDED(hr));
 }
 
-void VertexBufferDX9::Disable()
+void IndexBufferDX9::Disable()
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
+	HRESULT hr;
 
 #ifdef _DEBUG
-	//Check to see if this vertex buffer is the one currently enabled
-	IDirect3DVertexBuffer9* dbgBuffer = 0;
-	unsigned int dbgOffset = 0;
-	unsigned int dbgStride = 0;
-	HRESULT dbghr = device->GetStreamSource(0, &dbgBuffer, &dbgOffset, &dbgStride);
-	assert(dbghr == D3D_OK);
-	assert(dbgBuffer == m_pVertexBuffer);
-	ULONG refCount = 0;
-	refCount = dbgBuffer->Release();
+	IDirect3DIndexBuffer9* activeBuffer = 0;
+	hr = device->GetIndices(&activeBuffer);
+	assert(SUCCEEDED(hr));
+	assert(activeBuffer == m_pIndexBuffer);
+	ULONG refCount = 1;
+	refCount = activeBuffer->Release();
 	assert(refCount == 1);
 #endif
 
-	HRESULT hr = device->SetStreamSource(0, 0, 0, 0);
+	hr = device->SetIndices(0);
 	assert(SUCCEEDED(hr));
-
-	//Disable our vertex format
-	assert(m_pVertexFormat != nullptr);
-	m_pVertexFormat->Disable();
 }
 
-void VertexBufferDX9::Lock(BufferLocking lockMode)
+void IndexBufferDX9::Lock(BufferLocking lockMode)
 {
-	//The pointer to the locked data is saved for future use
 	assert(m_pTempBuffer == nullptr);
-	HRESULT hr = m_pVertexBuffer->Lock(0, 0, &m_pTempBuffer, BufferLockingDX9[lockMode]);
+	HRESULT hr = m_pIndexBuffer->Lock(0, 0, &m_pTempBuffer, BufferLockingDX9[lockMode]);
 	assert(SUCCEEDED(hr));
 }
 
-void VertexBufferDX9::Unlock()
+void IndexBufferDX9::Unlock()
 {
-	//Unlock the vertex data
 	assert(m_pTempBuffer != nullptr);
-	HRESULT hr = m_pVertexBuffer->Unlock();
+	HRESULT hr = m_pIndexBuffer->Unlock();
 	assert(SUCCEEDED(hr));
 	m_pTempBuffer = nullptr;
 }
 
-void VertexBufferDX9::Update()
+void IndexBufferDX9::Update()
 {
-	//Copy the local changes to our vertex buffer to where the locked data is
 	assert(m_pTempBuffer != nullptr);
 	memcpy(m_pTempBuffer, GetData(), GetSize());
 }

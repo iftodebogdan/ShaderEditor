@@ -18,8 +18,8 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include "../RendererDX9.h"
-#include "PlatformSpecificMappingsDX9.h"
+#include "RendererDX9.h"
+#include "MappingsDX9.h"
 #include "VertexFormatDX9.h"
 using namespace LibRendererDll;
 

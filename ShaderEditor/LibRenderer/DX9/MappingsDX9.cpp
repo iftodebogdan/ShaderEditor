@@ -18,7 +18,7 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include "PlatformSpecificMappingsDX9.h"
+#include "MappingsDX9.h"
 
 namespace LibRendererDll
 {
@@ -68,5 +68,11 @@ namespace LibRendererDll
 		D3DDECLUSAGE_BLENDWEIGHT,   // VAU_BLENDWEIGHT
 		D3DDECLUSAGE_TESSFACTOR,    // VAU_FOGCOORD
 		D3DDECLUSAGE_PSIZE          // VAU_PSIZE
+	};
+
+	D3DFORMAT IndexBufferFormatDX9[IndexBuffer::IBF_MAX] =
+	{
+		D3DFMT_INDEX16,				// IBF_INDEX16
+		D3DFMT_INDEX32				// IBF_INDEX32
 	};
 }

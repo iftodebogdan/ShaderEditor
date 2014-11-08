@@ -16,47 +16,45 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
+#ifndef INDEXBUFFER_H
+#define INDEXBUFFER_H
 
-// LibRenderer.cpp : Defines the exported functions for the DLL application.
-//
+#include "Buffer.h"
 
-#include "stdafx.h"
-
-#include "Renderer.h"
-#include "RendererDX9.h"
-
-using namespace LibRendererDll;
-
-Renderer* Renderer::m_pInstance = nullptr;
-
-Renderer::~Renderer()
+namespace LibRendererDll
 {
-}
-
-void Renderer::CreateInstance(API eApi)
-{
-	switch (eApi)
+	class IndexBuffer : public Buffer
 	{
-		case API_DX9:
-			m_pInstance = new RendererDX9;
-	}
+	public:
+		enum IndexBufferFormat
+		{
+			IBF_INDEX16,
+			IBF_INDEX32,
+
+			IBF_MAX
+		};
+
+						IndexBuffer(unsigned int indexCount, IndexBufferFormat indexFormat, BufferUsage usage = BU_STATIC);
+		virtual			~IndexBuffer();
+
+		void			SetOffset(unsigned int offset) { m_nOffset = offset; }
+		unsigned int	GetOffset() const { return m_nOffset; }
+
+		virtual void	Enable() = 0;
+		virtual void	Disable() = 0;
+		virtual void	Lock(BufferLocking lockMode) = 0;
+		virtual void	Unlock() = 0;
+		virtual void	Update() = 0;
+
+		void			SetIndex(unsigned int indexIdx, unsigned int indexVal);
+		void			SetIndices(unsigned int indicesVal[], unsigned int size, unsigned int offset = 0);
+
+	protected:
+		unsigned int	m_nOffset;
+		void*			m_pTempBuffer;
+
+		static unsigned int IndexBufferFormatSize[IBF_MAX];
+	};
 }
 
-void Renderer::DestroyInstance()
-{
-	if (m_pInstance)
-	{
-		delete m_pInstance;
-		m_pInstance = nullptr;
-	}
-}
-
-Renderer* Renderer::GetInstance()
-{
-	return m_pInstance;
-}
-
-const RenderData& Renderer::GetRenderData() const
-{
-	return m_RenderData;
-}
+#endif //INDEXBUFFER_H

@@ -16,30 +16,33 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-#ifndef VERTEXFORMATDX9_H
-#define VERTEXFORMATDX9_H
-
-#include "../../Resources/VertexFormat.h"
+#ifndef VERTEXBUFFERDX9_H
+#define VERTEXBUFFERDX9_H
 
 #include <d3d9.h>
+#include "VertexBuffer.h"
 
 namespace LibRendererDll
 {
-	//This is the DX9 implementation of the VertexFormat class
-	class VertexFormatDX9 : public VertexFormat
+	class VertexFormatDX9;
+	class IndexBufferDX9;
+
+	//This is the DX9 implementation of the VertexBuffer class
+	class VertexBufferDX9 : public VertexBuffer
 	{
 	public:
-						VertexFormatDX9(unsigned int attributeCount);
-						~VertexFormatDX9();
+						VertexBufferDX9(VertexFormatDX9* vertexFormat, unsigned int vertexCount, IndexBufferDX9* indexBuffer = nullptr, BufferUsage usage = BU_STATIC);
+						~VertexBufferDX9();
 
-		virtual void	Enable();
-		virtual void	Disable();
+		virtual	void	Enable(unsigned int offset = 0);
+		virtual	void	Disable();
+		virtual	void	Lock(BufferLocking lockMode);
+		virtual	void	Unlock();
 		virtual	void	Update();
 
 	protected:
-		D3DVERTEXELEMENT9 m_pVertexElements[VertexFormat::VF_MAX_ATTRIBUTES + 1];
-		IDirect3DVertexDeclaration9* m_pVertexDeclaration;
+		IDirect3DVertexBuffer9*		m_pVertexBuffer;
 	};
 }
 
-#endif //VERTEXFORMATDX9_H
+#endif //VERTEXBUFFERDX9_H

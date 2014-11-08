@@ -16,47 +16,38 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-
-// LibRenderer.cpp : Defines the exported functions for the DLL application.
-//
-
 #include "stdafx.h"
 
-#include "Renderer.h"
-#include "RendererDX9.h"
-
+#include <string.h>
+#include "IndexBuffer.h"
 using namespace LibRendererDll;
 
-Renderer* Renderer::m_pInstance = nullptr;
-
-Renderer::~Renderer()
+unsigned int IndexBuffer::IndexBufferFormatSize[IndexBuffer::IBF_MAX] =
 {
+	2,  // IBF_INDEX16
+	4,  // IBF_INDEX32
+};
+
+IndexBuffer::IndexBuffer(unsigned int indexCount, IndexBufferFormat indexFormat, BufferUsage usage)
+	: Buffer(indexCount, IndexBufferFormatSize[indexFormat], usage)
+	, m_nOffset(0)
+	, m_pTempBuffer(nullptr)
+{}
+
+IndexBuffer::~IndexBuffer()
+{}
+
+void IndexBuffer::SetIndex(unsigned int indexIdx, unsigned int indexVal)
+{
+	assert(indexIdx < m_nElementCount);
+	int sizeshort = sizeof(unsigned short);
+	int sizeint = sizeof(unsigned int);
+	int sizechar = sizeof(char);
+	memcpy((char*)m_pData + (indexIdx * m_nElementSize), &indexVal, m_nElementSize);
 }
 
-void Renderer::CreateInstance(API eApi)
+void IndexBuffer::SetIndices(unsigned int indicesVal[], unsigned int size, unsigned int offset)
 {
-	switch (eApi)
-	{
-		case API_DX9:
-			m_pInstance = new RendererDX9;
-	}
-}
-
-void Renderer::DestroyInstance()
-{
-	if (m_pInstance)
-	{
-		delete m_pInstance;
-		m_pInstance = nullptr;
-	}
-}
-
-Renderer* Renderer::GetInstance()
-{
-	return m_pInstance;
-}
-
-const RenderData& Renderer::GetRenderData() const
-{
-	return m_RenderData;
+	for (int i = 0; i < size; i++)
+		SetIndex(i + offset, indicesVal[i]);
 }
