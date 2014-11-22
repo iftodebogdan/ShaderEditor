@@ -48,6 +48,6 @@ void IndexBuffer::SetIndex(unsigned int indexIdx, unsigned int indexVal)
 
 void IndexBuffer::SetIndices(unsigned int indicesVal[], unsigned int size, unsigned int offset)
 {
-	for (int i = 0; i < size; i++)
+	for (unsigned int i = 0; i < size; i++)
 		SetIndex(i + offset, indicesVal[i]);
 }

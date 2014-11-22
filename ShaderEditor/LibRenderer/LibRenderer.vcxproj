@@ -68,23 +68,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
-    <IncludePath>$(DXSDK_DIR)Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+    <LibraryPath>$(ProjectDir)SDK\DX9\Lib\x86;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
+    <IncludePath>$(ProjectDir)SDK\DX9\Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(DXSDK_DIR)Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x64;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
+    <IncludePath>$(ProjectDir)SDK\DX9\Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+    <LibraryPath>$(ProjectDir)SDK\DX9\Lib\x64;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(DXSDK_DIR)Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(FrameworkSDKDir)\lib</LibraryPath>
+    <IncludePath>$(ProjectDir)SDK\DX9\Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+    <LibraryPath>$(ProjectDir)SDK\DX9\Lib\x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(FrameworkSDKDir)\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(DXSDK_DIR)Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
+    <IncludePath>$(ProjectDir)SDK\DX9\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+    <LibraryPath>$(ProjectDir)SDK\DX9\Lib\x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -166,6 +166,17 @@
     <ClInclude Include="IndexBufferDX9.h" />
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SDK\DX9\Include\d3d9.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9anim.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9core.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9effect.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9math.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9mesh.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9shader.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9shape.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9tex.h" />
+    <ClInclude Include="SDK\DX9\Include\d3dx9xof.h" />
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="VertexBuffer.h" />
@@ -205,7 +216,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />
+    <None Include="SDK\DX9\Include\d3dx9math.inl" />
     <None Include="VertexBuffer.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="SDK\DX9\Lib\x64\d3d9.lib" />
+    <Library Include="SDK\DX9\Lib\x64\d3dx9.lib" />
+    <Library Include="SDK\DX9\Lib\x64\DxErr.lib" />
+    <Library Include="SDK\DX9\Lib\x86\d3d9.lib" />
+    <Library Include="SDK\DX9\Lib\x86\d3dx9.lib" />
+    <Library Include="SDK\DX9\Lib\x86\DxErr.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
