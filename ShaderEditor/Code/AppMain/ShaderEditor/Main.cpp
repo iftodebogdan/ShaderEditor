@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include <gtkmm/main.h>
-#include "AppWindow.h"
+#include "HomeWindow.h"
 #include "Renderer.h"
 
 using namespace LibRendererDll;
@@ -13,8 +13,7 @@ using namespace LibRendererDll;
 int main(int argc, char* argv[])
 {
 	Gtk::Main kit(argc, argv);
-
-	AppWindow window;
+	HomeWindow window;
 	
 	Gtk::Main::run(window);
 

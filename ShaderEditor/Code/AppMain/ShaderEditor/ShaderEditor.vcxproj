@@ -71,7 +71,6 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
@@ -163,11 +162,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppWindow.h" />
+    <ClInclude Include="HomeWindow.h" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Text.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AppWindow.cpp" />
+    <ClCompile Include="HomeWindow.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -175,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Property Sheets\gtkmm-vc100-2_4win32.props" />

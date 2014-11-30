@@ -1,12 +1,12 @@
 #include "stdafx.h"
 
-#include "AppWindow.h"
+#include "MainWindow.h"
 #include "Renderer.h"
 #include <gdk/gdkwin32.h>
 
 using namespace LibRendererDll;
 
-AppWindow::AppWindow()
+MainWindow::MainWindow()
 {
 	// Set window properties
 	set_title("ShdEd");
@@ -42,46 +42,51 @@ AppWindow::AppWindow()
 	m_PreviewFrame.add(m_PreviewDrawingArea);
 
 	// Set up callbacks
-	m_PreviewDrawingArea.signal_realize().connect(sigc::mem_fun(this, &AppWindow::OnCreate));
+	m_PreviewDrawingArea.signal_realize().connect(sigc::mem_fun(this, &MainWindow::OnCreate));
 
 	// Show all children
 	show_all_children();
 }
 
-AppWindow::~AppWindow()
+MainWindow::~MainWindow()
 {
 	Renderer::GetInstance()->DestroyInstance();
 }
 
-void AppWindow::OnCreate()
+void MainWindow::OnCreate()
 {
-	Glib::signal_idle().connect(sigc::mem_fun(this, &AppWindow::OnUpdate));
+	Glib::signal_idle().connect(sigc::mem_fun(this, &MainWindow::OnUpdate));
 
 	Renderer::CreateInstance(Renderer::API_DX9);
 	HGDIOBJ handle = GDK_WINDOW_HWND(get_window()->gobj());
-	Renderer::GetInstance()->Initialize((void*)handle,
+	
+	Renderer::GetInstance()->Initialize(
+		(void*)handle,
 		m_PreviewDrawingArea.get_allocation().get_width(),
-		m_PreviewDrawingArea.get_allocation().get_height());
+		m_PreviewDrawingArea.get_allocation().get_height()
+	);
 }
 
-bool AppWindow::OnUpdate()
+bool MainWindow::OnUpdate()
 {
-	RenderData renderData = Renderer::GetInstance()->GetRenderData();
+	Renderer *renderer = Renderer::GetInstance();
+	RenderData renderData = renderer->GetRenderData();
 
 	renderData.backBufferSize = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_width(),
-		m_PreviewDrawingArea.get_allocation().get_height());
-
+		m_PreviewDrawingArea.get_allocation().get_height()
+	);
 	renderData.dstRect.topLeft = Vec2i(
 		m_PreviewDrawingArea.get_allocation().get_x(),
-		m_PreviewDrawingArea.get_allocation().get_y());
+		m_PreviewDrawingArea.get_allocation().get_y()
+	);
 	renderData.dstRect.bottomRight = renderData.dstRect.topLeft +
-		Vec2i(m_PreviewDrawingArea.get_allocation().get_width(),
-		m_PreviewDrawingArea.get_allocation().get_height());
-
-	Renderer::GetInstance()->SetRenderData(renderData);
-
-	Renderer::GetInstance()->RenderScene();
+		Vec2i(
+			m_PreviewDrawingArea.get_allocation().get_width(),
+			m_PreviewDrawingArea.get_allocation().get_height()
+		);
+	renderer->SetRenderData(renderData);
+	renderer->RenderScene();
 
 	return true;
 }
