@@ -19,48 +19,56 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include "RenderData.h"
+
 namespace LibRendererDll
 {
-	//This is the base class from which the VertexBuffer and IndexBuffer classes are derived from.
+	// This is the base class which manages memory buffers
 	class Buffer
 	{
 	public:
-		//Usage options that identify how resources are to be used.
+		// Usage options that identify how resources are to be used
 		enum BufferUsage
 		{
-			BU_STATIC,			//Informs the system that the application writes only to the vertex buffer.
-			BU_DYNAMIC,			//Set to indicate that the vertex buffer requires dynamic memory use.
-			BU_RENDERTAGET,		//The resource will be a render target.
-			BU_DEPTHSTENCIL,	//The resource will be a depth stencil buffer.
+			BU_STATIC,			// Informs the system that the application writes only to the buffer
+			BU_DYNAMIC,			// Set to indicate that the buffer requires dynamic memory use
+			BU_RENDERTAGET,		// The resource will be a render target
+			BU_DEPTHSTENCIL,	// The resource will be a depth stencil buffer
+			BU_TEXTURE,			// The resource will be a texture
 
-			BU_MAX
+			BU_MAX				// DO NOT USE! INTERNAL USAGE ONLY!
 		};
 
+		// Locking options that identify how resources are locked for reading/writing
 		enum BufferLocking
 		{
-			BL_READ_ONLY,	//The application will not write to the buffer.
-			BL_WRITE_ONLY,
-			BL_READ_WRITE,
+			BL_READ_ONLY,	// The application will ONLY read the buffer
+			BL_WRITE_ONLY,	// The application will ONLY write to the buffer
+			BL_READ_WRITE,	// The application will both read and write to the buffer
 
-			BL_MAX
+			BL_MAX			// DO NOT USE! INTERNAL USAGE ONLY!
 		};
 
-		const	unsigned int	GetElementCount() const;
-				void			SetElementCount(unsigned int numElements);
-		const	unsigned int	GetElementSize() const;
-		const	BufferUsage		GetUsage() const;
-		const	unsigned int	GetSize() const;
-		const	void*			GetData() const;
+		// Returns the number of elements (vertices, indices, pixels, etc.) in the buffer
+		const	unsigned int	GetElementCount() const { return m_nElementCount; }
+		// Returns the size in bytes of an element
+		const	unsigned int	GetElementSize() const { return m_nElementSize; }
+		// Returns the usage option of the buffer
+		const	BufferUsage		GetUsage() const { return m_eBufferUsage; }
+		// Returns the size in bytes of the entire buffer
+		const	unsigned int	GetSize() const { return m_nSize; }
+		// Returns a pointer to the beginning of the buffer
+				byte*			GetData() const { return m_pData; }
 
 	protected:
-						Buffer(unsigned int elementCount, unsigned int elementSize, BufferUsage usage);
+						Buffer(const unsigned int elementCount, const unsigned int elementSize, const BufferUsage usage);
 		virtual			~Buffer();
 
-		unsigned int	m_nElementCount;
-		unsigned int	m_nElementSize;
-		BufferUsage		m_eBufferUsage;
-		unsigned int	m_nSize;
-		void*			m_pData;
+		unsigned int	m_nElementCount;	// Holds the number of elements
+		unsigned int	m_nElementSize;		// Holds the size in bytes of an element
+		BufferUsage		m_eBufferUsage;		// Holds the type of usage of the buffer
+		unsigned int	m_nSize;			// Holds the total size in bytes of the buffer
+		byte*			m_pData;			// Pointer to the beginning of the buffer
 	};
 }
 

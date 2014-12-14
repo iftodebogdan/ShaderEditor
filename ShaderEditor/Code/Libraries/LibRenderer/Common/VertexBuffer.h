@@ -30,72 +30,74 @@ namespace LibRendererDll
 	class VertexBuffer : public Buffer
 	{
 	public:
-						VertexBuffer(VertexFormat* vertexFormat, unsigned int vertexCount, IndexBuffer* indexBuffer = nullptr, BufferUsage usage = BU_STATIC);
+						VertexBuffer(
+							VertexFormat* const vertexFormat, const unsigned int vertexCount,
+							IndexBuffer* const indexBuffer = nullptr, const BufferUsage usage = BU_STATIC);
 		virtual			~VertexBuffer();
 
 		//Enable the vertex buffer. You can specify offset N to start from the (N+1)th vertex.
 		//This also enables the proper vertex format and index buffer (if it exists) for the vertex buffer so you don't have to.
-		virtual	void	Enable(unsigned int offset = 0) = 0;
+		virtual	void	Enable(const unsigned int offset = 0) = 0;
 		//This also disabled the vertex format and index buffer (if it exists) for the vertex buffer so you don't have to.
 		virtual	void	Disable() = 0;
 		//Locking the buffer allows for modifications to be made to its' contents. The flow is Lock -> Update -> Unlock.
-		virtual	void	Lock(BufferLocking lockMode) = 0;
+		virtual	void	Lock(const BufferLocking lockMode) = 0;
 		//Unlock our buffer
 		virtual	void	Unlock() = 0;
 		//Sync our local modifications to the buffer's content.
 		virtual	void	Update() = 0;
 
-		VertexFormat*	GetVertexFormat() const { return m_pVertexFormat; }
-		void			SetIndexBuffer(IndexBuffer* indexBuffer) { m_pIndexBuffer = indexBuffer; }
-		IndexBuffer*	GetIndexBuffer() const { return m_pIndexBuffer; }
+		VertexFormat*		GetVertexFormat() const { return m_pVertexFormat; }
+		void				SetIndexBuffer(IndexBuffer* const indexBuffer) { m_pIndexBuffer = indexBuffer; }
+		IndexBuffer*		GetIndexBuffer() const { return m_pIndexBuffer; }
 
 		template <typename T>
-		//Position accessor for our vertex buffer
-		inline	T&		Position(unsigned int vertexIdx);
-		inline	bool	HasPosition() const;
+		//Position accessor
+		inline	T&			Position(const unsigned int vertexIdx) const;
+		inline	const bool	HasPosition() const;
 
 		template <typename T>
-		//Normal accessor for our vertex buffer
-		inline	T&		Normal(unsigned int vertexIdx);
-		inline	bool	HasNormal() const;
+		//Normal accessor
+		inline	T&			Normal(const unsigned int vertexIdx) const;
+		inline	const bool	HasNormal() const;
 
 		template <typename T>
-		//Tangent accessor for our vertex buffer
-		inline	T&		Tangent(unsigned int vertexIdx);
-		inline	bool	HasTangent() const;
+		//Tangent accessor
+		inline	T&			Tangent(const unsigned int vertexIdx) const;
+		inline	const bool	HasTangent() const;
 
 		template <typename T>
-		//Binormal accessor for our vertex buffer
-		inline	T&		Binormal(unsigned int vertexIdx);
-		inline	bool	HasBinormal() const;
+		//Binormal accessor
+		inline	T&			Binormal(const unsigned int vertexIdx) const;
+		inline	const bool	HasBinormal() const;
 
 		template <typename T>
-		//TexCoord accessor for our vertex buffer
-		inline	T&		TexCoord(unsigned int vertexIdx, unsigned int usageIdx);
-		inline	bool	HasTexCoord(unsigned int usageIdx) const;
+		//TexCoord accessor
+		inline	T&			TexCoord(const unsigned int vertexIdx, const unsigned int usageIdx) const;
+		inline	const bool	HasTexCoord(const unsigned int usageIdx) const;
 
 		template <typename T>
-		//Color accessor for our vertex buffer
-		inline	T&		Color(unsigned int vertexIdx, unsigned int usageIdx);
-		inline	bool	HasColor(unsigned int usageIdx) const;
+		//Color accessor
+		inline	T&			Color(const unsigned int vertexIdx, const unsigned int usageIdx) const;
+		inline	const bool	HasColor(const unsigned int usageIdx) const;
 
 		template <typename T>
-		//BlendIndices accessor for our vertex buffer
-		inline	T&		BlendIndices(unsigned int vertexIdx);
-		inline	bool	HasBlendIndices() const;
+		//BlendIndices accessor
+		inline	T&			BlendIndices(const unsigned int vertexIdx) const;
+		inline	const bool	HasBlendIndices() const;
 
 		template <typename T>
-		//BlendWeight accessor for our vertex buffer
-		inline	T&		BlendWeight(unsigned int vertexIdx);
-		inline	bool	HasBlendWeight() const;
+		//BlendWeight accessor
+		inline	T&			BlendWeight(const unsigned int vertexIdx) const;
+		inline	const bool	HasBlendWeight() const;
 
 	protected:
-		VertexFormat*	m_pVertexFormat;
-		IndexBuffer*	m_pIndexBuffer;
-		void*			m_pTempBuffer;
+		VertexFormat*	m_pVertexFormat;	// Holds a pointer to the associated vertex format
+		IndexBuffer*	m_pIndexBuffer;		// Holds a pointer to the associated index buffer
+		void*			m_pTempBuffer;		// Used in the Lock() -> Update() -> Unlock() flow
 	};
 
-//Include our inline file
+//Include our inline functions file
 #include "VertexBuffer.inl"
 }
 

@@ -23,16 +23,18 @@
 
 #include "Buffer.h"
 #include "VertexFormat.h"
-#include "IndexBufferDX9.h"
+#include "IndexBuffer.h"
+#include "Texture.h"
 
 namespace LibRendererDll
 {
 	//These are used to translate platform independent flags to D3D9 format
-	extern DWORD BufferUsageDX9[Buffer::BU_MAX];
-	extern DWORD BufferLockingDX9[Buffer::BL_MAX];
-	extern BYTE VertexAttributeTypeDX9[VertexFormat::VAT_MAX];
-	extern BYTE VertexAttributeUsageDX9[VertexFormat::VAU_MAX];
-	extern D3DFORMAT IndexBufferFormatDX9[IndexBuffer::IBF_MAX];
+	extern const DWORD BufferUsageDX9[Buffer::BU_MAX];
+	extern const DWORD BufferLockingDX9[Buffer::BL_MAX];
+	extern const BYTE VertexAttributeTypeDX9[VertexFormat::VAT_MAX];
+	extern const BYTE VertexAttributeUsageDX9[VertexFormat::VAU_MAX];
+	extern const D3DFORMAT IndexBufferFormatDX9[IndexBuffer::IBF_MAX];
+	extern const D3DFORMAT TextureFormatDX9[Texture::TF_MAX];
 }
 
-#endif //FLAGMAPPINGDX9_H
+#endif //MAPPINGDX9_H

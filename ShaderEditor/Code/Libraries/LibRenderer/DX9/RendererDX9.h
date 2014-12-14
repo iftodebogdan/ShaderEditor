@@ -29,6 +29,7 @@ namespace LibRendererDll
 	class VertexFormatDX9;
 	class VertexBufferDX9;
 	class IndexBufferDX9;
+	class TextureDX9;
 
 	class RendererDX9 : public Renderer
 	{
@@ -40,6 +41,7 @@ namespace LibRendererDll
 		VertexFormatDX9*	vf;
 		VertexBufferDX9*	vb;
 		IndexBufferDX9*		ib;
+		TextureDX9*			tex;
 
 		void						CreateResources();
 		void						ReleaseResources();
@@ -55,7 +57,7 @@ namespace LibRendererDll
 
 		static	RendererDX9*		GetInstance() { return (RendererDX9*)m_pInstance; };
 
-		void						Initialize(void* hWnd, int backBufferWidth = 0, int backBufferHeight = 0);
+		void						Initialize(void* hWnd, const int backBufferWidth = 0, const int backBufferHeight = 0);
 		void						SetRenderData(const RenderData& renderData);
 		void						RenderScene();
 

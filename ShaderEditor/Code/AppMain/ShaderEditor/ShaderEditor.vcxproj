@@ -27,7 +27,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -74,21 +73,29 @@
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -104,6 +111,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(GTKMM_BASEPATH)\lib\glademm-vc100-d-2_4.lib;$(GTKMM_BASEPATH)\lib\xml++-vc100-d-2_6.lib;$(GTKMM_BASEPATH)\lib\gtkmm-vc100-d-2_4.lib;$(GTKMM_BASEPATH)\lib\gdkmm-vc100-d-2_4.lib;$(GTKMM_BASEPATH)\lib\atkmm-vc100-d-1_6.lib;$(GTKMM_BASEPATH)\lib\pangomm-vc100-d-1_4.lib;$(GTKMM_BASEPATH)\lib\cairomm-vc100-d-1_0.lib;$(GTKMM_BASEPATH)\lib\giomm-vc100-d-2_4.lib;$(GTKMM_BASEPATH)\lib\glibmm-vc100-d-2_4.lib;$(GTKMM_BASEPATH)\lib\sigc-vc100-d-2_0.lib;$(GTKMM_BASEPATH)\lib\glade-2.0.lib;$(GTKMM_BASEPATH)\lib\libxml2.lib;$(GTKMM_BASEPATH)\lib\gtk-win32-2.0.lib;$(GTKMM_BASEPATH)\lib\gdk-win32-2.0.lib;$(GTKMM_BASEPATH)\lib\gdk_pixbuf-2.0.lib;$(GTKMM_BASEPATH)\lib\atk-1.0.lib;$(GTKMM_BASEPATH)\lib\pangowin32-1.0.lib;$(GTKMM_BASEPATH)\lib\pangocairo-1.0.lib;$(GTKMM_BASEPATH)\lib\pango-1.0.lib;$(GTKMM_BASEPATH)\lib\cairo.lib;$(GTKMM_BASEPATH)\lib\gio-2.0.lib;$(GTKMM_BASEPATH)\lib\gobject-2.0.lib;$(GTKMM_BASEPATH)\lib\gmodule-2.0.lib;$(GTKMM_BASEPATH)\lib\glib-2.0.lib;$(GTKMM_BASEPATH)\lib\intl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,6 +128,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(GTKMM64_BASEPATH)\lib\glademm-vc100-d-2_4.lib;$(GTKMM64_BASEPATH)\lib\xml++-vc100-d-2_6.lib;$(GTKMM64_BASEPATH)\lib\gtkmm-vc100-d-2_4.lib;$(GTKMM64_BASEPATH)\lib\gdkmm-vc100-d-2_4.lib;$(GTKMM64_BASEPATH)\lib\atkmm-vc100-d-1_6.lib;$(GTKMM64_BASEPATH)\lib\pangomm-vc100-d-1_4.lib;$(GTKMM64_BASEPATH)\lib\cairomm-vc100-d-1_0.lib;$(GTKMM64_BASEPATH)\lib\giomm-vc100-d-2_4.lib;$(GTKMM64_BASEPATH)\lib\glibmm-vc100-d-2_4.lib;$(GTKMM64_BASEPATH)\lib\sigc-vc100-d-2_0.lib;$(GTKMM64_BASEPATH)\lib\glade-2.0.lib;$(GTKMM64_BASEPATH)\lib\libxml2.lib;$(GTKMM64_BASEPATH)\lib\gtk-win32-2.0.lib;$(GTKMM64_BASEPATH)\lib\gdk-win32-2.0.lib;$(GTKMM64_BASEPATH)\lib\gdk_pixbuf-2.0.lib;$(GTKMM64_BASEPATH)\lib\atk-1.0.lib;$(GTKMM64_BASEPATH)\lib\pangowin32-1.0.lib;$(GTKMM64_BASEPATH)\lib\pangocairo-1.0.lib;$(GTKMM64_BASEPATH)\lib\pango-1.0.lib;$(GTKMM64_BASEPATH)\lib\cairo.lib;$(GTKMM64_BASEPATH)\lib\gio-2.0.lib;$(GTKMM64_BASEPATH)\lib\gobject-2.0.lib;$(GTKMM64_BASEPATH)\lib\gmodule-2.0.lib;$(GTKMM64_BASEPATH)\lib\glib-2.0.lib;$(GTKMM64_BASEPATH)\lib\intl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,6 +150,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(GTKMM_BASEPATH)\lib\glademm-vc100-2_4.lib;$(GTKMM_BASEPATH)\lib\xml++-vc100-2_6.lib;$(GTKMM_BASEPATH)\lib\gtkmm-vc100-2_4.lib;$(GTKMM_BASEPATH)\lib\gdkmm-vc100-2_4.lib;$(GTKMM_BASEPATH)\lib\atkmm-vc100-1_6.lib;$(GTKMM_BASEPATH)\lib\pangomm-vc100-1_4.lib;$(GTKMM_BASEPATH)\lib\cairomm-vc100-1_0.lib;$(GTKMM_BASEPATH)\lib\giomm-vc100-2_4.lib;$(GTKMM_BASEPATH)\lib\glibmm-vc100-2_4.lib;$(GTKMM_BASEPATH)\lib\sigc-vc100-2_0.lib;$(GTKMM_BASEPATH)\lib\glade-2.0.lib;$(GTKMM_BASEPATH)\lib\libxml2.lib;$(GTKMM_BASEPATH)\lib\gtk-win32-2.0.lib;$(GTKMM_BASEPATH)\lib\gdk-win32-2.0.lib;$(GTKMM_BASEPATH)\lib\gdk_pixbuf-2.0.lib;$(GTKMM_BASEPATH)\lib\atk-1.0.lib;$(GTKMM_BASEPATH)\lib\pangowin32-1.0.lib;$(GTKMM_BASEPATH)\lib\pangocairo-1.0.lib;$(GTKMM_BASEPATH)\lib\pango-1.0.lib;$(GTKMM_BASEPATH)\lib\cairo.lib;$(GTKMM_BASEPATH)\lib\gio-2.0.lib;$(GTKMM_BASEPATH)\lib\gobject-2.0.lib;$(GTKMM_BASEPATH)\lib\gmodule-2.0.lib;$(GTKMM_BASEPATH)\lib\glib-2.0.lib;$(GTKMM_BASEPATH)\lib\intl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,6 +172,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(GTKMM64_BASEPATH)\lib\glademm-vc100-2_4.lib;$(GTKMM64_BASEPATH)\lib\xml++-vc100-2_6.lib;$(GTKMM64_BASEPATH)\lib\gtkmm-vc100-2_4.lib;$(GTKMM64_BASEPATH)\lib\gdkmm-vc100-2_4.lib;$(GTKMM64_BASEPATH)\lib\atkmm-vc100-1_6.lib;$(GTKMM64_BASEPATH)\lib\pangomm-vc100-1_4.lib;$(GTKMM64_BASEPATH)\lib\cairomm-vc100-1_0.lib;$(GTKMM64_BASEPATH)\lib\giomm-vc100-2_4.lib;$(GTKMM64_BASEPATH)\lib\glibmm-vc100-2_4.lib;$(GTKMM64_BASEPATH)\lib\sigc-vc100-2_0.lib;$(GTKMM64_BASEPATH)\lib\glade-2.0.lib;$(GTKMM64_BASEPATH)\lib\libxml2.lib;$(GTKMM64_BASEPATH)\lib\gtk-win32-2.0.lib;$(GTKMM64_BASEPATH)\lib\gdk-win32-2.0.lib;$(GTKMM64_BASEPATH)\lib\gdk_pixbuf-2.0.lib;$(GTKMM64_BASEPATH)\lib\atk-1.0.lib;$(GTKMM64_BASEPATH)\lib\pangowin32-1.0.lib;$(GTKMM64_BASEPATH)\lib\pangocairo-1.0.lib;$(GTKMM64_BASEPATH)\lib\pango-1.0.lib;$(GTKMM64_BASEPATH)\lib\cairo.lib;$(GTKMM64_BASEPATH)\lib\gio-2.0.lib;$(GTKMM64_BASEPATH)\lib\gobject-2.0.lib;$(GTKMM64_BASEPATH)\lib\gmodule-2.0.lib;$(GTKMM64_BASEPATH)\lib\glib-2.0.lib;$(GTKMM64_BASEPATH)\lib\intl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -180,6 +199,7 @@
     <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Property Sheets\gtkmm-vc100-2_4-win32.props" />
     <None Include="Property Sheets\gtkmm-vc100-2_4win32.props" />
     <None Include="Property Sheets\gtkmm-vc100-d-2_4-win32.props" />
     <None Include="Property Sheets\gtkmm-vc100-2_4-x64.props" />

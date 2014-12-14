@@ -29,15 +29,13 @@
 
 namespace LibRendererDll
 {
+	// This is the platform independent renderer interface
 	class Renderer
 	{
-	protected:
-		virtual		~Renderer();
-
 	public:
 		enum API
 		{
-			API_DX9,
+			API_DX9,	// Direct3D 9
 		};
 
 		/* Create an instance of the Renderer object based on API of choice */
@@ -45,21 +43,23 @@ namespace LibRendererDll
 		/* Destroys the instance of the Renderer object */
 		static	LIBRENDERER_DLL			void					DestroyInstance();
 		/* Retrieves the instance of the Renderer object */
-		static	LIBRENDERER_DLL			Renderer*				GetInstance();
+		static	LIBRENDERER_DLL			Renderer*				GetInstance() { return m_pInstance; }
 
 		/* After you create an application window, you are ready to initialize the graphics
 		object that you will use to render the scene. This process includes creating the
 		object, setting the presentation parameters, and finally creating the device. */
-		virtual	LIBRENDERER_DLL			void					Initialize(void* hWnd, int backBufferWidth = 0, int backBufferHeight = 0) = 0;
+		virtual	LIBRENDERER_DLL			void					Initialize(void* hWnd, const int backBufferWidth = 0, const int backBufferHeight = 0) = 0;
 
 		/* Get presentation parameters, global states, etc. */
-		virtual	LIBRENDERER_DLL	const	RenderData&				GetRenderData() const;
+		virtual	LIBRENDERER_DLL	const	RenderData&				GetRenderData() const { return m_RenderData; }
 		/* Set presentation parameters, global states, etc. */
 		virtual	LIBRENDERER_DLL			void					SetRenderData(const RenderData& renderData) = 0;
-		
+		/* Render the scene */
 		virtual	LIBRENDERER_DLL			void					RenderScene() = 0;
 
 	protected:
+		virtual						~Renderer();
+
 		static	Renderer*			m_pInstance;
 				RenderData			m_RenderData;
 	};

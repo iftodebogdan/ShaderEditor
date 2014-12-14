@@ -82,5 +82,6 @@
     <None Include="Property Sheets\gtkmm-vc100-d-2_4-x64.props">
       <Filter>Property Sheets\x64</Filter>
     </None>
+    <None Include="Property Sheets\gtkmm-vc100-2_4-win32.props" />
   </ItemGroup>
 </Project>

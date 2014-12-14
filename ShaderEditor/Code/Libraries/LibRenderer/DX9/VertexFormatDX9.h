@@ -28,7 +28,7 @@ namespace LibRendererDll
 	class VertexFormatDX9 : public VertexFormat
 	{
 	public:
-						VertexFormatDX9(unsigned int attributeCount);
+						VertexFormatDX9(const unsigned int attributeCount);
 						~VertexFormatDX9();
 
 		virtual void	Enable();

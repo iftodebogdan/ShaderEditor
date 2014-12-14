@@ -1,5 +1,5 @@
 template <typename T>
-inline T& VertexBuffer::Position(unsigned int vertexIdx)
+inline T& VertexBuffer::Position(const unsigned int vertexIdx) const
 {
 	unsigned int positionOffset = 0;
 
@@ -10,10 +10,10 @@ inline T& VertexBuffer::Position(unsigned int vertexIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + positionOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + positionOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasPosition() const
+inline const bool VertexBuffer::HasPosition() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_POSITION)
@@ -23,7 +23,7 @@ inline bool VertexBuffer::HasPosition() const
 }
 
 template <typename T>
-inline T& VertexBuffer::Normal(unsigned int vertexIdx)
+inline T& VertexBuffer::Normal(const unsigned int vertexIdx) const
 {
 	unsigned int normalOffset = 0;
 
@@ -34,10 +34,10 @@ inline T& VertexBuffer::Normal(unsigned int vertexIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + normalOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + normalOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasNormal() const
+inline const bool VertexBuffer::HasNormal() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_NORMAL)
@@ -47,7 +47,7 @@ inline bool VertexBuffer::HasNormal() const
 }
 
 template <typename T>
-inline T& VertexBuffer::Tangent(unsigned int vertexIdx)
+inline T& VertexBuffer::Tangent(const unsigned int vertexIdx) const
 {
 	unsigned int tangentOffset = 0;
 
@@ -58,10 +58,10 @@ inline T& VertexBuffer::Tangent(unsigned int vertexIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + tangentOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + tangentOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasTangent() const
+inline const bool VertexBuffer::HasTangent() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_TANGENT)
@@ -71,7 +71,7 @@ inline bool VertexBuffer::HasTangent() const
 }
 
 template <typename T>
-inline T& VertexBuffer::Binormal(unsigned int vertexIdx)
+inline T& VertexBuffer::Binormal(const unsigned int vertexIdx) const
 {
 	unsigned int binormalOffset = 0;
 
@@ -82,10 +82,10 @@ inline T& VertexBuffer::Binormal(unsigned int vertexIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + binormalOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + binormalOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasBinormal() const
+inline const bool VertexBuffer::HasBinormal() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BINORMAL)
@@ -95,7 +95,7 @@ inline bool VertexBuffer::HasBinormal() const
 }
 
 template <typename T>
-inline T& VertexBuffer::TexCoord(unsigned int vertexIdx, unsigned int usageIdx)
+inline T& VertexBuffer::TexCoord(const unsigned int vertexIdx, const unsigned int usageIdx) const
 {
 	unsigned int tcoordOffset = 0;
 
@@ -107,10 +107,10 @@ inline T& VertexBuffer::TexCoord(unsigned int vertexIdx, unsigned int usageIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + tcoordOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + tcoordOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasTexCoord(unsigned int usageIdx) const
+inline const bool VertexBuffer::HasTexCoord(const unsigned int usageIdx) const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_TEXCOORD
@@ -121,7 +121,7 @@ inline bool VertexBuffer::HasTexCoord(unsigned int usageIdx) const
 }
 
 template <typename T>
-inline T& VertexBuffer::Color(unsigned int vertexIdx, unsigned int usageIdx)
+inline T& VertexBuffer::Color(const unsigned int vertexIdx, const unsigned int usageIdx) const
 {
 	unsigned int colorOffset = 0;
 
@@ -133,10 +133,10 @@ inline T& VertexBuffer::Color(unsigned int vertexIdx, unsigned int usageIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + colorOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + colorOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasColor(unsigned int usageIdx) const
+inline const bool VertexBuffer::HasColor(const unsigned int usageIdx) const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_COLOR
@@ -147,7 +147,7 @@ inline bool VertexBuffer::HasColor(unsigned int usageIdx) const
 }
 
 template <typename T>
-inline T& VertexBuffer::BlendIndices(unsigned int vertexIdx)
+inline T& VertexBuffer::BlendIndices(const unsigned int vertexIdx) const
 {
 	unsigned int blendIndOffset = 0;
 
@@ -158,10 +158,10 @@ inline T& VertexBuffer::BlendIndices(unsigned int vertexIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + blendIndOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + blendIndOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasBlendIndices() const
+inline const bool VertexBuffer::HasBlendIndices() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BLENDINDICES)
@@ -171,7 +171,7 @@ inline bool VertexBuffer::HasBlendIndices() const
 }
 
 template <typename T>
-inline T& VertexBuffer::BlendWeight(unsigned int vertexIdx)
+inline T& VertexBuffer::BlendWeight(const unsigned int vertexIdx) const
 {
 	unsigned int blendWeightOffset = 0;
 
@@ -182,10 +182,10 @@ inline T& VertexBuffer::BlendWeight(unsigned int vertexIdx)
 			break;
 		}
 
-	return *(T*)((char*)m_pData + blendWeightOffset + vertexIdx * GetVertexFormat()->GetStride());
+	return *(T*)(m_pData + blendWeightOffset + vertexIdx * GetVertexFormat()->GetStride());
 }
 
-inline bool VertexBuffer::HasBlendWeight() const
+inline const bool VertexBuffer::HasBlendWeight() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
 		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BLENDWEIGHT)

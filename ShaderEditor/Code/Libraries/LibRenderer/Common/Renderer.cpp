@@ -50,13 +50,3 @@ void Renderer::DestroyInstance()
 		m_pInstance = nullptr;
 	}
 }
-
-Renderer* Renderer::GetInstance()
-{
-	return m_pInstance;
-}
-
-const RenderData& Renderer::GetRenderData() const
-{
-	return m_RenderData;
-}

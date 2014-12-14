@@ -16,32 +16,35 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-#ifndef INDEXBUFFERDX9_H
-#define INDEXBUFFERDX9_H
+#ifndef TEXTUREDX9_H
+#define TEXTUREDX9_H
 
 #include <d3d9.h>
-#include "IndexBuffer.h"
+#include "Texture.h"
 
 namespace LibRendererDll
 {
-	class IndexBufferDX9 : public IndexBuffer
+	class TextureDX9 : public Texture
 	{
 	public:
-				IndexBufferDX9::IndexBufferDX9(
-					const unsigned int indexCount, const IndexBufferFormat indexFormat,
-					const BufferUsage usage = BU_STATIC);
-				IndexBufferDX9::~IndexBufferDX9();
+		TextureDX9(
+			const TexFormat texFormat, const TexType texType,
+			const unsigned int sizeX, const unsigned int sizeY = 1, const unsigned int sizeZ = 1,
+			const unsigned int mipmapLevelCount = 0, const BufferUsage usage = BU_TEXTURE);
+		~TextureDX9();
 
-		void	Enable();
-		void	Disable();
-		void	Lock(const BufferLocking lockMode);
-		void	Unlock();
-		void	Update();
+		void				Enable(const unsigned int texUnit);
+		void				Disable(const unsigned int texUnit);
+		void				Lock(const unsigned int mipmapLevel, const BufferLocking lockMode);
+		void				Lock(const unsigned int cubeFace, const unsigned int mipmapLevel, const BufferLocking lockMode);
+		void				Unlock(const unsigned int mipmapLevel);
+		void				Unlock(const unsigned int cubeFace, const unsigned int mipmapLevel);
+		void				Update(const unsigned int mipmapLevel);
+		void				Update(const unsigned int cubeFace, const unsigned int mipmapLevel);
 
-	private:
-		IDirect3DIndexBuffer9* m_pIndexBuffer;
-		void*	m_pTempBuffer;
+	protected:
+		IDirect3DBaseTexture9* m_pTexture;
 	};
 }
 
-#endif //INDEXBUFFERDX9_H
+#endif //TEXTUREDX9_H

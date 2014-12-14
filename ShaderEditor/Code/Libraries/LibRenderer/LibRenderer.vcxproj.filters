@@ -102,6 +102,8 @@
     <ClInclude Include="Common\VertexFormat.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Texture.h" />
+    <ClInclude Include="DX9\TextureDX9.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -138,6 +140,8 @@
     <ClCompile Include="Common\VertexFormat.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Common\Texture.cpp" />
+    <ClCompile Include="DX9\TextureDX9.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />
@@ -149,23 +153,23 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="SDK\DX9\Lib\x86\d3d9.lib">
-      <Filter>SDK\DX9\Lib\x86</Filter>
-    </Library>
     <Library Include="SDK\DX9\Lib\x64\d3d9.lib">
       <Filter>SDK\DX9\Lib\x64</Filter>
-    </Library>
-    <Library Include="SDK\DX9\Lib\x86\d3dx9.lib">
-      <Filter>SDK\DX9\Lib\x86</Filter>
     </Library>
     <Library Include="SDK\DX9\Lib\x64\d3dx9.lib">
       <Filter>SDK\DX9\Lib\x64</Filter>
     </Library>
-    <Library Include="SDK\DX9\Lib\x86\DxErr.lib">
-      <Filter>SDK\DX9\Lib\x86</Filter>
-    </Library>
     <Library Include="SDK\DX9\Lib\x64\DxErr.lib">
       <Filter>SDK\DX9\Lib\x64</Filter>
+    </Library>
+    <Library Include="SDK\DX9\Lib\x86\d3d9.lib">
+      <Filter>SDK\DX9\Lib\x86</Filter>
+    </Library>
+    <Library Include="SDK\DX9\Lib\x86\d3dx9.lib">
+      <Filter>SDK\DX9\Lib\x86</Filter>
+    </Library>
+    <Library Include="SDK\DX9\Lib\x86\DxErr.lib">
+      <Filter>SDK\DX9\Lib\x86</Filter>
     </Library>
   </ItemGroup>
 </Project>

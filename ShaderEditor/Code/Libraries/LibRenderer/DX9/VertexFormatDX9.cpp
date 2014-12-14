@@ -23,7 +23,7 @@
 #include "VertexFormatDX9.h"
 using namespace LibRendererDll;
 
-VertexFormatDX9::VertexFormatDX9(unsigned int attributeCount)
+VertexFormatDX9::VertexFormatDX9(const unsigned int attributeCount)
 	: VertexFormat(attributeCount)
 	, m_pVertexDeclaration(nullptr)
 {}

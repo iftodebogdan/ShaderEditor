@@ -23,37 +23,41 @@
 
 namespace LibRendererDll
 {
+	// This is the platform independent implementation of the index buffer class
 	class IndexBuffer : public Buffer
 	{
 	public:
+		// Specifies the format of the index buffer
 		enum IndexBufferFormat
 		{
-			IBF_INDEX16,
-			IBF_INDEX32,
+			IBF_INDEX16,	// 16bit index buffer
+			IBF_INDEX32,	// 32bit index buffer
 
-			IBF_MAX
+			IBF_MAX			// DO NOT USE! INTERNAL USAGE ONLY!
 		};
 
-						IndexBuffer(unsigned int indexCount, IndexBufferFormat indexFormat, BufferUsage usage = BU_STATIC);
-		virtual			~IndexBuffer();
-
-		void			SetOffset(unsigned int offset) { m_nOffset = offset; }
-		unsigned int	GetOffset() const { return m_nOffset; }
-
+		// Enable the index buffer
 		virtual void	Enable() = 0;
+		// Disable the index buffer
 		virtual void	Disable() = 0;
-		virtual void	Lock(BufferLocking lockMode) = 0;
+		// Lock the index buffer for reading/writing
+		virtual void	Lock(const BufferLocking lockMode) = 0;
+		// Unlock the index buffer
 		virtual void	Unlock() = 0;
+		// Update the index buffer with the changes made
 		virtual void	Update() = 0;
 
-		void			SetIndex(unsigned int indexIdx, unsigned int indexVal);
-		void			SetIndices(unsigned int indicesVal[], unsigned int size, unsigned int offset = 0);
+		// Set an index
+		void	SetIndex(const unsigned int indexIdx, const unsigned int indexVal);
+		// Copy 'size' elements to the index buffer from the array, starting from the 'offset'-th element of the index buffer
+		void	SetIndices(const unsigned int indicesVal[], const unsigned int size, const unsigned int offset = 0);
 
 	protected:
-		unsigned int	m_nOffset;
-		void*			m_pTempBuffer;
+						IndexBuffer(const unsigned int indexCount, const IndexBufferFormat indexFormat = IBF_INDEX16, const BufferUsage usage = BU_STATIC);
+		virtual			~IndexBuffer();
 
-		static unsigned int IndexBufferFormatSize[IBF_MAX];
+		// An array containing the sizes in bytes of indices of the specified format
+		static const unsigned int IndexBufferFormatSize[IBF_MAX];
 	};
 }
 

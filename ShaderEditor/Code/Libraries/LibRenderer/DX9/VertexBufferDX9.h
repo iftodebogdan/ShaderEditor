@@ -31,12 +31,14 @@ namespace LibRendererDll
 	class VertexBufferDX9 : public VertexBuffer
 	{
 	public:
-						VertexBufferDX9(VertexFormatDX9* vertexFormat, unsigned int vertexCount, IndexBufferDX9* indexBuffer = nullptr, BufferUsage usage = BU_STATIC);
+						VertexBufferDX9(
+							VertexFormatDX9* const vertexFormat, const unsigned int vertexCount,
+							IndexBufferDX9* const indexBuffer = nullptr, const BufferUsage usage = BU_STATIC);
 						~VertexBufferDX9();
 
-		virtual	void	Enable(unsigned int offset = 0);
+		virtual	void	Enable(const unsigned int offset = 0);
 		virtual	void	Disable();
-		virtual	void	Lock(BufferLocking lockMode);
+		virtual	void	Lock(const BufferLocking lockMode);
 		virtual	void	Unlock();
 		virtual	void	Update();
 

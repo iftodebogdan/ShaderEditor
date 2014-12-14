@@ -24,7 +24,7 @@
 #include "IndexBufferDX9.h"
 using namespace LibRendererDll;
 
-IndexBufferDX9::IndexBufferDX9(unsigned int indexCount, IndexBufferFormat indexFormat, BufferUsage usage)
+IndexBufferDX9::IndexBufferDX9(const unsigned int indexCount, const IndexBufferFormat indexFormat, const BufferUsage usage)
 	: IndexBuffer(indexCount, indexFormat, usage)
 	, m_pIndexBuffer(nullptr)
 {
@@ -66,7 +66,7 @@ void IndexBufferDX9::Disable()
 	assert(SUCCEEDED(hr));
 }
 
-void IndexBufferDX9::Lock(BufferLocking lockMode)
+void IndexBufferDX9::Lock(const BufferLocking lockMode)
 {
 	assert(m_pTempBuffer == nullptr);
 	HRESULT hr = m_pIndexBuffer->Lock(0, 0, &m_pTempBuffer, BufferLockingDX9[lockMode]);

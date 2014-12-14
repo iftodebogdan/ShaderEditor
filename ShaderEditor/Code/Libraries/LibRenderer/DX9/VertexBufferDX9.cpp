@@ -26,7 +26,7 @@
 #include "IndexBufferDX9.h"
 using namespace LibRendererDll;
 
-VertexBufferDX9::VertexBufferDX9(VertexFormatDX9* vertexFormat, unsigned int vertexCount, IndexBufferDX9* indexBuffer, BufferUsage usage)
+VertexBufferDX9::VertexBufferDX9(VertexFormatDX9* const vertexFormat, const unsigned int vertexCount, IndexBufferDX9* const indexBuffer, const BufferUsage usage)
 	: VertexBuffer(vertexFormat, vertexCount, indexBuffer, usage)
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
@@ -41,7 +41,7 @@ VertexBufferDX9::~VertexBufferDX9()
 	assert(refCount == 0);
 }
 
-void VertexBufferDX9::Enable(unsigned int offset)
+void VertexBufferDX9::Enable(const unsigned int offset)
 {
 	assert(offset < GetElementCount());
 
@@ -86,7 +86,7 @@ void VertexBufferDX9::Disable()
 	m_pVertexFormat->Disable();
 }
 
-void VertexBufferDX9::Lock(BufferLocking lockMode)
+void VertexBufferDX9::Lock(const BufferLocking lockMode)
 {
 	//The pointer to the locked data is saved for future use
 	assert(m_pTempBuffer == nullptr);

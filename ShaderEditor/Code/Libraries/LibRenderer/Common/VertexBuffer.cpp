@@ -22,7 +22,7 @@
 #include "IndexBuffer.h"
 using namespace LibRendererDll;
 
-VertexBuffer::VertexBuffer(VertexFormat* vertexFormat, unsigned int vertexCount, IndexBuffer* indexBuffer, BufferUsage usage)
+VertexBuffer::VertexBuffer(VertexFormat* const vertexFormat, const unsigned int vertexCount, IndexBuffer* const indexBuffer, const BufferUsage usage)
 	: Buffer(vertexCount, vertexFormat->GetStride(), usage)
 	, m_pVertexFormat(vertexFormat)
 	, m_pIndexBuffer(indexBuffer)

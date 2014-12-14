@@ -23,7 +23,7 @@
 using namespace LibRendererDll;
 
 //This holds the size if bytes for each vertex attribute type
-unsigned int VertexFormat::VertexAttributeTypeSize[VertexFormat::VAT_MAX] =
+const unsigned int VertexFormat::VertexAttributeTypeSize[VertexFormat::VAT_MAX] =
 {
 	0,  // AT_NONE
 	4,  // AT_FLOAT1
@@ -37,7 +37,7 @@ unsigned int VertexFormat::VertexAttributeTypeSize[VertexFormat::VAT_MAX] =
 	8   // AT_SHORT4
 };
 
-VertexFormat::VertexFormat(unsigned int attributeCount)
+VertexFormat::VertexFormat(const unsigned int attributeCount)
 	: m_nAttributeCount(attributeCount)
 	, m_nStride(0)
 {
@@ -52,7 +52,7 @@ VertexFormat::VertexFormat(unsigned int attributeCount)
 	}
 }
 
-void VertexFormat::Initialize(VertexAttributeUsage usage, VertexAttributeType type, unsigned int usageIdx, ...)
+void VertexFormat::Initialize(const VertexAttributeUsage usage, const VertexAttributeType type, const unsigned int usageIdx, ...)
 {
 	unsigned int offset = 0;
 
@@ -79,7 +79,7 @@ VertexFormat::~VertexFormat()
 	delete[] m_pElements;
 }
 			 
-void VertexFormat::SetAttribute(unsigned int attrIdx, unsigned int offset,
+void VertexFormat::SetAttribute(const unsigned int attrIdx, const unsigned int offset,
 	VertexFormat::VertexAttributeUsage usage, VertexFormat::VertexAttributeType type, unsigned int usageIdx)
 {
 	assert(attrIdx < m_nAttributeCount);
@@ -95,7 +95,7 @@ void VertexFormat::SetAttribute(unsigned int attrIdx, unsigned int offset,
 	m_pElements[attrIdx].UsageIdx = usageIdx;
 }
 
-unsigned int VertexFormat::CalculateStride() const
+const unsigned int VertexFormat::CalculateStride() const
 {
 	unsigned int stride = 0;
 	for (unsigned int i = 0; i < m_nAttributeCount; i++)

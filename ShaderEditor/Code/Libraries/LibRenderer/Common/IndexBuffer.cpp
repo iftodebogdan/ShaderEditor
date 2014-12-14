@@ -18,35 +18,30 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include <string.h>
+#include "RenderData.h"
 #include "IndexBuffer.h"
 using namespace LibRendererDll;
 
-unsigned int IndexBuffer::IndexBufferFormatSize[IndexBuffer::IBF_MAX] =
+const unsigned int IndexBuffer::IndexBufferFormatSize[IndexBuffer::IBF_MAX] =
 {
 	2,  // IBF_INDEX16
 	4,  // IBF_INDEX32
 };
 
-IndexBuffer::IndexBuffer(unsigned int indexCount, IndexBufferFormat indexFormat, BufferUsage usage)
+IndexBuffer::IndexBuffer(const unsigned int indexCount, const IndexBufferFormat indexFormat, const BufferUsage usage)
 	: Buffer(indexCount, IndexBufferFormatSize[indexFormat], usage)
-	, m_nOffset(0)
-	, m_pTempBuffer(nullptr)
 {}
 
 IndexBuffer::~IndexBuffer()
 {}
 
-void IndexBuffer::SetIndex(unsigned int indexIdx, unsigned int indexVal)
+void IndexBuffer::SetIndex(const unsigned int indexIdx, const unsigned int indexVal)
 {
 	assert(indexIdx < m_nElementCount);
-	int sizeshort = sizeof(unsigned short);
-	int sizeint = sizeof(unsigned int);
-	int sizechar = sizeof(char);
-	memcpy((char*)m_pData + (indexIdx * m_nElementSize), &indexVal, m_nElementSize);
+	memcpy(m_pData + (indexIdx * m_nElementSize), &indexVal, m_nElementSize);
 }
 
-void IndexBuffer::SetIndices(unsigned int indicesVal[], unsigned int size, unsigned int offset)
+void IndexBuffer::SetIndices(const unsigned int indicesVal[], const unsigned int size, const unsigned int offset)
 {
 	for (unsigned int i = 0; i < size; i++)
 		SetIndex(i + offset, indicesVal[i]);

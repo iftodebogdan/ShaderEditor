@@ -24,6 +24,8 @@ using namespace gmtl;
 
 namespace LibRendererDll
 {
+	typedef unsigned char byte;
+
 	struct RenderData
 	{
 		struct RenderState
