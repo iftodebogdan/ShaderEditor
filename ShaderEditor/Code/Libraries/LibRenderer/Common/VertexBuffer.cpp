@@ -26,7 +26,6 @@ VertexBuffer::VertexBuffer(VertexFormat* const vertexFormat, const unsigned int 
 	: Buffer(vertexCount, vertexFormat->GetStride(), usage)
 	, m_pVertexFormat(vertexFormat)
 	, m_pIndexBuffer(indexBuffer)
-	, m_pTempBuffer(nullptr)
 {
 	assert(vertexFormat != nullptr);
 }

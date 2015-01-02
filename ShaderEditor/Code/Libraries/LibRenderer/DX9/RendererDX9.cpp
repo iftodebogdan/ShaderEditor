@@ -110,15 +110,40 @@ void RendererDX9::Initialize(void* hWnd, const int backBufferWidth, const int ba
 	CreateResources();
 }
 
+#include <Importer.hpp> // C++ importer interface
+#include <scene.h> // Output data structure
+#include <postprocess.h> // Post processing flags
+
+// Create an instance of the Importer class
+Assimp::Importer importer;
+static const aiScene* scene = nullptr;
+
 void RendererDX9::CreateResources()
 {
+	// And have it read the given file with some example postprocessing
+	// Usually - if speed is not the most important aspect for you - you'll
+	// propably to request more postprocessing than we do in this example.
+	if (scene == nullptr)
+		scene = importer.ReadFile(
+			"models/COLLADA/teapot_instancenodes.DAE",
+			//"models-nonbsd/OBJ/rifle.obj",
+			//"sponza_scene/sponza.obj",
+			aiProcess_Triangulate |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_GenSmoothNormals |
+			aiProcess_GenUVCoords);
+
 	HRESULT hr;
 	// Turn off culling, so we see the front and back of the triangle
 	hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	// Turn on the zbuffer
+	hr = m_pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 	//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	//assert(SUCCEEDED(hr));
 	// Turn off lighting
-	hr = m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	hr = m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+	hr = m_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_PHONG);
+	hr = m_pd3dDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
 	assert(SUCCEEDED(hr));
 
 	// Set render parameters
@@ -127,73 +152,7 @@ void RendererDX9::CreateResources()
 	m_RenderData.dstRect.topLeft = Vec2i(0, 0);
 	m_RenderData.dstRect.bottomRight = Vec2i(MAXINT, MAXINT);
 
-	vf = new VertexFormatDX9(3);
-	vf->Initialize(
-		VertexFormat::VAU_POSITION, VertexFormat::VAT_FLOAT3, 0,
-		VertexFormat::VAU_NORMAL, VertexFormat::VAT_FLOAT3, 0,
-		//VertexFormat::VAU_TEXCOORD, VertexFormat::VAT_FLOAT3, 0,
-		VertexFormat::VAU_COLOR, VertexFormat::VAT_UBYTE4, 0);
-	vf->Update();
-
-	ib = nullptr;
-	//ib = new IndexBufferDX9(6, IndexBuffer::IBF_INDEX32);
-	//unsigned int indices[6] = { 0, 1, 2, 3, 2, 1 };
-	//ib->SetIndices(indices, 6);
-	//ib->Lock(Buffer::BL_READ_WRITE);
-	//ib->Update();
-	//ib->Unlock();
-
-	vb = new VertexBufferDX9(vf, 6 /* 1000 */, ib);
-	vb->Position<Vec3f>(0) = Vec3f(-10.f, 0.f, -10.f);
-	//vb->Color<D3DCOLOR>(0, 0) = D3DCOLOR_XRGB(255, 0, 0);
-	vb->TexCoord<Vec3f>(0, 0) = Vec3f(0.f, 1.f, 0.f);
-	//vb->TexCoord<Vec2f>(0, 0) = Vec2f(0.f, 1.f);
-	//vb->TexCoord<float>(0, 0) = 0.f;
-	vb->Normal<Vec3f>(0) = Vec3f(0.f, 1.f, 0.f);
-
-	vb->Position<Vec3f>(1) = Vec3f(-10.f, 0.f, 10.f);
-	//vb->Color<D3DCOLOR>(1, 0) = D3DCOLOR_XRGB(0, 255, 0);
-	vb->TexCoord<Vec3f>(1, 0) = Vec3f(0.f, 0.f, 0.f);
-	//vb->TexCoord<Vec2f>(1, 0) = Vec2f(0.f, 0.f);
-	//vb->TexCoord<float>(1, 0) = 0.f;
-	vb->Normal<Vec3f>(1) = Vec3f(0.f, 1.f, 0.f);
-
-	vb->Position<Vec3f>(2) = Vec3f(10.f, 0.f, -10.f);
-	//vb->Color<D3DCOLOR>(2, 0) = D3DCOLOR_XRGB(0, 0, 255);
-	vb->TexCoord<Vec3f>(2, 0) = Vec3f(1.f, 1.f, 0.f);
-	//vb->TexCoord<Vec2f>(2, 0) = Vec2f(1.f, 1.f);
-	//vb->TexCoord<float>(2, 0) = 1.f;
-	vb->Normal<Vec3f>(2) = Vec3f(0.f, 1.f, 0.f);
-
-	vb->Position<Vec3f>(3) = Vec3f(10.f, 0.f, -10.f);
-	//vb->Color<D3DCOLOR>(3, 0) = D3DCOLOR_XRGB(255, 0, 0);
-	vb->TexCoord<Vec3f>(3, 0) = Vec3f(1.f, 1.f, 0.f);
-	//vb->TexCoord<Vec2f>(3, 0) = Vec2f(1.f, 1.f);
-	//vb->TexCoord<float>(3, 0) = 1.f;
-	vb->Normal<Vec3f>(3) = Vec3f(0.f, 1.f, 0.f);
-
-	vb->Position<Vec3f>(4) = Vec3f(10.f, 0.f, 10.f);
-	//vb->Color<D3DCOLOR>(4, 0) = D3DCOLOR_XRGB(0, 255, 0);
-	vb->TexCoord<Vec3f>(4, 0) = Vec3f(1.f, 0.f, 0.f);
-	//vb->TexCoord<Vec2f>(4, 0) = Vec2f(1.f, 0.f);
-	//vb->TexCoord<float>(4, 0) = 1.f;
-	vb->Normal<Vec3f>(4) = Vec3f(0.f, 1.f, 0.f);
-
-	vb->Position<Vec3f>(5) = Vec3f(-10.f, 0.f, 10.f);
-	//vb->Color<D3DCOLOR>(5, 0) = D3DCOLOR_XRGB(0, 0, 255);
-	vb->TexCoord<Vec3f>(5, 0) = Vec3f(0.f, 0.f, 0.f);
-	//vb->TexCoord<Vec2f>(5, 0) = Vec2f(0.f, 0.f);
-	//vb->TexCoord<float>(5, 0) = 0.f;
-	vb->Normal<Vec3f>(5) = Vec3f(0.f, 1.f, 0.f);
-
-	//for (int i = 1; i < 1000; i++)
-	//memcpy(vb->GetData() + i * vb->GetElementSize() * 6, (unsigned char*)vb->GetData(), vb->GetElementSize() * 6);
-
-	vb->Lock(Buffer::BL_READ_WRITE);
-	vb->Update();
-	vb->Unlock();
-
-	tex = new TextureDX9(Texture::TF_A8R8G8B8, Texture::TT_CUBE, 256, 256, 16, 0, Buffer::BU_TEXTURE);
+	tex = new TextureDX9(Texture::TF_A8R8G8B8, Texture::TT_2D, 256, 256, 16, 0, Buffer::BU_TEXTURE);
 	for (unsigned int face = 0; face < (tex->GetTextureType() == Texture::TT_CUBE ? 6u : 1u); face++)
 		for (unsigned int level = 0, levelCount = tex->GetMipmapLevelCount(); level < levelCount; level++)
 		{
@@ -203,7 +162,7 @@ void RendererDX9::CreateResources()
 			else
 				pTex = tex->GetMipmapLevelData(level);
 			pTex = tex->GetData();
-			int faceOffset = face * tex->GetCubeFaceOffset();
+			int faceOffset = face * (tex->GetTextureType() == Texture::TT_CUBE ? tex->GetCubeFaceOffset() : 0);
 			int mipoffset = tex->GetMipmapLevelOffset(level);
 			pTex += faceOffset + mipoffset;
 			for (unsigned int pixelZ = 0; pixelZ < tex->GetDepth(level); pixelZ++)
@@ -215,10 +174,10 @@ void RendererDX9::CreateResources()
 							pixelZ * tex->GetWidth(level) * tex->GetHeight(level);
 
 						//Color test
-						//*(pTex + pixel * tex->GetPixelSize()) = (char)((float)pixelZ / (float)tex->GetDepth(level) * 255.f);
-						//*(pTex + pixel * tex->GetPixelSize() + 1) = (char)((float)pixelY / (float)tex->GetHeight(level) * 255.f);
-						//*(pTex + pixel * tex->GetPixelSize() + 2) = (char)((float)pixelX / (float)tex->GetWidth(level) * 255.f);
-						//*(pTex + pixel * tex->GetPixelSize() + 3) = 255;
+						*(pTex + pixel * tex->GetPixelSize()) = (char)((float)pixelZ / (float)tex->GetDepth(level) * 255.f);
+						*(pTex + pixel * tex->GetPixelSize() + 1) = (char)((float)pixelY / (float)tex->GetHeight(level) * 255.f);
+						*(pTex + pixel * tex->GetPixelSize() + 2) = (char)((float)pixelX / (float)tex->GetWidth(level) * 255.f);
+						*(pTex + pixel * tex->GetPixelSize() + 3) = 255;
 
 						//mip test
 						//*(pTex + pixel * tex->GetPixelSize() + 3)	= 255; //alpha
@@ -227,10 +186,10 @@ void RendererDX9::CreateResources()
 						//*(pTex + pixel * tex->GetPixelSize())		= (level % 6 == 2 || level % 6 == 4 || level % 6 == 5) * 255; //blue
 
 						//cubemap test
-						*(pTex + pixel * tex->GetPixelSize())		= ((face == 0) || (face == 3) || (face == 4)) * 255;
-						*(pTex + pixel * tex->GetPixelSize() + 1)	= ((face == 1) || (face == 3) || (face == 5)) * 255;
-						*(pTex + pixel * tex->GetPixelSize() + 2)	= ((face == 2) || (face == 4) || (face == 5)) * 255;
-						*(pTex + pixel * tex->GetPixelSize() + 3)	= 255;
+						//*(pTex + pixel * tex->GetPixelSize())		= ((face == 0) || (face == 3) || (face == 4)) * 255;
+						//*(pTex + pixel * tex->GetPixelSize() + 1)	= ((face == 1) || (face == 3) || (face == 5)) * 255;
+						//*(pTex + pixel * tex->GetPixelSize() + 2)	= ((face == 2) || (face == 4) || (face == 5)) * 255;
+						//*(pTex + pixel * tex->GetPixelSize() + 3)	= 255;
 					}
 
 			if (tex->GetTextureType() == Texture::TT_CUBE)
@@ -247,12 +206,14 @@ void RendererDX9::CreateResources()
 			}
 		}
 
-	m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+	m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 	m_pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSW, D3DTADDRESS_CLAMP);
@@ -268,7 +229,67 @@ void RendererDX9::CreateResources()
 		m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_SPHEREMAP);
 	}
 
-	m_pd3dDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
+	vf = new VertexFormatDX9(4);
+	vf->Initialize(
+		VertexFormat::VAU_POSITION, VertexFormat::VAT_FLOAT3, 0
+		, VertexFormat::VAU_NORMAL, VertexFormat::VAT_FLOAT3, 0
+		, VertexFormat::VAU_TEXCOORD, VertexFormat::VAT_FLOAT2, 0
+		, VertexFormat::VAU_COLOR, VertexFormat::VAT_UBYTE4, 0
+		);
+	vf->Update();
+
+	unsigned int totalNumVertices = 0, totalNumIndices = 0;
+	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+	{
+		totalNumIndices		+= scene->mMeshes[i]->mNumFaces * 3;
+		totalNumVertices	+= scene->mMeshes[i]->mNumVertices;
+	}
+
+	//create our IB
+	ib = new IndexBufferDX9(totalNumIndices, IndexBuffer::IBF_INDEX32);
+	//create our VB
+	vb = new VertexBufferDX9(vf, totalNumVertices, ib);
+
+	ib->Lock(Buffer::BL_WRITE_ONLY);
+	vb->Lock(Buffer::BL_WRITE_ONLY);
+
+	unsigned int iterIndices = 0, iterVertices = 0, indexOffset = 0;
+	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+	{
+		// Populate our IB
+		for (unsigned int j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
+		{
+			for (int k = 0; k < 3; k++)
+			{
+				assert(scene->mMeshes[i]->mFaces[j].mNumIndices == 3);
+				ib->SetIndex(iterIndices++, scene->mMeshes[i]->mFaces[j].mIndices[k] + indexOffset);
+			}
+		}
+		indexOffset += scene->mMeshes[i]->mNumVertices;
+
+		// Populate our VB
+		for (unsigned int j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
+		{
+			vb->Position<Vec3f>(iterVertices) = Vec3f(
+				scene->mMeshes[i]->mVertices[j].x,
+				scene->mMeshes[i]->mVertices[j].y,
+				scene->mMeshes[i]->mVertices[j].z);
+			vb->Normal<Vec3f>(iterVertices) = Vec3f(
+				scene->mMeshes[i]->mNormals[j].x,
+				scene->mMeshes[i]->mNormals[j].y,
+				scene->mMeshes[i]->mNormals[j].z);
+			vb->Color<D3DCOLOR>(iterVertices, 0) = D3DCOLOR_XRGB(255, 255, 255);
+			vb->TexCoord<Vec2f>(iterVertices++, 0) = Vec2f(
+				scene->mMeshes[i]->mTextureCoords[0][j].x,
+				scene->mMeshes[i]->mTextureCoords[0][j].y);
+		}
+	}
+	assert(iterIndices == totalNumIndices && iterVertices == totalNumVertices);
+
+	ib->Update();
+	ib->Unlock();
+	vb->Update();
+	vb->Unlock();
 }
 
 void RendererDX9::ReleaseResources()
@@ -391,6 +412,38 @@ void RendererDX9::RenderScene()
 	// Begin the scene
 	if (SUCCEEDED(m_pd3dDevice->BeginScene()))
 	{
+		// Set up a material. The material here just has the diffuse and ambient 	
+		// colors set to yellow. Note that only one material can be used at a time. 	
+		D3DMATERIAL9 mtrl;
+		ZeroMemory(&mtrl, sizeof(D3DMATERIAL9));
+		mtrl.Diffuse.r = 1.0f;
+		mtrl.Diffuse.g = 1.0f;
+		mtrl.Diffuse.b = 1.0f;
+		mtrl.Ambient.r = 0.3f;
+		mtrl.Ambient.g = 0.3f;
+		mtrl.Ambient.b = 0.3f;
+		m_pd3dDevice->SetMaterial(&mtrl);
+
+		// Set up a white, directional light, with an oscillating direction. 	
+		// Note that many Lights may be active at a time (but each one slows down 	
+		// the rendering of our scene). However, here we are just using one. Also, 	
+		// we need to set the D3DRS_LIGHTING renderstate to enable lighting 	
+		D3DXVECTOR3 vecDir;
+		D3DLIGHT9 light;
+		ZeroMemory(&light, sizeof(D3DLIGHT9));
+		light.Type = D3DLIGHT_DIRECTIONAL;
+		light.Diffuse.r = 1.0f;
+		light.Diffuse.g = 1.0f;
+		light.Diffuse.b = 1.0f;
+		light.Ambient.r = 0.5f;
+		light.Ambient.g = 0.5f;
+		light.Ambient.b = 0.5f;
+		vecDir = D3DXVECTOR3(/*cosf(GetTickCount() / 350.0f)*/ 1.f, -1.0f, 0.f /*sinf(GetTickCount() / 350.0f)*/);
+		D3DXVec3Normalize((D3DXVECTOR3*)&light.Direction, &vecDir);
+		light.Range = 5000.0f;
+		m_pd3dDevice->SetLight(0, &light);
+		m_pd3dDevice->LightEnable(0, TRUE);
+		
 		// Set up world matrix
 		D3DXMATRIXA16 matWorldRot, matWorldPos, matWorld;
 		D3DXMatrixIdentity(&matWorldRot);
@@ -402,10 +455,9 @@ void RendererDX9::RenderScene()
 		// a point to lookat, and a direction for which way is up. Here, we set the
 		// eye five units back along the z-axis and up three units, look at the
 		// origin, and define "up" to be in the y-direction.
-		D3DXVECTOR3 vEyePt(30.0f * cosf(GetTickCount() / 1000.f), 30.0f, 30.f * sinf(GetTickCount() / 1000.f));
-		//D3DXVECTOR3 vEyePt(0.0f, 30.0f, -30.f);
+		D3DXVECTOR3 vEyePt(200.f * cosf(GetTickCount() / 1000.f), 100.f, 200.f* sinf(GetTickCount() / 1000.f));
 		D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);
-		D3DXVECTOR3 vUpVec(0.0f, 0.0f, 1.0f);
+		D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
 		D3DXMATRIXA16 matView;
 		D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
 		m_pd3dDevice->SetTransform(D3DTS_VIEW, &matView);
@@ -418,27 +470,9 @@ void RendererDX9::RenderScene()
 		// what distances geometry should be no longer be rendered).
 		D3DXMATRIXA16 matProj;
 		float aspectRatio = (float)m_RenderData.backBufferSize[0] / (float)m_RenderData.backBufferSize[1];
-		D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, aspectRatio, 1.0f, 150.0f);
+		D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, aspectRatio, 1.0f, 5000.0f);
 		m_pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 		
-		for (int i = 0; i < 6; i++)
-			vb->TexCoord<Vec3f>(i, 0) = Vec3f(vb->TexCoord<Vec3f>(i, 0)[0], vb->TexCoord<Vec3f>(i, 0)[1], (sinf(GetTickCount() / 1000.f) + 1.f) / 2.f);
-		//std::cout << vb->TexCoord<Vec3f>(0, 0)[2] << std::endl;
-		vb->Lock(Buffer::BL_READ_WRITE);
-		vb->Update();
-		vb->Unlock();
-
-		vb->Enable();
-		tex->Enable(0);
-
-		//D3DXMatrixTranslation(&matWorldPos, 0.f, 0.f, 20.f * sin(GetTickCount() / 2000.f));
-		
-		
-		//unsigned long long time = GetTickCount64();
-		//for (unsigned int i = 0; i <= 100000; i++)
-		//m_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, Total_Points-2 /* 1000*/);
-		//std::cout << GetTickCount64() - time << std::endl;
-
 		if (tex->GetTextureType() == Texture::TT_CUBE)
 		{
 			D3DXMATRIXA16 matInvView;
@@ -449,34 +483,36 @@ void RendererDX9::RenderScene()
 			matInvView._44 = 0;
 			m_pd3dDevice->SetTransform(D3DTS_TEXTURE0, &matInvView);
 		}
+		
+		tex->Enable(0);
 
-		D3DXMatrixTranslation(&matWorldPos, -5.f, -5.f, 0.f);
-		D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
-		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
-
-		LPD3DXMESH pMesh;
-		D3DXCreateSphere(m_pd3dDevice, 5, 32, 32, &pMesh, NULL);
-		m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-		pMesh->DrawSubset(0);
-		pMesh->Release();
-
-		D3DXMatrixTranslation(&matWorldPos, 5.f, 5.f, 0.f);
-		D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
-		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
-
-		D3DXCreateTorus(m_pd3dDevice, 2, 5, 32, 32, &pMesh, NULL);
-		m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-		pMesh->DrawSubset(0);
-		pMesh->Release();
-
-		//D3DXMatrixTranslation(&matWorldPos, -1.5f, 0.f, 0.f);
+		//D3DXMatrixTranslation(&matWorldPos, -5.f, -5.f, 0.f);
 		//D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
 		//m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 		//
-		//m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, 2);
+		//LPD3DXMESH pMesh;
+		//D3DXCreateSphere(m_pd3dDevice, 5, 32, 32, &pMesh, NULL);
+		//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+		//pMesh->DrawSubset(0);
+		//pMesh->Release();
+		//
+		//D3DXMatrixTranslation(&matWorldPos, 5.f, 5.f, 0.f);
+		//D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
+		//m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
+		//
+		//D3DXCreateTorus(m_pd3dDevice, 2, 5, 32, 32, &pMesh, NULL);
+		//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+		//pMesh->DrawSubset(0);
+		//pMesh->Release();
+		
+		D3DXMatrixTranslation(&matWorldPos, 0.f, 0.f, 0.f);
+		D3DXMatrixRotationX(&matWorldPos, -Math::PI_OVER_2);
+		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorldPos);
+		vb->Enable();
+		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
+		vb->Disable();
 
 		tex->Disable(0);
-		//vb->Disable();
 
 		// End the scene
 		hr = m_pd3dDevice->EndScene();

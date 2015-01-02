@@ -1,4 +1,4 @@
-extensions: .cpp .h
+extensions: .cpp .h .inl
 //////////////////////////////////////////////////////////////////////////
 // This file is part of the "LibRenderer" 3D graphics library           //
 //                                                                      //

@@ -27,6 +27,7 @@ using namespace LibRendererDll;
 IndexBufferDX9::IndexBufferDX9(const unsigned int indexCount, const IndexBufferFormat indexFormat, const BufferUsage usage)
 	: IndexBuffer(indexCount, indexFormat, usage)
 	, m_pIndexBuffer(nullptr)
+	, m_pTempBuffer(nullptr)
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 	HRESULT hr = device->CreateIndexBuffer((UINT)m_nSize, BufferUsageDX9[usage], IndexBufferFormatDX9[indexFormat], D3DPOOL_DEFAULT, &m_pIndexBuffer, 0);

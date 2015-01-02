@@ -94,7 +94,6 @@ namespace LibRendererDll
 	protected:
 		VertexFormat*	m_pVertexFormat;	// Holds a pointer to the associated vertex format
 		IndexBuffer*	m_pIndexBuffer;		// Holds a pointer to the associated index buffer
-		void*			m_pTempBuffer;		// Used in the Lock() -> Update() -> Unlock() flow
 	};
 
 //Include our inline functions file

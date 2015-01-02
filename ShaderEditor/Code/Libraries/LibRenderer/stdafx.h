@@ -32,5 +32,6 @@
 
 #include <assert.h>
 #include <intrin.h>
+using namespace std;
 
 #endif //STDAFX_H

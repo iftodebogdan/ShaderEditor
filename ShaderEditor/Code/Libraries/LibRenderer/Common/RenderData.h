@@ -19,7 +19,7 @@
 #ifndef RENDERDATA_H
 #define RENDERDATA_H
 
-#include <gmtl/gmtl.h>
+#include <gmtl\gmtl.h>
 using namespace gmtl;
 
 namespace LibRendererDll

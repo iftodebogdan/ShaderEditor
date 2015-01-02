@@ -44,6 +44,9 @@ namespace LibRendererDll
 
 	protected:
 		IDirect3DVertexBuffer9*		m_pVertexBuffer;
+
+		// A temporary pointer used in the Lock->Update->Unlock flow
+		void*						m_pTempBuffer;
 	};
 }
 

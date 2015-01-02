@@ -67,7 +67,7 @@ void VertexFormat::Initialize(const VertexAttributeUsage usage, const VertexAttr
 		VertexAttributeType tempType = va_arg(args, VertexAttributeType);
 		unsigned int tempUsageIdx = va_arg(args, unsigned int);
 		SetAttribute(i, offset, tempUsage, tempType, tempUsageIdx);
-		offset += VertexAttributeTypeSize[type];
+		offset += VertexAttributeTypeSize[tempType];
 	}
 	va_end(args);
 

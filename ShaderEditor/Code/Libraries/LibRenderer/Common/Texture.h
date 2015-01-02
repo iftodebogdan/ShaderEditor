@@ -19,7 +19,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <gmtl/gmtl.h>
+#include <gmtl\gmtl.h>
 using namespace gmtl;
 
 #include "RenderData.h"
@@ -184,9 +184,6 @@ namespace LibRendererDll
 		unsigned int			m_nMipmapLevelByteCount[TEX_MAX_MIPMAP_LEVELS];
 		/* Holds the offsets in bytes from the beginning of the texture and to the start */
 		unsigned int			m_nMipmapLevelOffset[TEX_MAX_MIPMAP_LEVELS];
-
-		// A temporary pointer used in the Lock->Update->Unlock flow
-		void*					m_pTempBuffer;
 
 		/* Holds the number of valid dimensions for the specified texture type */
 		static	const unsigned int	ms_nDimensionCount[TT_MAX];

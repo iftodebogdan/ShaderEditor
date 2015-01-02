@@ -28,6 +28,8 @@ TextureDX9::TextureDX9(
 	const unsigned int sizeX, const unsigned int sizeY, const unsigned int sizeZ,
 	const unsigned int mipmapLevelCount, const BufferUsage usage)
 	: Texture(texFormat, texType, sizeX, sizeY, sizeZ, mipmapLevelCount, usage)
+	, m_pTexture(nullptr)
+	, m_pTempBuffer(nullptr)
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 

@@ -91,7 +91,6 @@ Texture::Texture(
 	, m_eTexFormat(texFormat)
 	, m_eTexType(texType)
 	, m_nMipmapLevelCount(mipmapLevelCount)
-	, m_pTempBuffer(nullptr)
 {
 	assert(sizeX > 0);
 	assert(sizeY > 0);

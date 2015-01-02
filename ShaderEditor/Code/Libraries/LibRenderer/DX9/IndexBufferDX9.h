@@ -40,6 +40,8 @@ namespace LibRendererDll
 
 	private:
 		IDirect3DIndexBuffer9* m_pIndexBuffer;
+
+		// A temporary pointer used in the Lock->Update->Unlock flow
 		void*	m_pTempBuffer;
 	};
 }

@@ -28,6 +28,8 @@ using namespace LibRendererDll;
 
 VertexBufferDX9::VertexBufferDX9(VertexFormatDX9* const vertexFormat, const unsigned int vertexCount, IndexBufferDX9* const indexBuffer, const BufferUsage usage)
 	: VertexBuffer(vertexFormat, vertexCount, indexBuffer, usage)
+	, m_pVertexBuffer(nullptr)
+	, m_pTempBuffer(nullptr)
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 	HRESULT hr = device->CreateVertexBuffer((UINT)m_nSize, BufferUsageDX9[usage], 0, D3DPOOL_DEFAULT, &m_pVertexBuffer, 0);

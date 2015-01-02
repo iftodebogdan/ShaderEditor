@@ -44,6 +44,9 @@ namespace LibRendererDll
 
 	protected:
 		IDirect3DBaseTexture9* m_pTexture;
+
+		// A temporary pointer used in the Lock->Update->Unlock flow
+		void*					m_pTempBuffer;
 	};
 }
 

@@ -64,29 +64,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(LibraryPath);$(ProjectDir)SDK\DX9\Lib\x86;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib;</LibraryPath>
-    <IncludePath>$(IncludePath);$(ProjectDir)SDK\DX9\Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib;</LibraryPath>
+    <IncludePath>$(IncludePath);$(ProjectDir)SDK;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);$(ProjectDir)SDK\DX9\Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(ProjectDir)SDK\DX9\Lib\x64;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
+    <IncludePath>$(IncludePath);$(ProjectDir)SDK;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath);$(ProjectDir)SDK\DX9\Include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(ProjectDir)SDK\DX9\Lib\x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(FrameworkSDKDir)\lib;</LibraryPath>
+    <IncludePath>$(IncludePath);$(ProjectDir)SDK;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(FrameworkSDKDir)\lib;</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath);$(ProjectDir)SDK\DX9\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(ProjectDir)SDK\DX9\Lib\x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
+    <IncludePath>$(IncludePath);$(ProjectDir)SDK;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\..\BinTemp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -97,13 +97,18 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxerr.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;dxerr.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+      <Message>Copy DLL dependencies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -112,13 +117,20 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxerr.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;dxerr.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy DLL dependencies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -129,15 +141,20 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+      <Message>Copy DLL dependencies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -148,15 +165,22 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)\DX9;$(ProjectDir)\..\LibMath;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy DLL dependencies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -172,6 +196,42 @@
     <ClInclude Include="DX9\IndexBufferDX9.h" />
     <ClInclude Include="Common\RenderData.h" />
     <ClInclude Include="Common\Renderer.h" />
+    <ClInclude Include="SDK\assimp\include\ai_assert.h" />
+    <ClInclude Include="SDK\assimp\include\anim.h" />
+    <ClInclude Include="SDK\assimp\include\camera.h" />
+    <ClInclude Include="SDK\assimp\include\cexport.h" />
+    <ClInclude Include="SDK\assimp\include\cfileio.h" />
+    <ClInclude Include="SDK\assimp\include\cimport.h" />
+    <ClInclude Include="SDK\assimp\include\color4.h" />
+    <ClInclude Include="SDK\assimp\include\Compiler\poppack1.h" />
+    <ClInclude Include="SDK\assimp\include\Compiler\pstdint.h" />
+    <ClInclude Include="SDK\assimp\include\Compiler\pushpack1.h" />
+    <ClInclude Include="SDK\assimp\include\config.h" />
+    <ClInclude Include="SDK\assimp\include\DefaultLogger.hpp" />
+    <ClInclude Include="SDK\assimp\include\defs.h" />
+    <ClInclude Include="SDK\assimp\include\Exporter.hpp" />
+    <ClInclude Include="SDK\assimp\include\Importer.hpp" />
+    <ClInclude Include="SDK\assimp\include\importerdesc.h" />
+    <ClInclude Include="SDK\assimp\include\IOStream.hpp" />
+    <ClInclude Include="SDK\assimp\include\IOSystem.hpp" />
+    <ClInclude Include="SDK\assimp\include\light.h" />
+    <ClInclude Include="SDK\assimp\include\Logger.hpp" />
+    <ClInclude Include="SDK\assimp\include\LogStream.hpp" />
+    <ClInclude Include="SDK\assimp\include\material.h" />
+    <ClInclude Include="SDK\assimp\include\matrix3x3.h" />
+    <ClInclude Include="SDK\assimp\include\matrix4x4.h" />
+    <ClInclude Include="SDK\assimp\include\mesh.h" />
+    <ClInclude Include="SDK\assimp\include\metadata.h" />
+    <ClInclude Include="SDK\assimp\include\NullLogger.hpp" />
+    <ClInclude Include="SDK\assimp\include\postprocess.h" />
+    <ClInclude Include="SDK\assimp\include\ProgressHandler.hpp" />
+    <ClInclude Include="SDK\assimp\include\quaternion.h" />
+    <ClInclude Include="SDK\assimp\include\scene.h" />
+    <ClInclude Include="SDK\assimp\include\texture.h" />
+    <ClInclude Include="SDK\assimp\include\types.h" />
+    <ClInclude Include="SDK\assimp\include\vector2.h" />
+    <ClInclude Include="SDK\assimp\include\vector3.h" />
+    <ClInclude Include="SDK\assimp\include\version.h" />
     <ClInclude Include="SDK\DX9\Include\d3d9.h" />
     <ClInclude Include="SDK\DX9\Include\d3dx9.h" />
     <ClInclude Include="SDK\DX9\Include\d3dx9anim.h" />
@@ -184,6 +244,57 @@
     <ClInclude Include="SDK\DX9\Include\d3dx9tex.h" />
     <ClInclude Include="SDK\DX9\Include\d3dx9xof.h" />
     <ClInclude Include="Common\VertexFormat.h" />
+    <ClInclude Include="SDK\gmtl\AABox.h" />
+    <ClInclude Include="SDK\gmtl\AABoxOps.h" />
+    <ClInclude Include="SDK\gmtl\AxisAngle.h" />
+    <ClInclude Include="SDK\gmtl\AxisAngleOps.h" />
+    <ClInclude Include="SDK\gmtl\Comparitors.h" />
+    <ClInclude Include="SDK\gmtl\Config.h" />
+    <ClInclude Include="SDK\gmtl\Containment.h" />
+    <ClInclude Include="SDK\gmtl\Coord.h" />
+    <ClInclude Include="SDK\gmtl\CoordOps.h" />
+    <ClInclude Include="SDK\gmtl\Defines.h" />
+    <ClInclude Include="SDK\gmtl\EulerAngle.h" />
+    <ClInclude Include="SDK\gmtl\EulerAngleOps.h" />
+    <ClInclude Include="SDK\gmtl\External\OpenSGConvert.h" />
+    <ClInclude Include="SDK\gmtl\Fit\GaussPointsFit.h" />
+    <ClInclude Include="SDK\gmtl\Frustum.h" />
+    <ClInclude Include="SDK\gmtl\FrustumOps.h" />
+    <ClInclude Include="SDK\gmtl\Generate.h" />
+    <ClInclude Include="SDK\gmtl\gmtl.h" />
+    <ClInclude Include="SDK\gmtl\Helpers.h" />
+    <ClInclude Include="SDK\gmtl\Intersection.h" />
+    <ClInclude Include="SDK\gmtl\LineSeg.h" />
+    <ClInclude Include="SDK\gmtl\LineSegOps.h" />
+    <ClInclude Include="SDK\gmtl\Math.h" />
+    <ClInclude Include="SDK\gmtl\Matrix.h" />
+    <ClInclude Include="SDK\gmtl\MatrixOps.h" />
+    <ClInclude Include="SDK\gmtl\Misc\MatrixConvert.h" />
+    <ClInclude Include="SDK\gmtl\Numerics\Eigen.h" />
+    <ClInclude Include="SDK\gmtl\OOBox.h" />
+    <ClInclude Include="SDK\gmtl\Output.h" />
+    <ClInclude Include="SDK\gmtl\ParametricCurve.h" />
+    <ClInclude Include="SDK\gmtl\Plane.h" />
+    <ClInclude Include="SDK\gmtl\PlaneOps.h" />
+    <ClInclude Include="SDK\gmtl\Point.h" />
+    <ClInclude Include="SDK\gmtl\Quat.h" />
+    <ClInclude Include="SDK\gmtl\QuatOps.h" />
+    <ClInclude Include="SDK\gmtl\Ray.h" />
+    <ClInclude Include="SDK\gmtl\RayOps.h" />
+    <ClInclude Include="SDK\gmtl\Sphere.h" />
+    <ClInclude Include="SDK\gmtl\SphereOps.h" />
+    <ClInclude Include="SDK\gmtl\Tri.h" />
+    <ClInclude Include="SDK\gmtl\TriOps.h" />
+    <ClInclude Include="SDK\gmtl\Util\Assert.h" />
+    <ClInclude Include="SDK\gmtl\Util\Meta.h" />
+    <ClInclude Include="SDK\gmtl\Util\StaticAssert.h" />
+    <ClInclude Include="SDK\gmtl\Vec.h" />
+    <ClInclude Include="SDK\gmtl\VecBase.h" />
+    <ClInclude Include="SDK\gmtl\VecExprMeta.h" />
+    <ClInclude Include="SDK\gmtl\VecOps.h" />
+    <ClInclude Include="SDK\gmtl\VecOpsMeta.h" />
+    <ClInclude Include="SDK\gmtl\Version.h" />
+    <ClInclude Include="SDK\gmtl\Xforms.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Common\VertexBuffer.h" />
     <ClInclude Include="DX9\VertexBufferDX9.h" />
@@ -224,10 +335,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />
+    <None Include="SDK\assimp\include\color4.inl" />
+    <None Include="SDK\assimp\include\material.inl" />
+    <None Include="SDK\assimp\include\matrix3x3.inl" />
+    <None Include="SDK\assimp\include\matrix4x4.inl" />
+    <None Include="SDK\assimp\include\quaternion.inl" />
+    <None Include="SDK\assimp\include\vector2.inl" />
+    <None Include="SDK\assimp\include\vector3.inl" />
+    <None Include="SDK\assimp\lib\x64\assimp.dll" />
+    <None Include="SDK\assimp\lib\x86\assimp.dll" />
     <None Include="SDK\DX9\Include\d3dx9math.inl" />
     <None Include="Common\VertexBuffer.inl" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="SDK\assimp\lib\x64\assimp.lib" />
+    <Library Include="SDK\assimp\lib\x86\assimp.lib" />
     <Library Include="SDK\DX9\Lib\x64\d3d9.lib" />
     <Library Include="SDK\DX9\Lib\x64\d3dx9.lib" />
     <Library Include="SDK\DX9\Lib\x64\DxErr.lib" />
