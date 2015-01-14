@@ -34,6 +34,12 @@
     <Filter Include="Source Files\Helpers">
       <UniqueIdentifier>{92d195f7-1e5c-47f1-a486-f40a9f5d03ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Widgets">
+      <UniqueIdentifier>{24332bbc-5e0c-44e9-8044-79b02e1734ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Widgets">
+      <UniqueIdentifier>{fd36f86d-2563-43bf-ad9c-a54eb36230e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -51,6 +57,9 @@
     <ClInclude Include="Text.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Header Files\Widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -67,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="Text.cpp">
       <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Source Files\Widgets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "MainWindow.h"
+#include "Menu.h"
 #include "Renderer.h"
 #include <gdk/gdkwin32.h>
 
@@ -12,6 +13,16 @@ MainWindow::MainWindow()
 	set_title("ShdEd");
 	set_border_width(10);
 	set_default_size(800, 600);
+
+	// Menu items list. Defined for example purposes.
+	std::map<int, std::map<std::string, std::string>> items;
+	items[0]["name"] = "New";
+	items[1]["name"] = "Quit";
+	items[2]["name"] = "Shader";
+	items[3]["name"] = "Set";
+
+	// Build the workspace frame menu.
+	MenuWidget* mw = new MenuWidget(this, &m_WorkspaceFrame, items);
 
 	// Add the pane widget to our toplevel window
 	add(m_VPaned);
