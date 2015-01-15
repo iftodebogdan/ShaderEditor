@@ -30,6 +30,8 @@ namespace LibRendererDll
 		// Usage options that identify how resources are to be used
 		enum BufferUsage
 		{
+			BU_NONE,
+
 			BU_STATIC,			// Informs the system that the application writes only to the buffer
 			BU_DYNAMIC,			// Set to indicate that the buffer requires dynamic memory use
 			BU_RENDERTAGET,		// The resource will be a render target

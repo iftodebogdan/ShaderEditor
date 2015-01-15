@@ -30,6 +30,10 @@
 
 // TODO: reference additional headers your program requires here
 
+#ifdef _DEBUG
+#include <vld.h>
+#endif
+
 #include <assert.h>
 #include <intrin.h>
 using namespace std;

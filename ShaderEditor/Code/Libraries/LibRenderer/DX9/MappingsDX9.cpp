@@ -25,6 +25,7 @@ namespace LibRendererDll
 	//Translates buffer usage flags from platform independent format to D3D9 format
 	const DWORD BufferUsageDX9[Buffer::BU_MAX] =
 	{
+		0,							// BU_NONE
 		D3DUSAGE_WRITEONLY,			// BU_STATIC
 		D3DUSAGE_DYNAMIC,			// BU_DYNAMIC
 		D3DUSAGE_RENDERTARGET,		// BU_RENDERTARGET
@@ -103,4 +104,35 @@ namespace LibRendererDll
 		D3DFMT_DXT5,				// TF_DXT5
 		D3DFMT_D24S8				// TF_D24S8
 	};
+
+	//const DWORD TextureAddressingModeDX9[Shader::SAM_MAX] =
+	//{
+	//	0,                          // SAM_NONE
+	//	D3DTADDRESS_CLAMP,          // SAM_CLAMP
+	//	D3DTADDRESS_WRAP,           // SAM_WRAP
+	//	D3DTADDRESS_MIRROR,         // SAM_MIRROR
+	//	D3DTADDRESS_BORDER,         // SAM_BORDER
+	//};
+	//
+	//const DWORD MinMagFilterDX9[Shader::SF_MAX] =
+	//{
+	//	D3DTEXF_NONE,               // SF_NONE
+	//	D3DTEXF_POINT,              // SF_MIN_MAG_POINT_MIP_NONE
+	//	D3DTEXF_LINEAR,             // SF_MIN_MAG_LINEAR_MIP_NONE
+	//	D3DTEXF_POINT,              // SF_MIN_MAG_POINT_MIP_POINT
+	//	D3DTEXF_POINT,              // SF_MIN_MAG_POINT_MIP_LINEAR
+	//	D3DTEXF_LINEAR,             // SF_MIN_MAG_LINEAR_MIP_POINT
+	//	D3DTEXF_LINEAR              // SF_MIN_MAG_LINEAR_MIP_LINEAR
+	//};
+	//
+	//const DWORD MipFilterDX9[Shader::SF_MAX] =
+	//{
+	//	D3DTEXF_NONE,               // SF_NONE
+	//	D3DTEXF_NONE,               // SF_MIN_MAG_POINT_MIP_NONE
+	//	D3DTEXF_NONE,               // SF_MIN_MAG_LINEAR_MIP_NONE
+	//	D3DTEXF_POINT,              // SF_MIN_MAG_POINT_MIP_POINT
+	//	D3DTEXF_LINEAR,             // SF_MIN_MAG_POINT_MIP_LINEAR
+	//	D3DTEXF_POINT,              // SF_MIN_MAG_LINEAR_MIP_POINT
+	//	D3DTEXF_LINEAR              // SF_MIN_MAG_LINEAR_MIP_LINEAR
+	//};
 }

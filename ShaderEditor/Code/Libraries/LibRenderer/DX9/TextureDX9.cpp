@@ -77,7 +77,7 @@ TextureDX9::~TextureDX9()
 	m_pTexture->Release();
 }
 
-void TextureDX9::Enable(const unsigned int texUnit)
+void TextureDX9::Enable(const unsigned int texUnit) const
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 
@@ -85,7 +85,7 @@ void TextureDX9::Enable(const unsigned int texUnit)
 	assert(SUCCEEDED(hr));
 }
 
-void TextureDX9::Disable(const unsigned int texUnit)
+void TextureDX9::Disable(const unsigned int texUnit) const
 {
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 	HRESULT hr;

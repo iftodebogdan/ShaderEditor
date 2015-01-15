@@ -104,6 +104,15 @@ namespace LibRendererDll
 		const	unsigned int			GetSize() const = delete;
 		// Replaced by GetMipmapLevelData()
 				byte*					GetData() const = delete;
+#else
+		// Replaced by GetMipmapLevelDimensions()
+		const	unsigned int			GetElementCount() const { assert(false); return 0; }
+		// Replaced by GetPixelSize()
+		const	unsigned int			GetElementSize() const { assert(false); return 0; }
+		// Replaced by GetMipmapLevelByteCount()
+		const	unsigned int			GetSize() const { assert(false); return 0; }
+		// Replaced by GetMipmapLevelData()
+				byte*					GetData() const { assert(false); return nullptr; }
 #endif // __cplusplus >= 201103L
 
 		// Get the format of the texture
@@ -140,9 +149,9 @@ namespace LibRendererDll
 				byte*					GetMipmapLevelData(const unsigned int cubeFace, const unsigned int mipmapLevel) const { assert(cubeFace >= 0 && cubeFace < 6); return m_pData + cubeFace * GetCubeFaceOffset() + GetMipmapLevelOffset(mipmapLevel); }
 
 		// Enable the texture on the specified slot
-		virtual void	Enable(const unsigned int texUnit) = 0;
+		virtual void	Enable(const unsigned int texUnit) const = 0;
 		// Disable the texture from the specified slot
-		virtual void	Disable(const unsigned int texUnit) = 0;
+		virtual void	Disable(const unsigned int texUnit) const = 0;
 		// Lock the specified mipmap level for reading/writing
 		virtual void	Lock(const unsigned int mipmapLevel, const BufferLocking lockMode) = 0;
 		// Lock the specified mipmap level of the specified cube face for reading/writing (cubemaps only!)

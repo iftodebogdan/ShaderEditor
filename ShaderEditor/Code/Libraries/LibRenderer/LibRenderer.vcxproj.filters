@@ -191,6 +191,12 @@
     <ClInclude Include="SDK\gmtl\VecOpsMeta.h" />
     <ClInclude Include="SDK\gmtl\Version.h" />
     <ClInclude Include="SDK\gmtl\Xforms.h" />
+    <ClInclude Include="Common\ShaderTemplate.h" />
+    <ClInclude Include="Common\ShaderProgram.h" />
+    <ClInclude Include="DX9\ShaderProgramDX9.h" />
+    <ClInclude Include="Common\ShaderInput.h" />
+    <ClInclude Include="SDK\vld\include\vld.h" />
+    <ClInclude Include="SDK\vld\include\vld_def.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -229,6 +235,10 @@
     </ClCompile>
     <ClCompile Include="Common\Texture.cpp" />
     <ClCompile Include="DX9\TextureDX9.cpp" />
+    <ClCompile Include="Common\ShaderTemplate.cpp" />
+    <ClCompile Include="Common\ShaderProgram.cpp" />
+    <ClCompile Include="DX9\ShaderProgramDX9.cpp" />
+    <ClCompile Include="Common\ShaderInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />
@@ -247,6 +257,13 @@
     <None Include="SDK\assimp\include\vector3.inl" />
     <None Include="SDK\assimp\lib\x64\assimp.dll" />
     <None Include="SDK\assimp\lib\x86\assimp.dll" />
+    <None Include="Common\ShaderInput.inl" />
+    <None Include="SDK\vld\bin\x64\dbghelp.dll" />
+    <None Include="SDK\vld\bin\x64\vld_x64.dll" />
+    <None Include="SDK\vld\bin\x86\dbghelp.dll" />
+    <None Include="SDK\vld\bin\x86\vld_x86.dll" />
+    <None Include="SDK\assimp\bin\x86\assimp.dll" />
+    <None Include="SDK\assimp\bin\x64\assimp.dll" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDK\DX9\Lib\x64\d3d9.lib">
@@ -269,5 +286,11 @@
     </Library>
     <Library Include="SDK\assimp\lib\x64\assimp.lib" />
     <Library Include="SDK\assimp\lib\x86\assimp.lib" />
+    <Library Include="SDK\vld\lib\x64\vld.lib" />
+    <Library Include="SDK\vld\lib\x86\vld.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="SDK\vld\bin\x64\Microsoft.DTfW.DHL.manifest" />
+    <Manifest Include="SDK\vld\bin\x86\Microsoft.DTfW.DHL.manifest" />
   </ItemGroup>
 </Project>

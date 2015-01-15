@@ -18,30 +18,27 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include "Buffer.h"
+#include "ShaderProgram.h"
 using namespace LibRendererDll;
 
-Buffer::Buffer(const unsigned int elementCount, const unsigned int elementSize, const Buffer::BufferUsage usage)
-	: m_nElementCount(elementCount)
-	, m_nElementSize(elementSize)
-	, m_eBufferUsage(usage)
-	, m_nSize(elementCount * elementSize)
-	, m_pData(nullptr)
-{
-	assert(elementCount >= 0);
-	assert(elementSize >= 0);
-	assert(usage >= 0 && usage < BU_MAX);
+ShaderProgram::ShaderProgram(ShaderProgramType programType)
+	: m_eProgramType(programType)
+{}
 
-	if (elementCount > 0 && elementSize > 0)
+ShaderProgram::~ShaderProgram()
+{}
+
+void ShaderProgram::SetValue(const ShaderTemplate::RegisterType registerType, const unsigned int registerIndex, const void* const data, const unsigned int registerCount)
+{
+	switch (registerType)
 	{
-		m_pData = new byte[m_nSize];
-		assert(m_pData != nullptr);
-		memset(m_pData, 0, m_nSize);
+	case ShaderTemplate::RT_BOOL:
+		SetBool(registerIndex, (const bool* const)data, registerCount);
+		break;
+	case ShaderTemplate::RT_INT4:
+		SetInt(registerIndex, (const int* const)data, registerCount);
+		break;
+	case ShaderTemplate::RT_FLOAT4:
+		SetFloat(registerIndex, (const float* const)data, registerCount);
 	}
-}
-
-Buffer::~Buffer()
-{
-	assert(m_pData != nullptr);
-	delete[] m_pData;
 }

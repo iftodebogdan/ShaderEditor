@@ -28,6 +28,7 @@
 using namespace LibRendererDll;
 
 Renderer* Renderer::m_pInstance = nullptr;
+Renderer::API Renderer::m_eAPI = API_NULL;
 
 Renderer::~Renderer()
 {
@@ -39,6 +40,7 @@ void Renderer::CreateInstance(API eApi)
 	{
 		case API_DX9:
 			m_pInstance = new RendererDX9;
+			m_eAPI = API_DX9;
 	}
 }
 

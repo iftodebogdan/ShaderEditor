@@ -35,6 +35,8 @@ namespace LibRendererDll
 	public:
 		enum API
 		{
+			API_NULL,	// Null render
+
 			API_DX9,	// Direct3D 9
 		};
 
@@ -44,6 +46,7 @@ namespace LibRendererDll
 		static	LIBRENDERER_DLL			void					DestroyInstance();
 		/* Retrieves the instance of the Renderer object */
 		static	LIBRENDERER_DLL			Renderer*				GetInstance() { return m_pInstance; }
+		static	LIBRENDERER_DLL			API						GetAPI() { return m_eAPI; }
 
 		/* After you create an application window, you are ready to initialize the graphics
 		object that you will use to render the scene. This process includes creating the
@@ -61,6 +64,7 @@ namespace LibRendererDll
 		virtual						~Renderer();
 
 		static	Renderer*			m_pInstance;
+		static	API					m_eAPI;
 				RenderData			m_RenderData;
 	};
 }

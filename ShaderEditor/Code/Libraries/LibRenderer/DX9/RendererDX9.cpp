@@ -118,6 +118,15 @@ void RendererDX9::Initialize(void* hWnd, const int backBufferWidth, const int ba
 Assimp::Importer importer;
 static const aiScene* scene = nullptr;
 
+#include "ShaderTemplate.h"
+#include "ShaderProgramDX9.h"
+#include "ShaderInput.h"
+#include <fstream>
+static ShaderProgramDX9* VProg = nullptr;
+static ShaderProgramDX9* PProg = nullptr;
+static ShaderTemplate* VTemp = nullptr;
+static ShaderTemplate* PTemp = nullptr;
+
 void RendererDX9::CreateResources()
 {
 	// And have it read the given file with some example postprocessing
@@ -135,15 +144,10 @@ void RendererDX9::CreateResources()
 
 	HRESULT hr;
 	// Turn off culling, so we see the front and back of the triangle
-	hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	// Turn on the zbuffer
 	hr = m_pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 	//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	//assert(SUCCEEDED(hr));
-	// Turn off lighting
-	hr = m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-	hr = m_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_PHONG);
-	hr = m_pd3dDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
 	assert(SUCCEEDED(hr));
 
 	// Set render parameters
@@ -161,10 +165,7 @@ void RendererDX9::CreateResources()
 				pTex = tex->GetMipmapLevelData(face, level);
 			else
 				pTex = tex->GetMipmapLevelData(level);
-			pTex = tex->GetData();
-			int faceOffset = face * (tex->GetTextureType() == Texture::TT_CUBE ? tex->GetCubeFaceOffset() : 0);
-			int mipoffset = tex->GetMipmapLevelOffset(level);
-			pTex += faceOffset + mipoffset;
+
 			for (unsigned int pixelZ = 0; pixelZ < tex->GetDepth(level); pixelZ++)
 				for (unsigned int pixelY = 0; pixelY < tex->GetHeight(level); pixelY++)
 					for (unsigned int pixelX = 0; pixelX < tex->GetWidth(level); pixelX++)
@@ -207,34 +208,34 @@ void RendererDX9::CreateResources()
 		}
 
 	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-	m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-	m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-	m_pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSW, D3DTADDRESS_CLAMP);
+	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSW, D3DTADDRESS_CLAMP);
+	//
+	//if (tex->GetTextureType() == Texture::TT_CUBE)
+	//{
+	//	m_pd3dDevice->SetRenderState(D3DRS_LOCALVIEWER, FALSE);
+	//	m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR);
+	//	m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT3);
+	//}
+	//else
+	//{
+	//	m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_SPHEREMAP);
+	//}
 
-	if (tex->GetTextureType() == Texture::TT_CUBE)
-	{
-		m_pd3dDevice->SetRenderState(D3DRS_LOCALVIEWER, FALSE);
-		m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR);
-		m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT3);
-	}
-	else
-	{
-		m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_SPHEREMAP);
-	}
-
-	vf = new VertexFormatDX9(4);
+	vf = new VertexFormatDX9(3);
 	vf->Initialize(
 		VertexFormat::VAU_POSITION, VertexFormat::VAT_FLOAT3, 0
 		, VertexFormat::VAU_NORMAL, VertexFormat::VAT_FLOAT3, 0
 		, VertexFormat::VAU_TEXCOORD, VertexFormat::VAT_FLOAT2, 0
-		, VertexFormat::VAU_COLOR, VertexFormat::VAT_UBYTE4, 0
+		//, VertexFormat::VAU_COLOR, VertexFormat::VAT_UBYTE4, 0
 		);
 	vf->Update();
 
@@ -278,7 +279,7 @@ void RendererDX9::CreateResources()
 				scene->mMeshes[i]->mNormals[j].x,
 				scene->mMeshes[i]->mNormals[j].y,
 				scene->mMeshes[i]->mNormals[j].z);
-			vb->Color<D3DCOLOR>(iterVertices, 0) = D3DCOLOR_XRGB(255, 255, 255);
+			//vb->Color<D3DCOLOR>(iterVertices, 0) = D3DCOLOR_XRGB(255, 255, 255);
 			vb->TexCoord<Vec2f>(iterVertices++, 0) = Vec2f(
 				scene->mMeshes[i]->mTextureCoords[0][j].x,
 				scene->mMeshes[i]->mTextureCoords[0][j].y);
@@ -290,6 +291,24 @@ void RendererDX9::CreateResources()
 	ib->Unlock();
 	vb->Update();
 	vb->Unlock();
+
+	std::ifstream t("test.hlsl");
+	int length;
+	t.seekg(0, std::ios::end);			// go to the end
+	length = (int)t.tellg();			// report location (this is the length)
+	t.seekg(0, std::ios::beg);			// go back to the beginning
+	char* buffer = new char[length];    // allocate memory for a buffer of appropriate dimension
+	t.read(buffer, length);				// read the whole file into the buffer
+	t.close();							// close file handle
+	buffer[length - 1] = '\0';
+
+	VProg = new ShaderProgramDX9(ShaderProgram::SPT_VERTEX, buffer);
+	PProg = new ShaderProgramDX9(ShaderProgram::SPT_PIXEL, buffer);
+
+	VTemp = new ShaderTemplate(VProg);
+	PTemp = new ShaderTemplate(PProg);
+
+	delete[] buffer;
 }
 
 void RendererDX9::ReleaseResources()
@@ -298,6 +317,10 @@ void RendererDX9::ReleaseResources()
 	delete vf;
 	delete ib;
 	delete tex;
+	delete VProg;
+	delete PProg;
+	delete VTemp;
+	delete PTemp;
 }
 
 void RendererDX9::GetBackBufferSize(Vec2i& backBufferSize)
@@ -407,60 +430,27 @@ void RendererDX9::RenderScene()
 
 	// Clear the backbuffer and the zbuffer
 	m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-						D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+						D3DCOLOR_XRGB(128, 128, 128), 1.0f, 0);
 	
 	// Begin the scene
 	if (SUCCEEDED(m_pd3dDevice->BeginScene()))
 	{
-		// Set up a material. The material here just has the diffuse and ambient 	
-		// colors set to yellow. Note that only one material can be used at a time. 	
-		D3DMATERIAL9 mtrl;
-		ZeroMemory(&mtrl, sizeof(D3DMATERIAL9));
-		mtrl.Diffuse.r = 1.0f;
-		mtrl.Diffuse.g = 1.0f;
-		mtrl.Diffuse.b = 1.0f;
-		mtrl.Ambient.r = 0.3f;
-		mtrl.Ambient.g = 0.3f;
-		mtrl.Ambient.b = 0.3f;
-		m_pd3dDevice->SetMaterial(&mtrl);
-
-		// Set up a white, directional light, with an oscillating direction. 	
-		// Note that many Lights may be active at a time (but each one slows down 	
-		// the rendering of our scene). However, here we are just using one. Also, 	
-		// we need to set the D3DRS_LIGHTING renderstate to enable lighting 	
-		D3DXVECTOR3 vecDir;
-		D3DLIGHT9 light;
-		ZeroMemory(&light, sizeof(D3DLIGHT9));
-		light.Type = D3DLIGHT_DIRECTIONAL;
-		light.Diffuse.r = 1.0f;
-		light.Diffuse.g = 1.0f;
-		light.Diffuse.b = 1.0f;
-		light.Ambient.r = 0.5f;
-		light.Ambient.g = 0.5f;
-		light.Ambient.b = 0.5f;
-		vecDir = D3DXVECTOR3(/*cosf(GetTickCount() / 350.0f)*/ 1.f, -1.0f, 0.f /*sinf(GetTickCount() / 350.0f)*/);
-		D3DXVec3Normalize((D3DXVECTOR3*)&light.Direction, &vecDir);
-		light.Range = 5000.0f;
-		m_pd3dDevice->SetLight(0, &light);
-		m_pd3dDevice->LightEnable(0, TRUE);
-		
 		// Set up world matrix
 		D3DXMATRIXA16 matWorldRot, matWorldPos, matWorld;
-		D3DXMatrixIdentity(&matWorldRot);
-		D3DXMatrixIdentity(&matWorldPos);
-		D3DXMatrixRotationY(&matWorldRot, (float)GetTickCount() / 1000.0f);
-		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
+		D3DXMatrixRotationX(&matWorldPos, -Math::PI_OVER_2);
+		D3DXMatrixRotationY(&matWorldRot, (float)GetTickCount() / 5000.0f);
 
 		// Set up our view matrix. A view matrix can be defined given an eye point,
 		// a point to lookat, and a direction for which way is up. Here, we set the
 		// eye five units back along the z-axis and up three units, look at the
 		// origin, and define "up" to be in the y-direction.
 		D3DXVECTOR3 vEyePt(200.f * cosf(GetTickCount() / 1000.f), 100.f, 200.f* sinf(GetTickCount() / 1000.f));
+		//D3DXVECTOR3 vEyePt(0.f, 10.f, 0.f);
 		D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);
+		//D3DXVECTOR3 vLookatPt(100.0f, 30.0f, 0.0f);
 		D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
 		D3DXMATRIXA16 matView;
 		D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
-		m_pd3dDevice->SetTransform(D3DTS_VIEW, &matView);
 
 		// For the projection matrix, we set up a perspective transform (which
 		// transforms geometry from 3D view space to 2D viewport space, with
@@ -470,49 +460,155 @@ void RendererDX9::RenderScene()
 		// what distances geometry should be no longer be rendered).
 		D3DXMATRIXA16 matProj;
 		float aspectRatio = (float)m_RenderData.backBufferSize[0] / (float)m_RenderData.backBufferSize[1];
-		D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, aspectRatio, 1.0f, 5000.0f);
-		m_pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+		D3DXMatrixPerspectiveFovLH(&matProj, 55 * D3DX_PI / 180, aspectRatio, 20.0f, 2000.0f);
 		
-		if (tex->GetTextureType() == Texture::TT_CUBE)
-		{
-			D3DXMATRIXA16 matInvView;
-			D3DXMatrixInverse(&matInvView, NULL, &matView);
-			matInvView._41 = 0;
-			matInvView._42 = 0;
-			matInvView._43 = 0;
-			matInvView._44 = 0;
-			m_pd3dDevice->SetTransform(D3DTS_TEXTURE0, &matInvView);
-		}
+		//if (tex->GetTextureType() == Texture::TT_CUBE)
+		//{
+		//	D3DXMATRIXA16 matInvView;
+		//	D3DXMatrixInverse(&matInvView, NULL, &matView);
+		//	matInvView._41 = 0;
+		//	matInvView._42 = 0;
+		//	matInvView._43 = 0;
+		//	matInvView._44 = 0;
+		//	m_pd3dDevice->SetTransform(D3DTS_TEXTURE0, &matInvView);
+		//}
 		
-		tex->Enable(0);
-
-		//D3DXMatrixTranslation(&matWorldPos, -5.f, -5.f, 0.f);
-		//D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
-		//m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
-		//
-		//LPD3DXMESH pMesh;
-		//D3DXCreateSphere(m_pd3dDevice, 5, 32, 32, &pMesh, NULL);
-		//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-		//pMesh->DrawSubset(0);
-		//pMesh->Release();
-		//
-		//D3DXMatrixTranslation(&matWorldPos, 5.f, 5.f, 0.f);
-		//D3DXMatrixMultiply(&matWorld, &matWorldRot, &matWorldPos);
-		//m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
-		//
-		//D3DXCreateTorus(m_pd3dDevice, 2, 5, 32, 32, &pMesh, NULL);
-		//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-		//pMesh->DrawSubset(0);
-		//pMesh->Release();
-		
-		D3DXMatrixTranslation(&matWorldPos, 0.f, 0.f, 0.f);
-		D3DXMatrixRotationX(&matWorldPos, -Math::PI_OVER_2);
-		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorldPos);
 		vb->Enable();
-		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
-		vb->Disable();
 
-		tex->Disable(0);
+		ShaderInput VInput(VTemp);
+		ShaderInput PInput(PTemp);
+		Matrix44f matWVP[3];
+		for (unsigned int i = 0; i < 3; i++)
+		{
+			D3DXMATRIX mat;
+			switch (i)
+			{
+			case 0:
+				mat = matWorldPos;
+				//mat = matWorldRot;
+				break;
+			case 1:
+				mat = matView;
+				break;
+			case 2:
+				mat = matProj;
+			}
+			matWVP[i](0, 0) = mat._11; matWVP[i](0, 1) = mat._12; matWVP[i](0, 2) = mat._13; matWVP[i](0, 3) = mat._14;
+			matWVP[i](1, 0) = mat._21; matWVP[i](1, 1) = mat._22; matWVP[i](1, 2) = mat._23; matWVP[i](1, 3) = mat._24;
+			matWVP[i](2, 0) = mat._31; matWVP[i](2, 1) = mat._32; matWVP[i](2, 2) = mat._33; matWVP[i](2, 3) = mat._34;
+			matWVP[i](3, 0) = mat._41; matWVP[i](3, 1) = mat._42; matWVP[i](3, 2) = mat._43; matWVP[i](3, 3) = mat._44;
+		}
+		unsigned int handle;
+		VInput.GetInputHandleByName("matWVP", handle);
+		VInput.SetMatrixArray<4, 4>(handle, matWVP);
+
+		assert(VInput.GetMatrix4x4(handle, 0) == matWVP[0]);
+		assert(VInput.GetMatrix4x4(handle, 1) == matWVP[1]);
+		assert(VInput.GetMatrix4x4(handle, 2) == matWVP[2]);
+
+		Matrix33f matTest33;
+		//matTest33[1][0] = 2.f;
+		VInput.GetInputHandleByName("matTest33", handle);
+		VInput.SetMatrix3x3(handle, matTest33);
+		assert(VInput.GetMatrix3x3(handle) == matTest33);
+
+		Matrix22f matTest22;
+		//matTest22[0][1] = 1.f;
+		VInput.GetInputHandleByName("matTest22", handle);
+		VInput.SetMatrix<2, 2>(handle, matTest22);
+		assert((VInput.GetMatrix<2, 2>(handle)) == matTest22);
+
+		//Matrix32f matTest32;
+		////matTest32[2][0] = -1.f;
+		//VInput.GetInputHandleByName("matTest32", handle);
+		//VInput.SetMatrix<3, 2>(handle, matTest32);
+		//assert((VInput.GetMatrix<3, 2>(handle)) == matTest32);
+
+		bool bData[3] = { true, true, true };
+		bool b1 = true;
+		Vec<bool, 2> b2 = Vec<bool, 2>(true, true);
+		Vec<bool, 3> b3 = Vec<bool, 3>(true, true, true);
+		Vec<bool, 4> b4 = Vec<bool, 4>(true, true, true, true);
+		VInput.GetInputHandleByName("bArr", handle);
+		VInput.SetBoolArray(handle, bData);
+		assert(VInput.GetBool(handle, 0) == bData[0]);
+		assert(VInput.GetBool(handle, 1) == bData[1]);
+		assert(VInput.GetBool(handle, 2) == bData[2]);
+		VInput.GetInputHandleByName("b1", handle);
+		VInput.SetBool(handle, b1);
+		assert(VInput.GetBool(handle) == b1);
+		VInput.GetInputHandleByName("b2", handle);
+		VInput.SetBool2(handle, b2);
+		assert(VInput.GetBool2(handle) == b2);
+		VInput.GetInputHandleByName("b3", handle);
+		VInput.SetBool3(handle, b3);
+		assert(VInput.GetBool3(handle) == b3);
+		VInput.GetInputHandleByName("b4", handle);
+		VInput.SetBool4(handle, b4);
+		assert(VInput.GetBool4(handle) == b4);
+		
+		int iData[3] = { 1, 2, 3 };
+		int i1 = 4;
+		Vec<int, 2> i2 = Vec<int, 2>(5, 6);
+		Vec<int, 3> i3 = Vec<int, 3>(7, 8, 9);
+		Vec<int, 4> i4 = Vec<int, 4>(10, 11, 12, 13);
+		VInput.GetInputHandleByName("iArr", handle);
+		VInput.SetIntArray(handle, iData);
+		assert(VInput.GetInt(handle, 0) == iData[0]);
+		assert(VInput.GetInt(handle, 1) == iData[1]);
+		assert(VInput.GetInt(handle, 2) == iData[2]);
+		VInput.GetInputHandleByName("i1", handle);
+		VInput.SetInt(handle, i1);
+		assert(VInput.GetInt(handle) == i1);
+		VInput.GetInputHandleByName("i2", handle);
+		VInput.SetInt2(handle, i2);
+		assert(VInput.GetInt2(handle) == i2);
+		VInput.GetInputHandleByName("i3", handle);
+		VInput.SetInt3(handle, i3);
+		assert(VInput.GetInt3(handle) == i3);
+		VInput.GetInputHandleByName("i4", handle);
+		VInput.SetInt4(handle, i4);
+		assert(VInput.GetInt4(handle) == i4);
+		
+		float fData[9] = { 14.f, 15.f, 16.f, 17.f, 18.f, 19.f, 20.f, 21.f, 22.f };
+		float f1 = 23.f;
+		Vec<float, 2> f2 = Vec<float, 2>(24.f, 25.f);
+		Vec<float, 3> f3 = Vec<float, 3>(26.f, 27.f, 28.f);
+		Vec<float, 4> f4 = Vec<float, 4>(29.f, 30.f, 31.f, 32.f);
+		VInput.GetInputHandleByName("fArr", handle);
+		VInput.SetFloatArray(handle, fData);
+		assert(VInput.GetFloat3(handle, 0)[0] == fData[0]);
+		assert(VInput.GetFloat3(handle, 0)[1] == fData[1]);
+		assert(VInput.GetFloat3(handle, 0)[2] == fData[2]);
+		assert(VInput.GetFloat3(handle, 1)[0] == fData[3]);
+		assert(VInput.GetFloat3(handle, 1)[1] == fData[4]);
+		assert(VInput.GetFloat3(handle, 1)[2] == fData[5]);
+		assert(VInput.GetFloat3(handle, 2)[0] == fData[6]);
+		assert(VInput.GetFloat3(handle, 2)[1] == fData[7]);
+		assert(VInput.GetFloat3(handle, 2)[2] == fData[8]);
+		VInput.GetInputHandleByName("f1", handle);
+		VInput.SetFloat(handle, f1);
+		assert(VInput.GetFloat(handle) == f1);
+		VInput.GetInputHandleByName("f2", handle);
+		VInput.SetFloat2(handle, f2);
+		assert(VInput.GetFloat2(handle) == f2);
+		VInput.GetInputHandleByName("f3", handle);
+		VInput.SetFloat3(handle, f3);
+		assert(VInput.GetFloat3(handle) == f3);
+		VInput.GetInputHandleByName("f4", handle);
+		VInput.SetFloat4(handle, f4);
+		assert(VInput.GetFloat4(handle) == f4);
+
+		PInput.GetInputHandleByName("s2D", handle);
+		PInput.SetTexture(handle, tex);
+
+		VTemp->Enable(VInput);
+		PTemp->Enable(PInput);
+		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
+		PTemp->Disable();
+		VTemp->Disable();
+
+		vb->Disable();
 
 		// End the scene
 		hr = m_pd3dDevice->EndScene();

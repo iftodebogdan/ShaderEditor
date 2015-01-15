@@ -33,20 +33,22 @@ namespace LibRendererDll
 			const unsigned int mipmapLevelCount = 0, const BufferUsage usage = BU_TEXTURE);
 		~TextureDX9();
 
-		void				Enable(const unsigned int texUnit);
-		void				Disable(const unsigned int texUnit);
-		void				Lock(const unsigned int mipmapLevel, const BufferLocking lockMode);
-		void				Lock(const unsigned int cubeFace, const unsigned int mipmapLevel, const BufferLocking lockMode);
-		void				Unlock(const unsigned int mipmapLevel);
-		void				Unlock(const unsigned int cubeFace, const unsigned int mipmapLevel);
-		void				Update(const unsigned int mipmapLevel);
-		void				Update(const unsigned int cubeFace, const unsigned int mipmapLevel);
+		void	Enable(const unsigned int texUnit) const;
+		void	Disable(const unsigned int texUnit) const;
+		void	Lock(const unsigned int mipmapLevel, const BufferLocking lockMode);
+		void	Lock(const unsigned int cubeFace, const unsigned int mipmapLevel, const BufferLocking lockMode);
+		void	Unlock(const unsigned int mipmapLevel);
+		void	Unlock(const unsigned int cubeFace, const unsigned int mipmapLevel);
+		void	Update(const unsigned int mipmapLevel);
+		void	Update(const unsigned int cubeFace, const unsigned int mipmapLevel);
 
-	protected:
+		IDirect3DBaseTexture9* const	GetTextureDX9() const { return m_pTexture; }
+
+	private:
 		IDirect3DBaseTexture9* m_pTexture;
 
 		// A temporary pointer used in the Lock->Update->Unlock flow
-		void*					m_pTempBuffer;
+		void*	m_pTempBuffer;
 	};
 }
 
