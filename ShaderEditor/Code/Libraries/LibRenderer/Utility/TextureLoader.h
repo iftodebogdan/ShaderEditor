@@ -16,65 +16,36 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-#ifndef RENDERDATA_H
-#define RENDERDATA_H
-
-#include <gmtl\gmtl.h>
-using namespace gmtl;
+#ifndef TEXTURELOADER_H
+#define TEXTURELOADER_H
 
 namespace LibRendererDll
 {
-	struct RenderData
+	class Texture;
+
+	class TextureLoader
 	{
-		struct RenderState
+	public:
+		struct ImageDesc
 		{
-			// AlphaState
-			unsigned int		mAlphaBlendEnable;
-			unsigned int		mAlphaSrcBlend;
-			unsigned int		mAlphaDstBlend;
-			unsigned int		mAlphaTestEnable;
-			unsigned int		mAlphaFunc;
-			unsigned int		mAlphaRef;
-			unsigned int		mBlendFactor;
+			unsigned int width;
+			unsigned int height;
+			unsigned int depth;
+			unsigned int bpp;
+			Texture::TexFormat format;
+			Texture::TexType type;
+			unsigned int mipmaps;
+		};
 
-			// CullState
-			unsigned int		mCullMode;
+		static ImageDesc LoadImageFile(const char* const path, const bool convertToARGB = false);
+		static void CopyImageData(Texture* outTex);
+		static void UnloadImageFile();
 
-			// DepthState
-			unsigned int		mZEnable;
-			unsigned int		mZFunc;
-			unsigned int		mZWriteEnable;
-
-			// OffsetState
-			unsigned int		mSlopeScaleDepthBias;
-			unsigned int		mDepthBias;
-
-			// StencilState
-			unsigned int		mStencilEnable;
-			unsigned int		mStencilFunc;
-			unsigned int		mStencilRef;
-			unsigned int		mStencilMask;
-			unsigned int		mStencilWriteMask;
-			unsigned int		mStencilFail;
-			unsigned int		mStencilZFail;
-			unsigned int		mStencilPass;
-
-			// WireState
-			unsigned int		mFillMode;
-		} renderState;
-
-		Vec2i		backBufferSize;
-
-		struct DestRect
-		{
-			Vec2i topLeft; Vec2i bottomRight;
-		} dstRect;
-
-		struct Viewport
-		{
-			Vec2i topLeft; Vec2i sizeWH; Vec2f minMaxZ;
-		} viewport;
+	private:
+		TextureLoader() {}
+		~TextureLoader() {}
+		static bool bIsInitialized;
 	};
 }
 
-#endif //RENDERDATA_H
+#endif // TEXTURELOADER_H

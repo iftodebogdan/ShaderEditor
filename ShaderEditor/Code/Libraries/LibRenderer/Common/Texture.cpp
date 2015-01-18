@@ -91,6 +91,9 @@ Texture::Texture(
 	, m_eTexFormat(texFormat)
 	, m_eTexType(texType)
 	, m_nMipmapLevelCount(mipmapLevelCount)
+	, m_bIsLocked(false)
+	, m_nLockedMipmap(-1)
+	, m_nLockedCubeFace(-1)
 {
 	assert(sizeX > 0);
 	assert(sizeY > 0);
@@ -192,4 +195,52 @@ void Texture::ComputeMipmapProperties()
 	}
 	// Calculate the total memory space required to store the texture
 	m_nSize = totalByteCount * (m_eTexType == TT_CUBE ? 6u : 1u);
+}
+
+void Texture::GenerateMipmaps()
+{
+	assert(GetTextureType() == TT_2D || GetTextureType() == TT_CUBE);
+	assert(GetTextureFormat() == TF_A8R8G8B8 || GetTextureFormat() == TF_A8B8G8R8);
+
+	if (IsLocked())
+		Unlock();
+
+	for (unsigned int face = 0; face < (m_eTexType == TT_CUBE ? 6u : 1u); face++)
+	{
+		for (unsigned int i = 1; i < GetMipmapLevelCount(); i++)
+		{
+			byte* srcBuffer;
+			byte* destBuffer;
+			if (m_eTexType == TT_CUBE)
+			{
+				Lock(face, i, BL_WRITE_ONLY);
+				srcBuffer = GetMipmapLevelData(face, i - 1);
+				destBuffer = GetMipmapLevelData(face, i);
+			}
+			else
+			{
+				Lock(i, BL_WRITE_ONLY);
+				srcBuffer = GetMipmapLevelData(i - 1);
+				destBuffer = GetMipmapLevelData(i);
+			}
+			for (unsigned int y = 0; y < GetHeight(i); y++)
+			{
+				for (unsigned int x = 0; x < GetWidth(i); x++)
+				{
+					for (unsigned int bpp = 0; bpp < GetPixelSize(); bpp++)
+					{
+						*(destBuffer + x * GetPixelSize() + y * GetWidth(i) * GetPixelSize() + bpp) =
+							(
+							*(srcBuffer + (2 * x)		* GetPixelSize() + (2 * y)		* GetWidth(i - 1) * GetPixelSize() + bpp) +
+							*(srcBuffer + (2 * x + 1)	* GetPixelSize() + (2 * y)		* GetWidth(i - 1) * GetPixelSize() + bpp) +
+							*(srcBuffer + (2 * x)		* GetPixelSize() + (2 * y + 1)	* GetWidth(i - 1) * GetPixelSize() + bpp) +
+							*(srcBuffer + (2 * x + 1)	* GetPixelSize() + (2 * y + 1)	* GetWidth(i - 1) * GetPixelSize() + bpp)
+							) / 4;
+					}
+				}
+			}
+			Update();
+			Unlock();
+		}
+	}
 }

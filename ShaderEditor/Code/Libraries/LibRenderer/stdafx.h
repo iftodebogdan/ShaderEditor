@@ -38,4 +38,6 @@
 #include <intrin.h>
 using namespace std;
 
+typedef unsigned char byte;
+
 #endif //STDAFX_H

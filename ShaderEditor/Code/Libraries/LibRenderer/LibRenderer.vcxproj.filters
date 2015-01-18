@@ -197,6 +197,18 @@
     <ClInclude Include="Common\ShaderInput.h" />
     <ClInclude Include="SDK\vld\include\vld.h" />
     <ClInclude Include="SDK\vld\include\vld_def.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\config.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\devil_internal_exports.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\il.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\il_wrap.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilu.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilu_region.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilut.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilut_config.h" />
+    <ClInclude Include="SDK\DX9\include\d3d9caps.h" />
+    <ClInclude Include="SDK\DX9\include\d3d9types.h" />
+    <ClInclude Include="Utility\TextureLoader.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\devil_cpp_wrapper.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -239,6 +251,7 @@
     <ClCompile Include="Common\ShaderProgram.cpp" />
     <ClCompile Include="DX9\ShaderProgramDX9.cpp" />
     <ClCompile Include="Common\ShaderInput.cpp" />
+    <ClCompile Include="Utility\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />
@@ -264,6 +277,21 @@
     <None Include="SDK\vld\bin\x86\vld_x86.dll" />
     <None Include="SDK\assimp\bin\x86\assimp.dll" />
     <None Include="SDK\assimp\bin\x64\assimp.dll" />
+    <None Include="SDK\DevIL\bin\x64\Unicode\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x64\Unicode\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x64\Unicode\ILUT.dll" />
+    <None Include="SDK\DevIL\bin\x64\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x64\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x64\ILUT.dll" />
+    <None Include="SDK\DevIL\bin\x86\Unicode\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x86\Unicode\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x86\Unicode\ILUT.dll" />
+    <None Include="SDK\DevIL\bin\x86\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x86\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x86\ILUT.dll" />
+    <None Include="SDK\vld\bin\x64\Microsoft.DTfW.DHL.manifest" />
+    <None Include="SDK\vld\bin\x86\Microsoft.DTfW.DHL.manifest" />
+    <None Include="SDK\DevIL\include\IL\config.h.win" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDK\DX9\Lib\x64\d3d9.lib">
@@ -288,9 +316,19 @@
     <Library Include="SDK\assimp\lib\x86\assimp.lib" />
     <Library Include="SDK\vld\lib\x64\vld.lib" />
     <Library Include="SDK\vld\lib\x86\vld.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="SDK\vld\bin\x64\Microsoft.DTfW.DHL.manifest" />
-    <Manifest Include="SDK\vld\bin\x86\Microsoft.DTfW.DHL.manifest" />
+    <Library Include="SDK\DevIL\lib\x64\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x64\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x64\ILUT.lib" />
+    <Library Include="SDK\DevIL\lib\x86\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x86\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x86\ILUT.lib" />
+    <Library Include="SDK\DX9\lib\x64\d3dx9d.lib" />
+    <Library Include="SDK\DX9\lib\x86\d3dx9d.lib" />
+    <Library Include="SDK\DevIL\lib\x64\Unicode\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x64\Unicode\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x64\Unicode\ILUT.lib" />
+    <Library Include="SDK\DevIL\lib\x86\Unicode\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x86\Unicode\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x86\Unicode\ILUT.lib" />
   </ItemGroup>
 </Project>

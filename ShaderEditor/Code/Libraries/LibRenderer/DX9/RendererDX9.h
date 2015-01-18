@@ -42,6 +42,7 @@ namespace LibRendererDll
 		VertexBufferDX9*	vb;
 		IndexBufferDX9*		ib;
 		TextureDX9*			tex;
+		TextureDX9*			tex2;
 
 		void						CreateResources();
 		void						ReleaseResources();

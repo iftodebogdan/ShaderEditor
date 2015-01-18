@@ -149,21 +149,23 @@ namespace LibRendererDll
 				byte*					GetMipmapLevelData(const unsigned int cubeFace, const unsigned int mipmapLevel) const { assert(cubeFace >= 0 && cubeFace < 6); return m_pData + cubeFace * GetCubeFaceOffset() + GetMipmapLevelOffset(mipmapLevel); }
 
 		// Enable the texture on the specified slot
-		virtual void	Enable(const unsigned int texUnit) const = 0;
+		virtual void			Enable(const unsigned int texUnit) const = 0;
 		// Disable the texture from the specified slot
-		virtual void	Disable(const unsigned int texUnit) const = 0;
+		virtual void			Disable(const unsigned int texUnit) const = 0;
 		// Lock the specified mipmap level for reading/writing
-		virtual void	Lock(const unsigned int mipmapLevel, const BufferLocking lockMode) = 0;
+		virtual const	bool	Lock(const unsigned int mipmapLevel, const BufferLocking lockMode) { assert(!m_bIsLocked); m_bIsLocked = true; m_nLockedMipmap = mipmapLevel; m_nLockedCubeFace = 0; return true; }
 		// Lock the specified mipmap level of the specified cube face for reading/writing (cubemaps only!)
-		virtual void	Lock(const unsigned int cubeFace, const unsigned int mipmapLevel, const BufferLocking lockMode) = 0;
-		// Unlock the specified mipmap level
-		virtual void	Unlock(const unsigned int mipmapLevel) = 0;
-		// Unlock the specified mipmap level of the specified cube face (cubemaps only!)
-		virtual void	Unlock(const unsigned int cubeFace, const unsigned int mipmapLevel) = 0;
-		// Update the specified mipmap level with the changes made
-		virtual void	Update(const unsigned int mipmapLevel) = 0;
-		// Update the specified mipmap level of the specified cube face with the changes made (cubemaps only!)
-		virtual void	Update(const unsigned int cubeFace, const unsigned int mipmapLevel) = 0;
+		virtual const	bool	Lock(const unsigned int cubeFace, const unsigned int mipmapLevel, const BufferLocking lockMode) { assert(!m_bIsLocked); m_bIsLocked = true; m_nLockedMipmap = mipmapLevel; m_nLockedCubeFace = cubeFace; return true; }
+		// Unlock the texture
+		virtual void			Unlock() { assert(m_bIsLocked); m_bIsLocked = false; m_nLockedMipmap = -1; m_nLockedCubeFace = -1; }
+		// Update the locked mipmap level (of the locked face, if cube texture) with the changes made
+		virtual void			Update() = 0;
+		// Get lock status
+		const	bool			IsLocked() const { return m_bIsLocked; }
+		const	unsigned int	GetLockedMipmap() const { assert(m_bIsLocked); return m_nLockedMipmap; }
+		const	unsigned int	GetLockedCubeFace() const { assert(m_bIsLocked); return m_nLockedCubeFace; }
+
+				void			GenerateMipmaps();
 
 		/* Get the number of dimensions a texture of the specified type has */
 		static	const	unsigned int	GetDimensionCount(const TexType texType) { return ms_nDimensionCount[texType]; }
@@ -193,6 +195,10 @@ namespace LibRendererDll
 		unsigned int			m_nMipmapLevelByteCount[TEX_MAX_MIPMAP_LEVELS];
 		/* Holds the offsets in bytes from the beginning of the texture and to the start */
 		unsigned int			m_nMipmapLevelOffset[TEX_MAX_MIPMAP_LEVELS];
+		/* Lock status */
+		bool					m_bIsLocked;
+		unsigned int			m_nLockedMipmap;
+		unsigned int			m_nLockedCubeFace;
 
 		/* Holds the number of valid dimensions for the specified texture type */
 		static	const unsigned int	ms_nDimensionCount[TT_MAX];

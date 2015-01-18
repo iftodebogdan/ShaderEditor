@@ -127,6 +127,8 @@ static ShaderProgramDX9* PProg = nullptr;
 static ShaderTemplate* VTemp = nullptr;
 static ShaderTemplate* PTemp = nullptr;
 
+#include "Utility/TextureLoader.h"
+
 void RendererDX9::CreateResources()
 {
 	// And have it read the given file with some example postprocessing
@@ -135,7 +137,6 @@ void RendererDX9::CreateResources()
 	if (scene == nullptr)
 		scene = importer.ReadFile(
 			"models/COLLADA/teapot_instancenodes.DAE",
-			//"models-nonbsd/OBJ/rifle.obj",
 			//"sponza_scene/sponza.obj",
 			aiProcess_Triangulate |
 			aiProcess_JoinIdenticalVertices |
@@ -156,79 +157,17 @@ void RendererDX9::CreateResources()
 	m_RenderData.dstRect.topLeft = Vec2i(0, 0);
 	m_RenderData.dstRect.bottomRight = Vec2i(MAXINT, MAXINT);
 
-	tex = new TextureDX9(Texture::TF_A8R8G8B8, Texture::TT_2D, 256, 256, 16, 0, Buffer::BU_TEXTURE);
-	for (unsigned int face = 0; face < (tex->GetTextureType() == Texture::TT_CUBE ? 6u : 1u); face++)
-		for (unsigned int level = 0, levelCount = tex->GetMipmapLevelCount(); level < levelCount; level++)
-		{
-			byte* pTex;
-			if (tex->GetTextureType() == Texture::TT_CUBE)
-				pTex = tex->GetMipmapLevelData(face, level);
-			else
-				pTex = tex->GetMipmapLevelData(level);
+	TextureLoader::ImageDesc desc = TextureLoader::LoadImageFile("sky-cubemap.dds", true);
+	tex = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth);
+	TextureLoader::CopyImageData(tex);
+	
+	desc = TextureLoader::LoadImageFile("sponza_ceiling_a_diff.tga", true);
+	tex2 = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth);
+	TextureLoader::CopyImageData(tex2);
 
-			for (unsigned int pixelZ = 0; pixelZ < tex->GetDepth(level); pixelZ++)
-				for (unsigned int pixelY = 0; pixelY < tex->GetHeight(level); pixelY++)
-					for (unsigned int pixelX = 0; pixelX < tex->GetWidth(level); pixelX++)
-					{
-						unsigned int pixel =
-							pixelX + pixelY * tex->GetWidth(level) +
-							pixelZ * tex->GetWidth(level) * tex->GetHeight(level);
-
-						//Color test
-						*(pTex + pixel * tex->GetPixelSize()) = (char)((float)pixelZ / (float)tex->GetDepth(level) * 255.f);
-						*(pTex + pixel * tex->GetPixelSize() + 1) = (char)((float)pixelY / (float)tex->GetHeight(level) * 255.f);
-						*(pTex + pixel * tex->GetPixelSize() + 2) = (char)((float)pixelX / (float)tex->GetWidth(level) * 255.f);
-						*(pTex + pixel * tex->GetPixelSize() + 3) = 255;
-
-						//mip test
-						//*(pTex + pixel * tex->GetPixelSize() + 3)	= 255; //alpha
-						//*(pTex + pixel * tex->GetPixelSize() + 2)	= (level % 6 == 0 || level % 6 == 3 || level % 6 == 3) * 255; //red
-						//*(pTex + pixel * tex->GetPixelSize() + 1)	= (level % 6 == 1 || level % 6 == 3 || level % 6 == 5) * 255; //green
-						//*(pTex + pixel * tex->GetPixelSize())		= (level % 6 == 2 || level % 6 == 4 || level % 6 == 5) * 255; //blue
-
-						//cubemap test
-						//*(pTex + pixel * tex->GetPixelSize())		= ((face == 0) || (face == 3) || (face == 4)) * 255;
-						//*(pTex + pixel * tex->GetPixelSize() + 1)	= ((face == 1) || (face == 3) || (face == 5)) * 255;
-						//*(pTex + pixel * tex->GetPixelSize() + 2)	= ((face == 2) || (face == 4) || (face == 5)) * 255;
-						//*(pTex + pixel * tex->GetPixelSize() + 3)	= 255;
-					}
-
-			if (tex->GetTextureType() == Texture::TT_CUBE)
-			{
-				tex->Lock(face, level, Buffer::BL_WRITE_ONLY);
-				tex->Update(face, level);
-				tex->Unlock(face, level);
-			}
-			else
-			{
-				tex->Lock(level, Buffer::BL_WRITE_ONLY);
-				tex->Update(level);
-				tex->Unlock(level);
-			}
-		}
-
-	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-	//m_pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSW, D3DTADDRESS_CLAMP);
-	//
-	//if (tex->GetTextureType() == Texture::TT_CUBE)
-	//{
-	//	m_pd3dDevice->SetRenderState(D3DRS_LOCALVIEWER, FALSE);
-	//	m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR);
-	//	m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT3);
-	//}
-	//else
-	//{
-	//	m_pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_SPHEREMAP);
-	//}
 
 	vf = new VertexFormatDX9(3);
 	vf->Initialize(
@@ -317,6 +256,7 @@ void RendererDX9::ReleaseResources()
 	delete vf;
 	delete ib;
 	delete tex;
+	delete tex2;
 	delete VProg;
 	delete PProg;
 	delete VTemp;
@@ -462,19 +402,6 @@ void RendererDX9::RenderScene()
 		float aspectRatio = (float)m_RenderData.backBufferSize[0] / (float)m_RenderData.backBufferSize[1];
 		D3DXMatrixPerspectiveFovLH(&matProj, 55 * D3DX_PI / 180, aspectRatio, 20.0f, 2000.0f);
 		
-		//if (tex->GetTextureType() == Texture::TT_CUBE)
-		//{
-		//	D3DXMATRIXA16 matInvView;
-		//	D3DXMatrixInverse(&matInvView, NULL, &matView);
-		//	matInvView._41 = 0;
-		//	matInvView._42 = 0;
-		//	matInvView._43 = 0;
-		//	matInvView._44 = 0;
-		//	m_pd3dDevice->SetTransform(D3DTS_TEXTURE0, &matInvView);
-		//}
-		
-		vb->Enable();
-
 		ShaderInput VInput(VTemp);
 		ShaderInput PInput(PTemp);
 		Matrix44f matWVP[3];
@@ -600,14 +527,16 @@ void RendererDX9::RenderScene()
 		assert(VInput.GetFloat4(handle) == f4);
 
 		PInput.GetInputHandleByName("s2D", handle);
+		PInput.SetTexture(handle, tex2);
+		PInput.GetInputHandleByName("sCube", handle);
 		PInput.SetTexture(handle, tex);
 
+		vb->Enable();
 		VTemp->Enable(VInput);
 		PTemp->Enable(PInput);
 		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
 		PTemp->Disable();
 		VTemp->Disable();
-
 		vb->Disable();
 
 		// End the scene

@@ -28,8 +28,6 @@ float2 f2;
 float3 f3;
 float4 f4;
 
-sampler2D s2D;
-
 VOut vsmain(float4 position : POSITION, float2 texcoord : TEXCOORD) //float4 color : COLOR
 {
     VOut output;
@@ -95,8 +93,10 @@ VOut vsmain(float4 position : POSITION, float2 texcoord : TEXCOORD) //float4 col
     return output;
 }
 
+sampler2D s2D;
+samplerCUBE sCube;
 
 float4 psmain(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET //uniform float4x4 modelViewProjection
 {
-    return tex2D(s2D, texcoord);
+    return texCUBE(sCube, float3(texcoord, 1.f)) * tex2D(s2D, texcoord);
 }
