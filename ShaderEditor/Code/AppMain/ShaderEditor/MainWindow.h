@@ -1,10 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "Menu.h"
 #include <gtkmm/window.h>
 #include <gtkmm/paned.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/drawingarea.h>
+#include <gtkmm/notebook.h>
 
 class MainWindow : public Gtk::Window
 {
@@ -18,7 +20,7 @@ protected:
 	// Called every frame
 	bool OnUpdate();
 
-	//Child widgets:
+	// Child widgets:
 	Gtk::VPaned			m_VPaned;
 	Gtk::HPaned			m_HPanedTop;
 	Gtk::HPaned			m_HPanedBottom;
@@ -27,6 +29,10 @@ protected:
 	Gtk::Frame			m_PreviewFrame;
 	Gtk::DrawingArea	m_PreviewDrawingArea;
 	Gtk::Frame			m_OutputFrame;
+
+	// Components
+	MenuWidget*			m_MenuWidget;
+	Gtk::Notebook		m_Notebook;
 };
 
 #endif

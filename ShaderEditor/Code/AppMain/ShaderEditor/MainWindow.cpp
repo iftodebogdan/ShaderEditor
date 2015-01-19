@@ -1,13 +1,13 @@
 #include "stdafx.h"
 
-#include "MainWindow.h"
 #include "Menu.h"
+#include "MainWindow.h"
 #include "Renderer.h"
 #include <gdk/gdkwin32.h>
 
 using namespace LibRendererDll;
 
-MainWindow::MainWindow()
+MainWindow::MainWindow() : m_Notebook()
 {
 	// Set window properties
 	set_title("ShdEd");
@@ -17,16 +17,23 @@ MainWindow::MainWindow()
 	// Menu items list. Defined for example purposes.
 	std::map<int, std::map<std::string, std::string>> items;
 	items[0]["name"] = "New";
+	items[0]["file"] = "New";
 	items[1]["name"] = "Quit";
+	items[1]["file"] = "New";
 	items[2]["name"] = "Shader";
+	items[2]["file"] = "New";
 	items[3]["name"] = "Set";
+	items[3]["file"] = "New";
 
 	// Build the workspace frame menu.
-	MenuWidget* mw = new MenuWidget(this, &m_WorkspaceFrame, items);
+	m_MenuWidget = new MenuWidget(this, &m_WorkspaceFrame, items, &m_Notebook);
+
+	// Add the notebook to the editor frame.
+	m_EditorFrame.add(m_Notebook);
 
 	// Add the pane widget to our toplevel window
 	add(m_VPaned);
-	
+
 	// Add the contents of the vertical pane
 	m_VPaned.pack1(m_HPanedTop , true, true);
 	m_VPaned.pack2(m_HPanedBottom , false, false);
