@@ -75,36 +75,20 @@ void MainWindow::OnCreate()
 {
 	Glib::signal_idle().connect(sigc::mem_fun(this, &MainWindow::OnUpdate));
 
-	Renderer::CreateInstance(Renderer::API_DX9);
+	Renderer::CreateInstance(API_DX9);
 	HGDIOBJ handle = GDK_WINDOW_HWND(get_window()->gobj());
 	
-	Renderer::GetInstance()->Initialize(
-		(void*)handle,
-		m_PreviewDrawingArea.get_allocation().get_width(),
-		m_PreviewDrawingArea.get_allocation().get_height()
-	);
+	Renderer *renderer = Renderer::GetInstance();
+	renderer->Initialize((void*)handle);
 }
 
 bool MainWindow::OnUpdate()
 {
 	Renderer *renderer = Renderer::GetInstance();
-	RenderData renderData = renderer->GetRenderData();
-
-	renderData.backBufferSize = Vec2i(
-		m_PreviewDrawingArea.get_allocation().get_width(),
-		m_PreviewDrawingArea.get_allocation().get_height()
-	);
-	renderData.dstRect.topLeft = Vec2i(
-		m_PreviewDrawingArea.get_allocation().get_x(),
-		m_PreviewDrawingArea.get_allocation().get_y()
-	);
-	renderData.dstRect.bottomRight = renderData.dstRect.topLeft +
-		Vec2i(
-			m_PreviewDrawingArea.get_allocation().get_width(),
-			m_PreviewDrawingArea.get_allocation().get_height()
+	renderer->SetViewport(
+		Vec2i(m_PreviewDrawingArea.get_allocation().get_width() + 1, m_PreviewDrawingArea.get_allocation().get_height() + 1),
+		Vec2i(m_PreviewDrawingArea.get_allocation().get_x() - 1, m_PreviewDrawingArea.get_allocation().get_y() - 1)
 		);
-	renderer->SetRenderData(renderData);
 	renderer->RenderScene();
-
 	return true;
 }

@@ -22,7 +22,6 @@
 #include <gmtl\gmtl.h>
 using namespace gmtl;
 
-#include "RenderData.h"
 #include "Buffer.h"
 
 namespace LibRendererDll
@@ -31,68 +30,6 @@ namespace LibRendererDll
 	class Texture : public Buffer
 	{
 	public:
-		// Specifies the format of the texture
-		enum TexFormat
-		{
-			TF_NONE,
-
-			// Small-bit color formats
-			TF_R5G6B5,
-			TF_A1R5G5B5,
-			TF_A4R4G4B4,
-
-			// 8-bit integer formats
-			TF_A8,
-			TF_L8,
-			TF_A8L8,
-			TF_R8G8B8,		// can be saved into file
-			TF_A8R8G8B8,	// can be saved into file
-			TF_A8B8G8R8,
-
-			// 16-bit integer formats
-			TF_L16,
-			TF_G16R16,
-			TF_A16B16G16R16,
-
-			// 16-bit floating-point formats ('half float' channels)
-			TF_R16F,
-			TF_G16R16F,
-			TF_A16B16G16R16F,
-
-			// 32-bit floating-point formats ('float' channels)
-			TF_R32F,
-			TF_G32R32F,
-			TF_A32B32G32R32F,
-
-			// DXT compressed formats
-			TF_DXT1,	// can be saved into file
-			TF_DXT3,	// can be saved into file
-			TF_DXT5,	// can be saved into file
-
-			// Depth-stencil format
-			TF_D24S8,
-
-			TF_MAX		// DO NOT USE! INTERNAL USAGE ONLY!
-		};
-
-		// Specifies the type of the texture
-		enum TexType
-		{
-			TT_1D,		// One-dimensional texture
-			TT_2D,		// Two-dimensional texture
-			TT_3D,		// Three-dimensional texture
-			TT_CUBE,	// Cubic environment maps
-
-			TT_MAX		// DO NOT USE! INTERNAL USAGE ONLY!
-		};
-
-		enum
-		{
-			// This is the maximum number of mipmap levels for a texture.
-			// A 32768x32768 texture has a maximum of 16 levels.
-			TEX_MAX_MIPMAP_LEVELS = 16
-		};
-
 		virtual							~Texture();
 
 #if __cplusplus >= 201103L // Check if the compiler supports C++11 standard
@@ -104,10 +41,19 @@ namespace LibRendererDll
 		const	unsigned int			GetSize() const = delete;
 		// Replaced by GetMipmapLevelData()
 				byte*					GetData() const = delete;
+#else
+		// Replaced by GetMipmapLevelDimensions()
+		const	unsigned int			GetElementCount() const { assert(false); return 0; }
+		// Replaced by GetPixelSize()
+		const	unsigned int			GetElementSize() const { assert(false); return 0; }
+		// Replaced by GetMipmapLevelByteCount()
+		const	unsigned int			GetSize() const { assert(false); return 0; }
+		// Replaced by GetMipmapLevelData()
+				byte*					GetData() const { assert(false); return nullptr; }
 #endif // __cplusplus >= 201103L
 
 		// Get the format of the texture
-		const	TexFormat				GetTextureFormat() const { return m_eTexFormat; }
+		const	PixelFormat				GetTextureFormat() const { return m_eTexFormat; }
 		// Get the type of texture
 		const	TexType					GetTextureType() const { return m_eTexType; }
 		// Get the number of mip levels
@@ -131,7 +77,7 @@ namespace LibRendererDll
 		/* Get the pixel size in bytes */
 		const	unsigned int			GetPixelSize() const { return Buffer::GetElementSize(); }
 		/* Returns true if the format of the texture is a compressed format */
-		const	bool					IsCompressed() const { return m_eTexFormat == TF_DXT1 || m_eTexFormat == TF_DXT3 || m_eTexFormat == TF_DXT5; }
+		const	bool					IsCompressed() const { return m_eTexFormat == PF_DXT1 || m_eTexFormat == PF_DXT3 || m_eTexFormat == PF_DXT5; }
 		/* Returns true if the format of the texture allows it to be mipmapable */
 		const	bool					IsMipmapable() const { return ms_bIsMipmapable[m_eTexFormat]; }
 		/* Get a pointer to the start of the specified mip level in the memory buffer in which the texture is stored */
@@ -140,39 +86,41 @@ namespace LibRendererDll
 				byte*					GetMipmapLevelData(const unsigned int cubeFace, const unsigned int mipmapLevel) const { assert(cubeFace >= 0 && cubeFace < 6); return m_pData + cubeFace * GetCubeFaceOffset() + GetMipmapLevelOffset(mipmapLevel); }
 
 		// Enable the texture on the specified slot
-		virtual void	Enable(const unsigned int texUnit) = 0;
+		virtual void			Enable(const unsigned int texUnit) const = 0;
 		// Disable the texture from the specified slot
-		virtual void	Disable(const unsigned int texUnit) = 0;
+		virtual void			Disable(const unsigned int texUnit) const = 0;
 		// Lock the specified mipmap level for reading/writing
-		virtual void	Lock(const unsigned int mipmapLevel, const BufferLocking lockMode) = 0;
+		virtual const	bool	Lock(const unsigned int mipmapLevel, const BufferLocking lockMode) { assert(!m_bIsLocked); m_bIsLocked = true; m_nLockedMipmap = mipmapLevel; m_nLockedCubeFace = 0; return true; }
 		// Lock the specified mipmap level of the specified cube face for reading/writing (cubemaps only!)
-		virtual void	Lock(const unsigned int cubeFace, const unsigned int mipmapLevel, const BufferLocking lockMode) = 0;
-		// Unlock the specified mipmap level
-		virtual void	Unlock(const unsigned int mipmapLevel) = 0;
-		// Unlock the specified mipmap level of the specified cube face (cubemaps only!)
-		virtual void	Unlock(const unsigned int cubeFace, const unsigned int mipmapLevel) = 0;
-		// Update the specified mipmap level with the changes made
-		virtual void	Update(const unsigned int mipmapLevel) = 0;
-		// Update the specified mipmap level of the specified cube face with the changes made (cubemaps only!)
-		virtual void	Update(const unsigned int cubeFace, const unsigned int mipmapLevel) = 0;
+		virtual const	bool	Lock(const unsigned int cubeFace, const unsigned int mipmapLevel, const BufferLocking lockMode) { assert(!m_bIsLocked); m_bIsLocked = true; m_nLockedMipmap = mipmapLevel; m_nLockedCubeFace = cubeFace; return true; }
+		// Unlock the texture
+		virtual void			Unlock() { assert(m_bIsLocked); m_bIsLocked = false; m_nLockedMipmap = -1; m_nLockedCubeFace = -1; }
+		// Update the locked mipmap level (of the locked face, if cube texture) with the changes made
+		virtual void			Update() = 0;
+		// Get lock status
+		const	bool			IsLocked() const { return m_bIsLocked; }
+		const	unsigned int	GetLockedMipmap() const { assert(m_bIsLocked); return m_nLockedMipmap; }
+		const	unsigned int	GetLockedCubeFace() const { assert(m_bIsLocked); return m_nLockedCubeFace; }
+
+				void			GenerateMipmaps();
 
 		/* Get the number of dimensions a texture of the specified type has */
 		static	const	unsigned int	GetDimensionCount(const TexType texType) { return ms_nDimensionCount[texType]; }
 		/* Returns true if the specified texture format is mipmapable */
-		static	const	bool			IsMipmapable(const TexFormat texFormat) { return ms_bIsMipmapable[texFormat]; }
+		static	const	bool			IsMipmapable(const PixelFormat texFormat) { return ms_bIsMipmapable[texFormat]; }
 		/* Get the size in bytes of a pixel from a texture of the specified format */
-		static	const	unsigned int	GetPixelSize(const TexFormat texFormat) { return ms_nPixelSize[texFormat]; }
+		static	const	unsigned int	GetPixelSize(const PixelFormat texFormat) { return ms_nPixelSize[texFormat]; }
 
 	protected:
 		Texture(
-			const TexFormat texFormat, const TexType texType,
+			const PixelFormat texFormat, const TexType texType,
 			const unsigned int sizeX, const unsigned int sizeY = 1, const unsigned int sizeZ = 1,
 			const unsigned int mipmapLevelCount = 0, const BufferUsage usage = BU_TEXTURE);
 
 		// Computes the properties of the texture and its mipmaps
 		void			ComputeMipmapProperties();
 
-		TexFormat		m_eTexFormat;			// Holds the format of the texture
+		PixelFormat		m_eTexFormat;			// Holds the format of the texture
 		TexType			m_eTexType;				// Holds the type of texture
 		unsigned int	m_nMipmapLevelCount;	// Holds the number of mips
 
@@ -184,13 +132,17 @@ namespace LibRendererDll
 		unsigned int			m_nMipmapLevelByteCount[TEX_MAX_MIPMAP_LEVELS];
 		/* Holds the offsets in bytes from the beginning of the texture and to the start */
 		unsigned int			m_nMipmapLevelOffset[TEX_MAX_MIPMAP_LEVELS];
+		/* Lock status */
+		bool					m_bIsLocked;
+		unsigned int			m_nLockedMipmap;
+		unsigned int			m_nLockedCubeFace;
 
 		/* Holds the number of valid dimensions for the specified texture type */
 		static	const unsigned int	ms_nDimensionCount[TT_MAX];
 		/* Holds the size in bytes of a pixel for the specified texture format */
-		static	const unsigned int	ms_nPixelSize[TF_MAX];
+		static	const unsigned int	ms_nPixelSize[PF_MAX];
 		/* Holds whether the specified texture format is mipmapable */
-		static	const bool			ms_bIsMipmapable[TF_MAX];
+		static	const bool			ms_bIsMipmapable[PF_MAX];
 	};
 }
 

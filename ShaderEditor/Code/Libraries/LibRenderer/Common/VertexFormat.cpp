@@ -23,7 +23,7 @@
 using namespace LibRendererDll;
 
 //This holds the size if bytes for each vertex attribute type
-const unsigned int VertexFormat::VertexAttributeTypeSize[VertexFormat::VAT_MAX] =
+const unsigned int VertexFormat::VertexAttributeTypeSize[VAT_MAX] =
 {
 	0,  // AT_NONE
 	4,  // AT_FLOAT1
@@ -45,10 +45,10 @@ VertexFormat::VertexFormat(const unsigned int attributeCount)
 
 	for (unsigned int i = 0; i < m_nAttributeCount; i++)
 	{
-		m_pElements[i].Offset = 0;
-		m_pElements[i].Type	= VAT_NONE;
-		m_pElements[i].Usage = VAU_NONE;
-		m_pElements[i].UsageIdx = 0;
+		m_pElements[i].nOffset = 0;
+		m_pElements[i].eType	= VAT_NONE;
+		m_pElements[i].eUsage = VAU_NONE;
+		m_pElements[i].nUsageIdx = 0;
 	}
 }
 
@@ -80,25 +80,25 @@ VertexFormat::~VertexFormat()
 }
 			 
 void VertexFormat::SetAttribute(const unsigned int attrIdx, const unsigned int offset,
-	VertexFormat::VertexAttributeUsage usage, VertexFormat::VertexAttributeType type, unsigned int usageIdx)
+	VertexAttributeUsage usage, VertexAttributeType type, unsigned int usageIdx)
 {
 	assert(attrIdx < m_nAttributeCount);
 
 #ifdef _DEBUG
 	if (attrIdx > 0)
-		assert(offset > m_pElements[attrIdx - 1].Offset);
+		assert(offset > m_pElements[attrIdx - 1].nOffset);
 #endif //_DEBUG
 
-	m_pElements[attrIdx].Offset = offset;
-	m_pElements[attrIdx].Type = type;
-	m_pElements[attrIdx].Usage = usage;
-	m_pElements[attrIdx].UsageIdx = usageIdx;
+	m_pElements[attrIdx].nOffset = offset;
+	m_pElements[attrIdx].eType = type;
+	m_pElements[attrIdx].eUsage = usage;
+	m_pElements[attrIdx].nUsageIdx = usageIdx;
 }
 
 const unsigned int VertexFormat::CalculateStride() const
 {
 	unsigned int stride = 0;
 	for (unsigned int i = 0; i < m_nAttributeCount; i++)
-		stride += VertexAttributeTypeSize[m_pElements[i].Type];
+		stride += VertexAttributeTypeSize[m_pElements[i].eType];
 	return stride;
 }

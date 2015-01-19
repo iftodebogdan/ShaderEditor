@@ -15,4 +15,7 @@
 
 // TODO: reference additional headers your program requires here
 
+// Warning C4099: 'Gtk::PaperSizeTraits' : type name first seen using 'class' now seen using 'struct'
+#pragma warning( disable : 4099 )
+
 #endif //STD_AFX_H

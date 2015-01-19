@@ -22,7 +22,7 @@ inline T& VertexBuffer::Position(const unsigned int vertexIdx) const
 	unsigned int positionOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_POSITION)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_POSITION)
 		{
 			positionOffset = m_pVertexFormat->GetOffset(i);
 			break;
@@ -34,7 +34,7 @@ inline T& VertexBuffer::Position(const unsigned int vertexIdx) const
 inline const bool VertexBuffer::HasPosition() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_POSITION)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_POSITION)
 			return true;
 
 	return false;
@@ -46,7 +46,7 @@ inline T& VertexBuffer::Normal(const unsigned int vertexIdx) const
 	unsigned int normalOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_NORMAL)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_NORMAL)
 		{
 			normalOffset = m_pVertexFormat->GetOffset(i);
 			break;
@@ -58,7 +58,7 @@ inline T& VertexBuffer::Normal(const unsigned int vertexIdx) const
 inline const bool VertexBuffer::HasNormal() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_NORMAL)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_NORMAL)
 			return true;
 
 	return false;
@@ -70,7 +70,7 @@ inline T& VertexBuffer::Tangent(const unsigned int vertexIdx) const
 	unsigned int tangentOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_TANGENT)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_TANGENT)
 		{
 			tangentOffset = m_pVertexFormat->GetOffset(i);
 			break;
@@ -82,7 +82,7 @@ inline T& VertexBuffer::Tangent(const unsigned int vertexIdx) const
 inline const bool VertexBuffer::HasTangent() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_TANGENT)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_TANGENT)
 			return true;
 
 	return false;
@@ -94,7 +94,7 @@ inline T& VertexBuffer::Binormal(const unsigned int vertexIdx) const
 	unsigned int binormalOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BINORMAL)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_BINORMAL)
 		{
 			binormalOffset = m_pVertexFormat->GetOffset(i);
 			break;
@@ -106,7 +106,7 @@ inline T& VertexBuffer::Binormal(const unsigned int vertexIdx) const
 inline const bool VertexBuffer::HasBinormal() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BINORMAL)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_BINORMAL)
 			return true;
 
 	return false;
@@ -118,7 +118,7 @@ inline T& VertexBuffer::TexCoord(const unsigned int vertexIdx, const unsigned in
 	unsigned int tcoordOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_TEXCOORD
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_TEXCOORD
 			&& m_pVertexFormat->GetUsageIndex(i) == usageIdx)
 		{
 			tcoordOffset = m_pVertexFormat->GetOffset(i);
@@ -131,7 +131,7 @@ inline T& VertexBuffer::TexCoord(const unsigned int vertexIdx, const unsigned in
 inline const bool VertexBuffer::HasTexCoord(const unsigned int usageIdx) const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_TEXCOORD
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_TEXCOORD
 			&& m_pVertexFormat->GetUsageIndex(i) == usageIdx)
 			return true;
 
@@ -144,7 +144,7 @@ inline T& VertexBuffer::Color(const unsigned int vertexIdx, const unsigned int u
 	unsigned int colorOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_COLOR
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_COLOR
 			&& m_pVertexFormat->GetUsageIndex(i) == usageIdx)
 		{
 			colorOffset = m_pVertexFormat->GetOffset(i);
@@ -157,7 +157,7 @@ inline T& VertexBuffer::Color(const unsigned int vertexIdx, const unsigned int u
 inline const bool VertexBuffer::HasColor(const unsigned int usageIdx) const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_COLOR
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_COLOR
 			&& m_pVertexFormat->GetUsageIndex(i) == usageIdx)
 			return true;
 
@@ -170,7 +170,7 @@ inline T& VertexBuffer::BlendIndices(const unsigned int vertexIdx) const
 	unsigned int blendIndOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BLENDINDICES)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_BLENDINDICES)
 		{
 			blendIndOffset = m_pVertexFormat->GetOffset(i);
 			break;
@@ -182,7 +182,7 @@ inline T& VertexBuffer::BlendIndices(const unsigned int vertexIdx) const
 inline const bool VertexBuffer::HasBlendIndices() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BLENDINDICES)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_BLENDINDICES)
 			return true;
 
 	return false;
@@ -194,7 +194,7 @@ inline T& VertexBuffer::BlendWeight(const unsigned int vertexIdx) const
 	unsigned int blendWeightOffset = 0;
 
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BLENDWEIGHT)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_BLENDWEIGHT)
 		{
 			blendWeightOffset = m_pVertexFormat->GetOffset(i);
 			break;
@@ -206,7 +206,7 @@ inline T& VertexBuffer::BlendWeight(const unsigned int vertexIdx) const
 inline const bool VertexBuffer::HasBlendWeight() const
 {
 	for (int i = 0, n = m_pVertexFormat->GetAttributeCount(); i < n; i++)
-		if (m_pVertexFormat->GetAttributeUsage(i) == VertexFormat::VAU_BLENDWEIGHT)
+		if (m_pVertexFormat->GetAttributeUsage(i) == VAU_BLENDWEIGHT)
 			return true;
 
 	return false;

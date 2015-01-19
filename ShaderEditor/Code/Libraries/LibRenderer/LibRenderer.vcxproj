@@ -27,24 +27,24 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -97,16 +97,18 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\vld\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;dxerr.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;ILU.lib;assimp.lib;d3d9.lib;d3dx9.lib;dxerr.lib;vld.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\DevIL\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);$(ProjectDir)SDK\vld\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)SDK\vld\bin\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
       <Message>Copy DLL dependencies</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -117,16 +119,18 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\vld\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;dxerr.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;ILU.lib;assimp.lib;d3d9.lib;d3dx9.lib;dxerr.lib;vld.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\DevIL\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);$(ProjectDir)SDK\vld\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)SDK\vld\bin\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy DLL dependencies</Message>
@@ -141,18 +145,19 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;ILU.lib;assimp.lib;d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\DevIL\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
       <Message>Copy DLL dependencies</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -165,18 +170,19 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;ILU.lib;assimp.lib;d3d9.lib;d3dx9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDK\DX9\lib\$(PlatformTarget);$(ProjectDir)SDK\DevIL\lib\$(PlatformTarget);$(ProjectDir)SDK\assimp\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\lib\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /y /d "$(ProjectDir)SDK\assimp\bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy DLL dependencies</Message>
@@ -186,15 +192,23 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\RenderData.h" />
+    <ClInclude Include="Common\SamplerState.h" />
+    <ClInclude Include="Common\ShaderInput.h" />
+    <ClInclude Include="Common\ShaderProgram.h" />
+    <ClInclude Include="Common\ShaderTemplate.h" />
     <ClInclude Include="Common\Texture.h" />
     <ClInclude Include="DX9\MappingsDX9.h" />
+    <ClInclude Include="DX9\RenderStateDX9.h" />
+    <ClInclude Include="DX9\SamplerStateDX9.h" />
+    <ClInclude Include="DX9\ShaderProgramDX9.h" />
     <ClInclude Include="DX9\TextureDX9.h" />
     <ClInclude Include="DX9\VertexFormatDX9.h" />
     <ClInclude Include="Common\Buffer.h" />
     <ClInclude Include="DX9\RendererDX9.h" />
     <ClInclude Include="Common\IndexBuffer.h" />
     <ClInclude Include="DX9\IndexBufferDX9.h" />
-    <ClInclude Include="Common\RenderData.h" />
+    <ClInclude Include="Common\RenderState.h" />
     <ClInclude Include="Common\Renderer.h" />
     <ClInclude Include="SDK\assimp\include\ai_assert.h" />
     <ClInclude Include="SDK\assimp\include\anim.h" />
@@ -232,7 +246,18 @@
     <ClInclude Include="SDK\assimp\include\vector2.h" />
     <ClInclude Include="SDK\assimp\include\vector3.h" />
     <ClInclude Include="SDK\assimp\include\version.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\config.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\devil_cpp_wrapper.hpp" />
+    <ClInclude Include="SDK\DevIL\include\IL\devil_internal_exports.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\il.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilu.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilut.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilut_config.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\ilu_region.h" />
+    <ClInclude Include="SDK\DevIL\include\IL\il_wrap.h" />
     <ClInclude Include="SDK\DX9\Include\d3d9.h" />
+    <ClInclude Include="SDK\DX9\include\d3d9caps.h" />
+    <ClInclude Include="SDK\DX9\include\d3d9types.h" />
     <ClInclude Include="SDK\DX9\Include\d3dx9.h" />
     <ClInclude Include="SDK\DX9\Include\d3dx9anim.h" />
     <ClInclude Include="SDK\DX9\Include\d3dx9core.h" />
@@ -295,13 +320,24 @@
     <ClInclude Include="SDK\gmtl\VecOpsMeta.h" />
     <ClInclude Include="SDK\gmtl\Version.h" />
     <ClInclude Include="SDK\gmtl\Xforms.h" />
+    <ClInclude Include="SDK\vld\include\vld.h" />
+    <ClInclude Include="SDK\vld\include\vld_def.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Common\VertexBuffer.h" />
     <ClInclude Include="DX9\VertexBufferDX9.h" />
+    <ClInclude Include="Utility\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\RenderState.cpp" />
+    <ClCompile Include="Common\SamplerState.cpp" />
+    <ClCompile Include="Common\ShaderInput.cpp" />
+    <ClCompile Include="Common\ShaderProgram.cpp" />
+    <ClCompile Include="Common\ShaderTemplate.cpp" />
     <ClCompile Include="Common\Texture.cpp" />
     <ClCompile Include="DX9\MappingsDX9.cpp" />
+    <ClCompile Include="DX9\RenderStateDX9.cpp" />
+    <ClCompile Include="DX9\SamplerStateDX9.cpp" />
+    <ClCompile Include="DX9\ShaderProgramDX9.cpp" />
     <ClCompile Include="DX9\TextureDX9.cpp" />
     <ClCompile Include="DX9\VertexFormatDX9.cpp" />
     <ClCompile Include="Common\Buffer.cpp" />
@@ -332,9 +368,13 @@
     </ClCompile>
     <ClCompile Include="Common\VertexBuffer.cpp" />
     <ClCompile Include="DX9\VertexBufferDX9.cpp" />
+    <ClCompile Include="Utility\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Common\ShaderInput.inl" />
     <None Include="LibRenderer.licenseheader" />
+    <None Include="SDK\assimp\bin\x64\assimp.dll" />
+    <None Include="SDK\assimp\bin\x86\assimp.dll" />
     <None Include="SDK\assimp\include\color4.inl" />
     <None Include="SDK\assimp\include\material.inl" />
     <None Include="SDK\assimp\include\matrix3x3.inl" />
@@ -344,18 +384,55 @@
     <None Include="SDK\assimp\include\vector3.inl" />
     <None Include="SDK\assimp\lib\x64\assimp.dll" />
     <None Include="SDK\assimp\lib\x86\assimp.dll" />
+    <None Include="SDK\DevIL\bin\x64\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x64\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x64\ILUT.dll" />
+    <None Include="SDK\DevIL\bin\x64\Unicode\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x64\Unicode\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x64\Unicode\ILUT.dll" />
+    <None Include="SDK\DevIL\bin\x86\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x86\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x86\ILUT.dll" />
+    <None Include="SDK\DevIL\bin\x86\Unicode\DevIL.dll" />
+    <None Include="SDK\DevIL\bin\x86\Unicode\ILU.dll" />
+    <None Include="SDK\DevIL\bin\x86\Unicode\ILUT.dll" />
+    <None Include="SDK\DevIL\include\IL\config.h.win" />
     <None Include="SDK\DX9\Include\d3dx9math.inl" />
     <None Include="Common\VertexBuffer.inl" />
+    <None Include="SDK\vld\bin\x64\dbghelp.dll" />
+    <None Include="SDK\vld\bin\x64\vld_x64.dll" />
+    <None Include="SDK\vld\bin\x86\dbghelp.dll" />
+    <None Include="SDK\vld\bin\x86\vld_x86.dll" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDK\assimp\lib\x64\assimp.lib" />
     <Library Include="SDK\assimp\lib\x86\assimp.lib" />
+    <Library Include="SDK\DevIL\lib\x64\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x64\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x64\ILUT.lib" />
+    <Library Include="SDK\DevIL\lib\x64\Unicode\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x64\Unicode\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x64\Unicode\ILUT.lib" />
+    <Library Include="SDK\DevIL\lib\x86\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x86\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x86\ILUT.lib" />
+    <Library Include="SDK\DevIL\lib\x86\Unicode\DevIL.lib" />
+    <Library Include="SDK\DevIL\lib\x86\Unicode\ILU.lib" />
+    <Library Include="SDK\DevIL\lib\x86\Unicode\ILUT.lib" />
     <Library Include="SDK\DX9\Lib\x64\d3d9.lib" />
     <Library Include="SDK\DX9\Lib\x64\d3dx9.lib" />
+    <Library Include="SDK\DX9\lib\x64\d3dx9d.lib" />
     <Library Include="SDK\DX9\Lib\x64\DxErr.lib" />
     <Library Include="SDK\DX9\Lib\x86\d3d9.lib" />
     <Library Include="SDK\DX9\Lib\x86\d3dx9.lib" />
+    <Library Include="SDK\DX9\lib\x86\d3dx9d.lib" />
     <Library Include="SDK\DX9\Lib\x86\DxErr.lib" />
+    <Library Include="SDK\vld\lib\x64\vld.lib" />
+    <Library Include="SDK\vld\lib\x86\vld.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SDK\vld\bin\x64\Microsoft.DTfW.DHL.manifest" />
+    <None Include="SDK\vld\bin\x86\Microsoft.DTfW.DHL.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

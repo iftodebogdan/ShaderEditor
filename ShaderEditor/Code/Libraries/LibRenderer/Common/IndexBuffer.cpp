@@ -18,11 +18,10 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include "RenderData.h"
 #include "IndexBuffer.h"
 using namespace LibRendererDll;
 
-const unsigned int IndexBuffer::IndexBufferFormatSize[IndexBuffer::IBF_MAX] =
+const unsigned int IndexBuffer::IndexBufferFormatSize[IBF_MAX] =
 {
 	2,  // IBF_INDEX16
 	4,  // IBF_INDEX32
