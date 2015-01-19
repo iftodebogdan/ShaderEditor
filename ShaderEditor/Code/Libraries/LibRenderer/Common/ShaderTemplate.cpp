@@ -42,7 +42,7 @@ void ShaderTemplate::DescribeShaderInputs()
 	unsigned int offset = 0;
 	for (unsigned int i = 0; i < paramCount; i++)
 	{
-		InputDesc inputDesc;
+		ShaderInputDesc inputDesc;
 		inputDesc.szName = m_pProgram->GetConstantName(i);
 		inputDesc.eInputType = m_pProgram->GetConstantType(i);
 		inputDesc.eRegisterType = m_pProgram->GetConstantRegisterType(i);

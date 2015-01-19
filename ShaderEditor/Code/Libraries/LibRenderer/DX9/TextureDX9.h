@@ -28,7 +28,7 @@ namespace LibRendererDll
 	{
 	public:
 		TextureDX9(
-			const TexFormat texFormat, const TexType texType,
+			const PixelFormat texFormat, const TexType texType,
 			const unsigned int sizeX, const unsigned int sizeY = 1, const unsigned int sizeZ = 1,
 			const unsigned int mipmapLevelCount = 0, const BufferUsage usage = BU_TEXTURE);
 		~TextureDX9();

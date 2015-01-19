@@ -23,15 +23,29 @@
 #include "stdafx.h"
 
 #include "Renderer.h"
+#include "RenderState.h"
+#include "SamplerState.h"
 #include "RendererDX9.h"
 
 using namespace LibRendererDll;
 
 Renderer* Renderer::m_pInstance = nullptr;
-Renderer::API Renderer::m_eAPI = API_NULL;
+API Renderer::m_eAPI = API_NULL;
+
+Renderer::Renderer()
+	: m_vViewportSize(800, 600)
+	, m_vViewportOffset(0, 0)
+	, m_pRenderState(nullptr)
+	, m_pSamplerState(nullptr)
+{}
 
 Renderer::~Renderer()
 {
+	if (m_pRenderState)
+		delete m_pRenderState;
+
+	if (m_pSamplerState)
+		delete m_pSamplerState;
 }
 
 void Renderer::CreateInstance(API eApi)

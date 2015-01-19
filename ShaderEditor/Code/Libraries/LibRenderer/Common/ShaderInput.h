@@ -24,6 +24,7 @@ using namespace gmtl;
 
 #include "Buffer.h"
 #include "ShaderTemplate.h"
+#include "RenderData.h"
 
 namespace LibRendererDll
 {
@@ -104,7 +105,7 @@ namespace LibRendererDll
 
 		const unsigned int GetInputCount() const { return (unsigned int)m_pShaderTemplate->m_arrInputDesc.size(); }
 		const bool GetInputHandleByName(const char* const inputName, unsigned int& inputHandle) const;
-		const ShaderTemplate::InputDesc GetInputDesc(const unsigned int handle) const { return m_pShaderTemplate->m_arrInputDesc[handle]; }
+		const ShaderInputDesc GetInputDesc(const unsigned int handle) const { return m_pShaderTemplate->m_arrInputDesc[handle]; }
 
 	protected:
 		ShaderTemplate* m_pShaderTemplate;

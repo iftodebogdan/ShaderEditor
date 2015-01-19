@@ -21,7 +21,7 @@
 #include "Buffer.h"
 using namespace LibRendererDll;
 
-Buffer::Buffer(const unsigned int elementCount, const unsigned int elementSize, const Buffer::BufferUsage usage)
+Buffer::Buffer(const unsigned int elementCount, const unsigned int elementSize, const BufferUsage usage)
 	: m_nElementCount(elementCount)
 	, m_nElementSize(elementSize)
 	, m_eBufferUsage(usage)

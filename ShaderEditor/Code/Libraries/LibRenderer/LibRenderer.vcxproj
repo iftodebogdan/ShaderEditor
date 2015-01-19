@@ -192,11 +192,15 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\RenderData.h" />
+    <ClInclude Include="Common\SamplerState.h" />
     <ClInclude Include="Common\ShaderInput.h" />
     <ClInclude Include="Common\ShaderProgram.h" />
     <ClInclude Include="Common\ShaderTemplate.h" />
     <ClInclude Include="Common\Texture.h" />
     <ClInclude Include="DX9\MappingsDX9.h" />
+    <ClInclude Include="DX9\RenderStateDX9.h" />
+    <ClInclude Include="DX9\SamplerStateDX9.h" />
     <ClInclude Include="DX9\ShaderProgramDX9.h" />
     <ClInclude Include="DX9\TextureDX9.h" />
     <ClInclude Include="DX9\VertexFormatDX9.h" />
@@ -204,7 +208,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
     <ClInclude Include="DX9\RendererDX9.h" />
     <ClInclude Include="Common\IndexBuffer.h" />
     <ClInclude Include="DX9\IndexBufferDX9.h" />
-    <ClInclude Include="Common\RenderData.h" />
+    <ClInclude Include="Common\RenderState.h" />
     <ClInclude Include="Common\Renderer.h" />
     <ClInclude Include="SDK\assimp\include\ai_assert.h" />
     <ClInclude Include="SDK\assimp\include\anim.h" />
@@ -324,11 +328,15 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
     <ClInclude Include="Utility\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\RenderState.cpp" />
+    <ClCompile Include="Common\SamplerState.cpp" />
     <ClCompile Include="Common\ShaderInput.cpp" />
     <ClCompile Include="Common\ShaderProgram.cpp" />
     <ClCompile Include="Common\ShaderTemplate.cpp" />
     <ClCompile Include="Common\Texture.cpp" />
     <ClCompile Include="DX9\MappingsDX9.cpp" />
+    <ClCompile Include="DX9\RenderStateDX9.cpp" />
+    <ClCompile Include="DX9\SamplerStateDX9.cpp" />
     <ClCompile Include="DX9\ShaderProgramDX9.cpp" />
     <ClCompile Include="DX9\TextureDX9.cpp" />
     <ClCompile Include="DX9\VertexFormatDX9.cpp" />

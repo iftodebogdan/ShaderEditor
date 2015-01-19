@@ -24,7 +24,7 @@
 using namespace LibRendererDll;
 
 TextureDX9::TextureDX9(
-	const TexFormat texFormat, const TexType texType,
+	const PixelFormat texFormat, const TexType texType,
 	const unsigned int sizeX, const unsigned int sizeY, const unsigned int sizeZ,
 	const unsigned int mipmapLevelCount, const BufferUsage usage)
 	: Texture(texFormat, texType, sizeX, sizeY, sizeZ, mipmapLevelCount, usage)
@@ -76,7 +76,9 @@ TextureDX9::TextureDX9(
 
 TextureDX9::~TextureDX9()
 {
-	m_pTexture->Release();
+	unsigned int refCount = 0;
+	refCount = m_pTexture->Release();
+	assert(refCount == 0);
 }
 
 void TextureDX9::Enable(const unsigned int texUnit) const
@@ -97,7 +99,9 @@ void TextureDX9::Disable(const unsigned int texUnit) const
 	hr = device->GetTexture(texUnit, &activeTex);
 	assert(SUCCEEDED(hr));
 	assert(activeTex == m_pTexture);
-	activeTex->Release();
+	unsigned int refCount = 1;
+	refCount = activeTex->Release();
+	assert(refCount == 1);
 #endif
 
 	hr = device->SetTexture(texUnit, 0);

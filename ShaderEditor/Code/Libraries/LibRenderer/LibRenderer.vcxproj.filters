@@ -90,9 +90,6 @@
     <ClInclude Include="Common\IndexBuffer.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\RenderData.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\Renderer.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -209,6 +206,11 @@
     <ClInclude Include="SDK\DX9\include\d3d9types.h" />
     <ClInclude Include="Utility\TextureLoader.h" />
     <ClInclude Include="SDK\DevIL\include\IL\devil_cpp_wrapper.hpp" />
+    <ClInclude Include="Common\RenderState.h" />
+    <ClInclude Include="DX9\RenderStateDX9.h" />
+    <ClInclude Include="Common\SamplerState.h" />
+    <ClInclude Include="DX9\SamplerStateDX9.h" />
+    <ClInclude Include="Common\RenderData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -252,6 +254,10 @@
     <ClCompile Include="DX9\ShaderProgramDX9.cpp" />
     <ClCompile Include="Common\ShaderInput.cpp" />
     <ClCompile Include="Utility\TextureLoader.cpp" />
+    <ClCompile Include="Common\RenderState.cpp" />
+    <ClCompile Include="DX9\RenderStateDX9.cpp" />
+    <ClCompile Include="Common\SamplerState.cpp" />
+    <ClCompile Include="DX9\SamplerStateDX9.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />

@@ -27,14 +27,6 @@ namespace LibRendererDll
 	class IndexBuffer : public Buffer
 	{
 	public:
-		// Specifies the format of the index buffer
-		enum IndexBufferFormat
-		{
-			IBF_INDEX16,	// 16bit index buffer
-			IBF_INDEX32,	// 32bit index buffer
-
-			IBF_MAX			// DO NOT USE! INTERNAL USAGE ONLY!
-		};
 
 		// Enable the index buffer
 		virtual void	Enable() = 0;

@@ -21,7 +21,7 @@
 #include "Texture.h"
 using namespace LibRendererDll;
 
-const unsigned int Texture::ms_nDimensionCount[Texture::TT_MAX] =
+const unsigned int Texture::ms_nDimensionCount[TT_MAX] =
 {
 	1,	// TT_1D
 	2,	// TT_2D
@@ -29,62 +29,62 @@ const unsigned int Texture::ms_nDimensionCount[Texture::TT_MAX] =
 	2	// TT_CUBE
 };
 
-const unsigned int Texture::ms_nPixelSize[Texture::TF_MAX] =
+const unsigned int Texture::ms_nPixelSize[PF_MAX] =
 {
-	0,	// TF_NONE
-	2,	// TF_R5G6B5
-	2,	// TF_A1R5G5B5
-	2,	// TF_A4R4G4B4
-	1,	// TF_A8
-	1,	// TF_L8
-	2,	// TF_A8L8
-	3,	// TF_R8G8B8
-	4,	// TF_A8R8G8B8
-	4,	// TF_A8B8G8R8
-	2,	// TF_L16
-	4,	// TF_G16R16
-	8,	// TF_A16B16G16R16
-	2,	// TF_R16F
-	4,	// TF_G16R16F
-	8,	// TF_A16B16G16R16F
-	4,	// TF_R32F
-	8,	// TF_G32R32F
-	16,	// TF_A32B32G32R32F,
-	0,	// TF_DXT1 (calculated at runtime)
-	0,	// TF_DXT3 (calculated at runtime)
-	0,	// TF_DXT5 (calculated at runtime)
-	4	// TF_D24S8
+	0,	// PF_NONE
+	2,	// PF_R5G6B5
+	2,	// PF_A1R5G5B5
+	2,	// PF_A4R4G4B4
+	1,	// PF_A8
+	1,	// PF_L8
+	2,	// PF_A8L8
+	3,	// PF_R8G8B8
+	4,	// PF_A8R8G8B8
+	4,	// PF_A8B8G8R8
+	2,	// PF_L16
+	4,	// PF_G16R16
+	8,	// PF_A16B16G16R16
+	2,	// PF_R16F
+	4,	// PF_G16R16F
+	8,	// PF_A16B16G16R16F
+	4,	// PF_R32F
+	8,	// PF_G32R32F
+	16,	// PF_A32B32G32R32F,
+	0,	// PF_DXT1 (calculated at runtime)
+	0,	// PF_DXT3 (calculated at runtime)
+	0,	// PF_DXT5 (calculated at runtime)
+	4	// PF_D24S8
 };
 
-const bool Texture::ms_bIsMipmapable[Texture::TF_MAX] =
+const bool Texture::ms_bIsMipmapable[PF_MAX] =
 {
-	false,	// TF_NONE
-	true,	// TF_R5G6B5
-	true,	// TF_A1R5G5B5
-	true,	// TF_A4R4G4B4
-	true,	// TF_A8
-	true,	// TF_L8
-	true,	// TF_A8L8
-	true,	// TF_R8G8B8
-	true,	// TF_A8R8G8B8
-	true,	// TF_A8B8G8R8
-	true,	// TF_L16
-	true,	// TF_G16R16
-	true,	// TF_A16B16G16R16
-	true,	// TF_R16F
-	true,	// TF_G16R16F
-	true,	// TF_A16B16G16R16F
-	false,	// TF_R32F
-	false,	// TF_G32R32F
-	false,	// TF_A32B32G32R32F,
-	true,	// TF_DXT1 (calculated at runtime)
-	true,	// TF_DXT3 (calculated at runtime)
-	true,	// TF_DXT5 (calculated at runtime)
-	false	// TF_D24S8
+	false,	// PF_NONE
+	true,	// PF_R5G6B5
+	true,	// PF_A1R5G5B5
+	true,	// PF_A4R4G4B4
+	true,	// PF_A8
+	true,	// PF_L8
+	true,	// PF_A8L8
+	true,	// PF_R8G8B8
+	true,	// PF_A8R8G8B8
+	true,	// PF_A8B8G8R8
+	true,	// PF_L16
+	true,	// PF_G16R16
+	true,	// PF_A16B16G16R16
+	true,	// PF_R16F
+	true,	// PF_G16R16F
+	true,	// PF_A16B16G16R16F
+	false,	// PF_R32F
+	false,	// PF_G32R32F
+	false,	// PF_A32B32G32R32F,
+	true,	// PF_DXT1 (calculated at runtime)
+	true,	// PF_DXT3 (calculated at runtime)
+	true,	// PF_DXT5 (calculated at runtime)
+	false	// PF_D24S8
 };
 
 Texture::Texture(
-	const TexFormat texFormat, const TexType texType,
+	const PixelFormat texFormat, const TexType texType,
 	const unsigned int sizeX, const unsigned int sizeY, const unsigned int sizeZ,
 	const unsigned int mipmapLevelCount, const BufferUsage usage)
 	: Buffer(0, 0, usage)	// We don't know at this stage how much memory we need
@@ -200,7 +200,7 @@ void Texture::ComputeMipmapProperties()
 void Texture::GenerateMipmaps()
 {
 	assert(GetTextureType() == TT_2D || GetTextureType() == TT_CUBE);
-	assert(GetTextureFormat() == TF_A8R8G8B8 || GetTextureFormat() == TF_A8B8G8R8);
+	assert(GetTextureFormat() == PF_A8R8G8B8 || GetTextureFormat() == PF_A8B8G8R8);
 
 	if (IsLocked())
 		Unlock();

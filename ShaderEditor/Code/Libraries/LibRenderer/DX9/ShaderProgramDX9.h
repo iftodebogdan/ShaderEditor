@@ -30,7 +30,7 @@ namespace LibRendererDll
 	class ShaderProgramDX9 : public ShaderProgram
 	{
 	public:
-		ShaderProgramDX9(const ShaderProgram::ShaderProgramType programType, const char* srcData = "", const char* entryPoint = "", const char* profile = "");
+		ShaderProgramDX9(const ShaderProgramType programType, const char* srcData = "", const char* entryPoint = "", const char* profile = "");
 		~ShaderProgramDX9();
 
 	private:
@@ -40,8 +40,8 @@ namespace LibRendererDll
 		
 		const unsigned int GetConstantCount() const;
 		const char* GetConstantName(const unsigned int handle) const;
-		const ShaderTemplate::InputType GetConstantType(const unsigned int handle) const;
-		const ShaderTemplate::RegisterType GetConstantRegisterType(const unsigned int handle) const;
+		const InputType GetConstantType(const unsigned int handle) const;
+		const RegisterType GetConstantRegisterType(const unsigned int handle) const;
 		const unsigned int GetConstantRegisterIndex(const unsigned int handle) const;
 		const unsigned int GetConstantRegisterCount(const unsigned int handle) const;
 		const unsigned int GetConstantRowCount(const unsigned int handle) const;

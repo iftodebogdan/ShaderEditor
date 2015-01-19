@@ -29,17 +29,13 @@
 
 namespace LibRendererDll
 {
+	class RenderState;
+	class SamplerState;
+
 	// This is the platform independent renderer interface
 	class Renderer
 	{
 	public:
-		enum API
-		{
-			API_NULL,	// Null render
-
-			API_DX9,	// Direct3D 9
-		};
-
 		/* Create an instance of the Renderer object based on API of choice */
 		static	LIBRENDERER_DLL			void					CreateInstance(API eApi);
 		/* Destroys the instance of the Renderer object */
@@ -51,21 +47,29 @@ namespace LibRendererDll
 		/* After you create an application window, you are ready to initialize the graphics
 		object that you will use to render the scene. This process includes creating the
 		object, setting the presentation parameters, and finally creating the device. */
-		virtual	LIBRENDERER_DLL			void					Initialize(void* hWnd, const int backBufferWidth = 0, const int backBufferHeight = 0) = 0;
+		virtual	LIBRENDERER_DLL			void					Initialize(void* hWnd) = 0;
 
-		/* Get presentation parameters, global states, etc. */
-		virtual	LIBRENDERER_DLL	const	RenderData&				GetRenderData() const { return m_RenderData; }
-		/* Set presentation parameters, global states, etc. */
-		virtual	LIBRENDERER_DLL			void					SetRenderData(const RenderData& renderData) = 0;
+		/* Set viewport size and offset */
+		virtual	LIBRENDERER_DLL			void					SetViewport(const Vec2i size, const Vec2i offset = Vec2i(0, 0)) { m_vViewportSize = size; m_vViewportOffset = offset; }
+		
 		/* Render the scene */
 		virtual	LIBRENDERER_DLL			void					RenderScene() = 0;
 
-	protected:
-		virtual						~Renderer();
+				LIBRENDERER_DLL		RenderState*				GetRenderStateManager() { return m_pRenderState; }
+				LIBRENDERER_DLL		DeviceCaps					GetDeviceCaps() { return m_tDeviceCaps; }
 
-		static	Renderer*			m_pInstance;
-		static	API					m_eAPI;
-				RenderData			m_RenderData;
+	protected:
+							Renderer();
+		virtual				~Renderer();
+
+				Vec2i		m_vViewportSize;
+				Vec2i		m_vViewportOffset;
+			RenderState*	m_pRenderState;
+			SamplerState*	m_pSamplerState;
+			DeviceCaps		m_tDeviceCaps;
+
+		static	Renderer*	m_pInstance;
+		static	API			m_eAPI;
 	};
 }
 

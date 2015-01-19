@@ -18,27 +18,21 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include "ShaderProgram.h"
+#include "SamplerState.h"
 using namespace LibRendererDll;
 
-ShaderProgram::ShaderProgram(ShaderProgramType programType)
-	: m_eProgramType(programType)
-{}
-
-ShaderProgram::~ShaderProgram()
-{}
-
-void ShaderProgram::SetValue(const RegisterType registerType, const unsigned int registerIndex, const void* const data, const unsigned int registerCount)
+SamplerState::SamplerState()
 {
-	switch (registerType)
+	for (unsigned int i = 0; i < MAX_NUM_PSAMPLERS; i++)
 	{
-	case RT_BOOL:
-		SetBool(registerIndex, (const bool* const)data, registerCount);
-		break;
-	case RT_INT4:
-		SetInt(registerIndex, (const int* const)data, registerCount);
-		break;
-	case RT_FLOAT4:
-		SetFloat(registerIndex, (const float* const)data, registerCount);
+		m_tCurrentState[i].fAnisotropy = 1.f;
+		m_tCurrentState[i].fLodBias = 0.f;
+		m_tCurrentState[i].eFilter = SF_MIN_MAG_POINT_MIP_NONE;
+		m_tCurrentState[i].vBorderColor = Vec4f(0.f, 0.f, 0.f, 0.f);
+		for (unsigned int j = 0; j < 3; j++)
+			m_tCurrentState[i].eAddressingMode[j] = SAM_WRAP;
 	}
 }
+
+SamplerState::~SamplerState()
+{}

@@ -66,18 +66,18 @@ const bool ShaderInput::GetInputHandleByName(const char* const inputName, unsign
 void ShaderInput::SetBoolArray(const unsigned int handle, const bool* const data)
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	
 	switch (desc.eRegisterType)
 	{
-	case ShaderTemplate::RT_BOOL:
+	case RT_BOOL:
 		memcpy(
 			m_pData + desc.nOffsetInBytes,
 			data,
 			desc.nRegisterCount
 			);
 		break;
-	case ShaderTemplate::RT_FLOAT4:
+	case RT_FLOAT4:
 		for (unsigned int i = 0; i < desc.nArrayElements; i++)
 			for (unsigned int j = 0; j < desc.nColumns; j++)
 			{
@@ -88,7 +88,7 @@ void ShaderInput::SetBoolArray(const unsigned int handle, const bool* const data
 				//*(float*)(m_pData + desc.nOffsetInBytes + sizeof(float) * i * 4u + sizeof(float) * j) = (float)*(data + i * desc.nColumns + j);
 			}
 		break;
-	case ShaderTemplate::RT_INT4:
+	case RT_INT4:
 		assert(false);	// This should not happen
 	}
 }
@@ -96,7 +96,7 @@ void ShaderInput::SetBoolArray(const unsigned int handle, const bool* const data
 void ShaderInput::SetFloatArray(const unsigned int handle, const float* const data)
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	for (unsigned int i = 0; i < desc.nArrayElements; i++)
 	{
 		memcpy(
@@ -110,11 +110,11 @@ void ShaderInput::SetFloatArray(const unsigned int handle, const float* const da
 void ShaderInput::SetIntArray(const unsigned int handle, const int* const data)
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 
 	switch (desc.eRegisterType)
 	{
-	case ShaderTemplate::RT_INT4:
+	case RT_INT4:
 		for (unsigned int i = 0; i < desc.nArrayElements; i++)
 		{
 			memcpy(
@@ -124,7 +124,7 @@ void ShaderInput::SetIntArray(const unsigned int handle, const int* const data)
 				);
 		}
 		break;
-	case ShaderTemplate::RT_FLOAT4:
+	case RT_FLOAT4:
 		for (unsigned int i = 0; i < desc.nArrayElements; i++)
 			for (unsigned int j = 0; j < desc.nColumns; j++)
 			{
@@ -134,7 +134,7 @@ void ShaderInput::SetIntArray(const unsigned int handle, const int* const data)
 				*(dest + destRegisterOffset + j) = (float)*(data + i * desc.nColumns + j);
 			}
 		break;
-	case ShaderTemplate::RT_BOOL:
+	case RT_BOOL:
 		assert(false);	// This should not happen
 	}
 }
@@ -142,11 +142,11 @@ void ShaderInput::SetIntArray(const unsigned int handle, const int* const data)
 const bool ShaderInput::GetBool(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_BOOL);
+	assert(desc.eInputType == IT_BOOL);
 	assert(desc.nColumns == 1);
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 		return (*((float*)(m_pData + desc.nOffsetInBytes) + idx * 4u)) != 0; // see headnote about Compiler Warning(level 3) C4800
 	else
 		return *((bool*)(m_pData + desc.nOffsetInBytes) + idx);
@@ -155,12 +155,12 @@ const bool ShaderInput::GetBool(const unsigned int handle, const unsigned int id
 const Vec<bool, 2> ShaderInput::GetBool2(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_BOOL);
+	assert(desc.eInputType == IT_BOOL);
 	assert(desc.nColumns == 2);
 	Vec<bool, 2> retVec;
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 	{
 		retVec[0] = (*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float))) != 0; // see headnote about Compiler Warning(level 3) C4800
 		retVec[1] = (*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float) + 1u * sizeof(float))) != 0; // see headnote about Compiler Warning(level 3) C4800
@@ -176,12 +176,12 @@ const Vec<bool, 2> ShaderInput::GetBool2(const unsigned int handle, const unsign
 const Vec<bool, 3> ShaderInput::GetBool3(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_BOOL);
+	assert(desc.eInputType == IT_BOOL);
 	assert(desc.nColumns == 3);
 	Vec<bool, 3> retVec;
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 	{
 		retVec[0] = (*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float))) != 0; // see headnote about Compiler Warning(level 3) C4800
 		retVec[1] = (*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float) + 1u * sizeof(float))) != 0; // see headnote about Compiler Warning(level 3) C4800
@@ -199,12 +199,12 @@ const Vec<bool, 3> ShaderInput::GetBool3(const unsigned int handle, const unsign
 const Vec<bool, 4> ShaderInput::GetBool4(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_BOOL);
+	assert(desc.eInputType == IT_BOOL);
 	assert(desc.nColumns == 4);
 	Vec<bool, 4> retVec;
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 	{
 		retVec[0] = (*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float))) != 0; // see headnote about Compiler Warning(level 3) C4800
 		retVec[1] = (*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float) + 1u * sizeof(float))) != 0; // see headnote about Compiler Warning(level 3) C4800
@@ -224,11 +224,11 @@ const Vec<bool, 4> ShaderInput::GetBool4(const unsigned int handle, const unsign
 const int ShaderInput::GetInt(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_INT);
+	assert(desc.eInputType == IT_INT);
 	assert(desc.nColumns == 1);
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 		return (int)*((float*)(m_pData + desc.nOffsetInBytes) + idx * 4u);
 	else
 		return *((int*)(m_pData + desc.nOffsetInBytes) + idx * 4u);
@@ -237,12 +237,12 @@ const int ShaderInput::GetInt(const unsigned int handle, const unsigned int idx)
 const Vec2i ShaderInput::GetInt2(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_INT);
+	assert(desc.eInputType == IT_INT);
 	assert(desc.nColumns == 2);
 	Vec2i retVec;
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 	{
 		retVec[0] = (int)*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float));
 		retVec[1] = (int)*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float) + 1u * sizeof(float));
@@ -258,12 +258,12 @@ const Vec2i ShaderInput::GetInt2(const unsigned int handle, const unsigned int i
 const Vec3i ShaderInput::GetInt3(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_INT);
+	assert(desc.eInputType == IT_INT);
 	assert(desc.nColumns == 3);
 	Vec3i retVec;
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 	{
 		retVec[0] = (int)*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float));
 		retVec[1] = (int)*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float) + 1u * sizeof(float));
@@ -281,12 +281,12 @@ const Vec3i ShaderInput::GetInt3(const unsigned int handle, const unsigned int i
 const Vec4i ShaderInput::GetInt4(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_INT);
+	assert(desc.eInputType == IT_INT);
 	assert(desc.nColumns == 4);
 	Vec4i retVec;
-	if (desc.eRegisterType == ShaderTemplate::RT_FLOAT4)
+	if (desc.eRegisterType == RT_FLOAT4)
 	{
 		retVec[0] = (int)*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float));
 		retVec[1] = (int)*(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float) + 1u * sizeof(float));
@@ -306,9 +306,9 @@ const Vec4i ShaderInput::GetInt4(const unsigned int handle, const unsigned int i
 const float ShaderInput::GetFloat(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_FLOAT);
+	assert(desc.eInputType == IT_FLOAT);
 	assert(desc.nColumns == 1);
 	return *((float*)(m_pData + desc.nOffsetInBytes) + idx * 4u);
 }
@@ -316,9 +316,9 @@ const float ShaderInput::GetFloat(const unsigned int handle, const unsigned int 
 const Vec2f ShaderInput::GetFloat2(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_FLOAT);
+	assert(desc.eInputType == IT_FLOAT);
 	assert(desc.nColumns == 2);
 	Vec2f retVec;
 	retVec[0] = *(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float));
@@ -329,9 +329,9 @@ const Vec2f ShaderInput::GetFloat2(const unsigned int handle, const unsigned int
 const Vec3f ShaderInput::GetFloat3(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_FLOAT);
+	assert(desc.eInputType == IT_FLOAT);
 	assert(desc.nColumns == 3);
 	Vec3f retVec;
 	retVec[0] = *(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float));
@@ -343,9 +343,9 @@ const Vec3f ShaderInput::GetFloat3(const unsigned int handle, const unsigned int
 const Vec4f ShaderInput::GetFloat4(const unsigned int handle, const unsigned int idx) const
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(idx < desc.nArrayElements);
-	assert(desc.eInputType == ShaderTemplate::IT_FLOAT);
+	assert(desc.eInputType == IT_FLOAT);
 	assert(desc.nColumns == 4);
 	Vec4f retVec;
 	retVec[0] = *(float*)(m_pData + desc.nOffsetInBytes + idx * 4u * sizeof(float));
@@ -379,14 +379,14 @@ const Matrix44f ShaderInput::GetMatrix4x4(const unsigned int handle, const unsig
 void ShaderInput::SetTexture(const unsigned int handle, const Texture* const tex)
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(tex);
 	assert(
-		(desc.eInputType == ShaderTemplate::IT_SAMPLER) ||
-		(desc.eInputType == ShaderTemplate::IT_SAMPLER1D && tex->GetTextureType() == Texture::TT_1D) ||
-		(desc.eInputType == ShaderTemplate::IT_SAMPLER2D && tex->GetTextureType() == Texture::TT_2D) ||
-		(desc.eInputType == ShaderTemplate::IT_SAMPLER3D && tex->GetTextureType() == Texture::TT_3D) ||
-		(desc.eInputType == ShaderTemplate::IT_SAMPLERCUBE && tex->GetTextureType() == Texture::TT_CUBE)
+		(desc.eInputType == IT_SAMPLER) ||
+		(desc.eInputType == IT_SAMPLER1D && tex->GetTextureType() == TT_1D) ||
+		(desc.eInputType == IT_SAMPLER2D && tex->GetTextureType() == TT_2D) ||
+		(desc.eInputType == IT_SAMPLER3D && tex->GetTextureType() == TT_3D) ||
+		(desc.eInputType == IT_SAMPLERCUBE && tex->GetTextureType() == TT_CUBE)
 		);
 	*(unsigned long long*)(m_pData + desc.nOffsetInBytes) = (unsigned long long)tex; // unsigned long long for 64bit pointer support
 }

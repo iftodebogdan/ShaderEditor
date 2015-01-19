@@ -26,11 +26,11 @@ template < typename T, const unsigned int ROWS, const unsigned int COLS >
 inline void ShaderInput::SetMatrixArray(const unsigned int handle, const Matrix<T, ROWS, COLS>* const data)
 {
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(desc.nRows == ROWS && desc.nColumns == COLS);
-	assert((desc.eRegisterType == ShaderTemplate::RT_BOOL) == (typeid(T) == typeid(bool)));
-	assert((desc.eRegisterType == ShaderTemplate::RT_INT4) == (typeid(T) == typeid(int)));
-	assert((desc.eRegisterType == ShaderTemplate::RT_FLOAT4) == (typeid(T) == typeid(float)));
+	assert((desc.eRegisterType == RT_BOOL) == (typeid(T) == typeid(bool)));
+	assert((desc.eRegisterType == RT_INT4) == (typeid(T) == typeid(int)));
+	assert((desc.eRegisterType == RT_FLOAT4) == (typeid(T) == typeid(float)));
 	for (unsigned int i = 0; i < desc.nArrayElements; i++)
 	{
 		for (unsigned int j = 0; j < desc.nColumns; j++)
@@ -61,11 +61,11 @@ const Matrix<T, ROWS, COLS> ShaderInput::GetMatrix(const unsigned int handle, co
 {
 	Matrix<T, ROWS, COLS> retMat;
 	assert(handle < m_pShaderTemplate->m_arrInputDesc.size());
-	ShaderTemplate::InputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
+	ShaderInputDesc desc = m_pShaderTemplate->m_arrInputDesc[handle];
 	assert(desc.nRows == ROWS && desc.nColumns == COLS);
-	assert((desc.eRegisterType == ShaderTemplate::RT_BOOL) == (typeid(T) == typeid(bool)));
-	assert((desc.eRegisterType == ShaderTemplate::RT_INT4) == (typeid(T) == typeid(int)));
-	assert((desc.eRegisterType == ShaderTemplate::RT_FLOAT4) == (typeid(T) == typeid(float)));
+	assert((desc.eRegisterType == RT_BOOL) == (typeid(T) == typeid(bool)));
+	assert((desc.eRegisterType == RT_INT4) == (typeid(T) == typeid(int)));
+	assert((desc.eRegisterType == RT_FLOAT4) == (typeid(T) == typeid(float)));
 	for (unsigned int i = 0; i < desc.nColumns; i++)
 	{
 		memcpy(

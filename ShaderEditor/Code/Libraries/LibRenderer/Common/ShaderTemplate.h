@@ -19,8 +19,8 @@
 #ifndef SHADERTEMPLATE_H
 #define SHADERTEMPLATE_H
 
-#include <string>
 #include <vector>
+#include "RenderData.h"
 
 namespace LibRendererDll
 {
@@ -36,62 +36,14 @@ namespace LibRendererDll
 		void Enable(ShaderInput* shaderInput);
 		void Enable(ShaderInput& shaderInput) { Enable(&shaderInput); }
 		void Disable();
-
-		enum InputType
-		{
-			IT_NONE,
-
-			IT_VOID,
-			IT_BOOL,
-			IT_INT,
-			IT_FLOAT,
-			IT_TEXTURE,
-			IT_TEXTURE1D,
-			IT_TEXTURE2D,
-			IT_TEXTURE3D,
-			IT_TEXTURECUBE,
-			IT_SAMPLER,
-			IT_SAMPLER1D,
-			IT_SAMPLER2D,
-			IT_SAMPLER3D,
-			IT_SAMPLERCUBE,
-
-			IT_MAX
-		};
-
-		enum RegisterType
-		{
-			RT_NONE,
-
-			RT_BOOL,
-			RT_INT4,
-			RT_FLOAT4,
-			RT_SAMPLER,
-
-			RT_MAX
-		};
-
-		struct InputDesc
-		{
-			std::string szName;
-			InputType eInputType;
-			RegisterType eRegisterType;
-			unsigned int nRegisterIndex;
-			unsigned int nRegisterCount;
-			unsigned int nRows;
-			unsigned int nColumns;
-			unsigned int nArrayElements;
-			unsigned int nBytes;
-			unsigned int nOffsetInBytes;
-		};
-
+		
 	protected:
 		void DescribeShaderInputs();
 		const unsigned int GetTotalNumberOfUsedRegisters() const;
 		const unsigned int GetTotalSizeOfInputConstants() const;
 
 		ShaderProgram* m_pProgram;
-		std::vector<InputDesc> m_arrInputDesc;
+		std::vector<ShaderInputDesc> m_arrInputDesc;
 		ShaderInput* m_pShaderInput;
 
 		friend class ShaderInput;

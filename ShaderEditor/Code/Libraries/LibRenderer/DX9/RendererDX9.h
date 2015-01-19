@@ -19,50 +19,33 @@
 #ifndef RENDERERDX9_H
 #define RENDERERDX9_H
 
-#include "Renderer.h"
-
 #include <d3d9.h>
-#include <d3dx9.h>
+#include "Renderer.h"
 
 namespace LibRendererDll
 {
-	class VertexFormatDX9;
-	class VertexBufferDX9;
-	class IndexBufferDX9;
-	class TextureDX9;
-
 	class RendererDX9 : public Renderer
 	{
 		// Used to create the D3DDevice
 		IDirect3D9*			m_pD3D;
 		// Our rendering device
 		IDirect3DDevice9*	m_pd3dDevice;
-
-		VertexFormatDX9*	vf;
-		VertexBufferDX9*	vb;
-		IndexBufferDX9*		ib;
-		TextureDX9*			tex;
-		TextureDX9*			tex2;
-
-		void						CreateResources();
-		void						ReleaseResources();
-
-		void						GetBackBufferSize(Vec2i& backBufferSize);
-		void						SetBackBufferSize(const Vec2i& backBufferSize);
-		void						GetViewport(RenderData::Viewport& viewport);
-		void						SetViewport(const RenderData::Viewport& viewport);
+		
+		void	CreateResources();
+		void	ReleaseResources();
 
 	public:
 		RendererDX9();
 		~RendererDX9();
 
-		static	RendererDX9*		GetInstance() { return (RendererDX9*)m_pInstance; };
+		static	RendererDX9*	GetInstance() { return (RendererDX9*)m_pInstance; };
 
-		void						Initialize(void* hWnd, const int backBufferWidth = 0, const int backBufferHeight = 0);
-		void						SetRenderData(const RenderData& renderData);
-		void						RenderScene();
+		void					Initialize(void* hWnd);
+		void					SetViewport(const Vec2i size, const Vec2i offset = Vec2i(0, 0));
+		void					RenderScene();
 
-		IDirect3DDevice9*			GetDevice() const { return m_pd3dDevice; };
+		IDirect3DDevice9*		GetDevice() const { return m_pd3dDevice; };
+		IDirect3D9*				GetDriver() const { return m_pD3D; }
 	};
 }
 

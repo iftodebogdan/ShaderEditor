@@ -63,16 +63,16 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 	imgDesc.mipmaps = ilGetInteger(IL_NUM_MIPMAPS) + 1;
 	
 	if (ilGetInteger(IL_IMAGE_CUBEFLAGS) == IL_CUBEMAP_POSITIVEX)
-		imgDesc.type = Texture::TT_CUBE;
+		imgDesc.type = TT_CUBE;
 	else
 		if (imgDesc.height == 1)
-			imgDesc.type = Texture::TT_1D;
+			imgDesc.type = TT_1D;
 		else
-			imgDesc.type = Texture::TT_2D;
+			imgDesc.type = TT_2D;
 
 	if (convertToARGB)
 	{
-		if (imgDesc.type == Texture::TT_CUBE)
+		if (imgDesc.type == TT_CUBE)
 			for (unsigned int face = 0; face < 6; face++)
 			{
 				ilBindImage(img);
@@ -90,7 +90,7 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		{
 		case IL_BYTE:
 		case IL_UNSIGNED_BYTE:
-			imgDesc.format = Texture::TF_A8;
+			imgDesc.format = PF_A8;
 			break;
 		default:
 			assert(false);
@@ -102,7 +102,7 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		{
 		case IL_BYTE:
 		case IL_UNSIGNED_BYTE:
-			imgDesc.format = Texture::TF_R8G8B8;
+			imgDesc.format = PF_R8G8B8;
 			break;
 		case IL_SHORT:
 		case IL_UNSIGNED_SHORT:
@@ -121,17 +121,17 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		{
 		case IL_BYTE:
 		case IL_UNSIGNED_BYTE:
-			imgDesc.format = Texture::TF_A8B8G8R8;
+			imgDesc.format = PF_A8B8G8R8;
 			break;
 		case IL_SHORT:
 		case IL_UNSIGNED_SHORT:
-			imgDesc.format = Texture::TF_A16B16G16R16;
+			imgDesc.format = PF_A16B16G16R16;
 			break;
 		case IL_FLOAT:
-			imgDesc.format = Texture::TF_A32B32G32R32F;
+			imgDesc.format = PF_A32B32G32R32F;
 			break;
 		case IL_HALF:
-			imgDesc.format = Texture::TF_A16B16G16R16F;
+			imgDesc.format = PF_A16B16G16R16F;
 			break;
 		case IL_INT:
 		case IL_UNSIGNED_INT:
@@ -146,17 +146,17 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		{
 		case IL_BYTE:
 		case IL_UNSIGNED_BYTE:
-			imgDesc.format = Texture::TF_R8G8B8;
+			imgDesc.format = PF_R8G8B8;
 			break;
 		case IL_SHORT:
 		case IL_UNSIGNED_SHORT:
-			imgDesc.format = Texture::TF_A16B16G16R16;
+			imgDesc.format = PF_A16B16G16R16;
 			break;
 		case IL_FLOAT:
-			imgDesc.format = Texture::TF_A32B32G32R32F;
+			imgDesc.format = PF_A32B32G32R32F;
 			break;
 		case IL_HALF:
-			imgDesc.format = Texture::TF_A16B16G16R16F;
+			imgDesc.format = PF_A16B16G16R16F;
 			break;
 		case IL_INT:
 		case IL_UNSIGNED_INT:
@@ -171,17 +171,17 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		{
 		case IL_BYTE:
 		case IL_UNSIGNED_BYTE:
-			imgDesc.format = Texture::TF_A8R8G8B8;
+			imgDesc.format = PF_A8R8G8B8;
 			break;
 		case IL_SHORT:
 		case IL_UNSIGNED_SHORT:
-			imgDesc.format = Texture::TF_A16B16G16R16;
+			imgDesc.format = PF_A16B16G16R16;
 			break;
 		case IL_FLOAT:
-			imgDesc.format = Texture::TF_A32B32G32R32F;
+			imgDesc.format = PF_A32B32G32R32F;
 			break;
 		case IL_HALF:
-			imgDesc.format = Texture::TF_A16B16G16R16F;
+			imgDesc.format = PF_A16B16G16R16F;
 			break;
 		case IL_INT:
 		case IL_UNSIGNED_INT:
@@ -196,11 +196,11 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		{
 		case IL_SHORT:
 		case IL_UNSIGNED_SHORT:
-			imgDesc.format = Texture::TF_L8;
+			imgDesc.format = PF_L8;
 			break;
 		case IL_INT:
 		case IL_UNSIGNED_INT:
-			imgDesc.format = Texture::TF_L16;
+			imgDesc.format = PF_L16;
 			break;
 		case IL_BYTE:
 		case IL_UNSIGNED_BYTE:
@@ -217,7 +217,7 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		{
 		case IL_SHORT:
 		case IL_UNSIGNED_SHORT:
-			imgDesc.format = Texture::TF_A8L8;
+			imgDesc.format = PF_A8L8;
 			break;
 		case IL_INT:
 		case IL_UNSIGNED_INT:
@@ -248,7 +248,7 @@ void TextureLoader::CopyImageData(Texture* outTex)
 	if (outTex->IsLocked())
 		outTex->Unlock();
 
-	if (outTex->GetTextureType() == Texture::TT_CUBE)
+	if (outTex->GetTextureType() == TT_CUBE)
 	{
 		for (unsigned int face = 0; face < 6; face++)
 		{
@@ -265,7 +265,7 @@ void TextureLoader::CopyImageData(Texture* outTex)
 				const unsigned int depth = ilGetInteger(IL_IMAGE_DEPTH);
 				const unsigned int bpp = ilGetInteger(IL_IMAGE_BITS_PER_PIXEL);
 
-				outTex->Lock(face, mip, Buffer::BL_WRITE_ONLY);
+				outTex->Lock(face, mip, BL_WRITE_ONLY);
 				memcpy(
 					outTex->GetMipmapLevelData(face, mip),
 					ilGetData(),
@@ -288,7 +288,7 @@ void TextureLoader::CopyImageData(Texture* outTex)
 			const unsigned int height = ilGetInteger(IL_IMAGE_HEIGHT);
 			const unsigned int depth = ilGetInteger(IL_IMAGE_DEPTH);
 			const unsigned int bpp = ilGetInteger(IL_IMAGE_BITS_PER_PIXEL);
-			outTex->Lock(mip, Buffer::BL_WRITE_ONLY);
+			outTex->Lock(mip, BL_WRITE_ONLY);
 			memcpy(
 				outTex->GetMipmapLevelData(mip),
 				ilGetData(),

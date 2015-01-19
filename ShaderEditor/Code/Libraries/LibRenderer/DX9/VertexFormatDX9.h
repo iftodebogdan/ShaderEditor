@@ -36,7 +36,7 @@ namespace LibRendererDll
 		void	Update();
 
 	private:
-		D3DVERTEXELEMENT9 m_pVertexElements[VertexFormat::VF_MAX_ATTRIBUTES + 1];
+		D3DVERTEXELEMENT9 m_pVertexElements[VF_MAX_ATTRIBUTES + 1];
 		IDirect3DVertexDeclaration9* m_pVertexDeclaration;
 	};
 }

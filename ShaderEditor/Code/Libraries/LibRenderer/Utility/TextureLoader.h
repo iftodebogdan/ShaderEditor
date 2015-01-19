@@ -32,8 +32,8 @@ namespace LibRendererDll
 			unsigned int height;
 			unsigned int depth;
 			unsigned int bpp;
-			Texture::TexFormat format;
-			Texture::TexType type;
+			PixelFormat format;
+			TexType type;
 			unsigned int mipmaps;
 		};
 

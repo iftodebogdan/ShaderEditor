@@ -19,7 +19,7 @@
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
 
-#include "ShaderTemplate.h"
+#include "RenderData.h"
 
 namespace LibRendererDll
 {
@@ -27,17 +27,6 @@ namespace LibRendererDll
 
 	class ShaderProgram
 	{
-	public:
-		enum ShaderProgramType
-		{
-			SPT_NONE,
-
-			SPT_VERTEX,
-			SPT_PIXEL,
-
-			SPT_MAX
-		};
-
 	protected:
 		ShaderProgram(const ShaderProgramType programType);
 		virtual ~ShaderProgram();
@@ -48,8 +37,8 @@ namespace LibRendererDll
 
 		virtual const unsigned int GetConstantCount() const = 0;
 		virtual const char* GetConstantName(const unsigned int handle) const = 0;
-		virtual const ShaderTemplate::InputType GetConstantType(const unsigned int handle) const = 0;
-		virtual const ShaderTemplate::RegisterType GetConstantRegisterType(const unsigned int handle) const = 0;
+		virtual const InputType GetConstantType(const unsigned int handle) const = 0;
+		virtual const RegisterType GetConstantRegisterType(const unsigned int handle) const = 0;
 		virtual const unsigned int GetConstantRegisterIndex(const unsigned int handle) const = 0;
 		virtual const unsigned int GetConstantRegisterCount(const unsigned int handle) const = 0;
 		virtual const unsigned int GetConstantRowCount(const unsigned int handle) const = 0;
@@ -58,7 +47,7 @@ namespace LibRendererDll
 		virtual const unsigned int GetConstantStructMemberCount(const unsigned int handle) const = 0;
 		virtual const unsigned int GetConstantByteCount(const unsigned int handle) const = 0;
 
-		void SetValue(const ShaderTemplate::RegisterType registerType, const unsigned int registerIndex, const void* const data, const unsigned int registerCount);
+		void SetValue(const RegisterType registerType, const unsigned int registerIndex, const void* const data, const unsigned int registerCount);
 		virtual void SetFloat(const unsigned int registerIndex, const float* const data, const unsigned int registerCount) = 0;
 		virtual void SetInt(const unsigned int registerIndex, const int* const data, const unsigned int registerCount) = 0;
 		virtual void SetBool(const unsigned int registerIndex, const bool* const data, const unsigned int registerCount) = 0;

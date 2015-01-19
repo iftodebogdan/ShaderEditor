@@ -27,29 +27,6 @@ namespace LibRendererDll
 	class Buffer
 	{
 	public:
-		// Usage options that identify how resources are to be used
-		enum BufferUsage
-		{
-			BU_NONE,
-
-			BU_STATIC,			// Informs the system that the application writes only to the buffer
-			BU_DYNAMIC,			// Set to indicate that the buffer requires dynamic memory use
-			BU_RENDERTAGET,		// The resource will be a render target
-			BU_DEPTHSTENCIL,	// The resource will be a depth stencil buffer
-			BU_TEXTURE,			// The resource will be a texture
-
-			BU_MAX				// DO NOT USE! INTERNAL USAGE ONLY!
-		};
-
-		// Locking options that identify how resources are locked for reading/writing
-		enum BufferLocking
-		{
-			BL_READ_ONLY,	// The application will ONLY read the buffer
-			BL_WRITE_ONLY,	// The application will ONLY write to the buffer
-			BL_READ_WRITE,	// The application will both read and write to the buffer
-
-			BL_MAX			// DO NOT USE! INTERNAL USAGE ONLY!
-		};
 
 		// Returns the number of elements (vertices, indices, pixels, etc.) in the buffer
 		const	unsigned int	GetElementCount() const { return m_nElementCount; }

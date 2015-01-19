@@ -30,14 +30,15 @@
 
 // TODO: reference additional headers your program requires here
 
+// Memory leak guard on debug
 #ifdef _DEBUG
 #include <vld.h>
 #endif
 
+// Include common header files
 #include <assert.h>
-#include <intrin.h>
-using namespace std;
 
+// Declare new data types
 typedef unsigned char byte;
 
 #endif //STDAFX_H

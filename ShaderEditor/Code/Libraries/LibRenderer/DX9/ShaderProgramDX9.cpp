@@ -22,10 +22,11 @@
 #include "RendererDX9.h"
 #include "TextureDX9.h"
 using namespace LibRendererDll;
+using namespace std;
 
 #define CONST_MAX_ARRAY_SIZE 16;
 
-ShaderProgramDX9::ShaderProgramDX9(const ShaderProgram::ShaderProgramType programType,
+ShaderProgramDX9::ShaderProgramDX9(const ShaderProgramType programType,
 	const char* srcData, const char* entryPoint, const char* profile)
 	: ShaderProgram(programType)
 	, m_pVertexShader(nullptr)
@@ -38,12 +39,19 @@ ShaderProgramDX9::ShaderProgramDX9(const ShaderProgram::ShaderProgramType progra
 
 ShaderProgramDX9::~ShaderProgramDX9()
 {
+	unsigned int refCount = 0;
+	
 	if (m_pVertexShader)
-		m_pVertexShader->Release();
+		refCount = m_pVertexShader->Release();
+	assert(refCount == 0);
+
 	if (m_pPixelShader)
-		m_pPixelShader->Release();
+		refCount = m_pPixelShader->Release();
+	assert(refCount == 0);
+
 	if (m_pConstantTable)
-		m_pConstantTable->Release();
+		refCount = m_pConstantTable->Release();
+	assert(refCount == 0);
 }
 
 void ShaderProgramDX9::Enable()
@@ -71,19 +79,22 @@ void ShaderProgramDX9::Disable()
 #ifdef _DEBUG
 	IDirect3DVertexShader9* activeVShader = nullptr;
 	IDirect3DPixelShader9* activePShader = nullptr;
+	unsigned int refCount = 1;
 	switch (m_eProgramType)
 	{
 	case SPT_VERTEX:
 		hr = device->GetVertexShader(&activeVShader);
 		assert(SUCCEEDED(hr));
 		assert(activeVShader == m_pVertexShader);
-		activeVShader->Release();
+		refCount = activeVShader->Release();
+		assert(refCount == 1);
 		break;
 	case SPT_PIXEL:
 		hr = device->GetPixelShader(&activePShader);
 		assert(SUCCEEDED(hr));
 		assert(activePShader == m_pPixelShader);
-		activePShader->Release();
+		refCount = activePShader->Release();
+		assert(refCount == 1);
 	}
 #endif
 
@@ -104,13 +115,13 @@ const bool ShaderProgramDX9::Compile(const char* srcData, char* const errors, co
 
 	switch (m_eProgramType)
 	{
-	case ShaderProgram::SPT_VERTEX:
+	case SPT_VERTEX:
 		if (strlen(profile) == 0)
 			profile = "vs_3_0";
 		if (strlen(entryPoint) == 0)
 			entryPoint = "vsmain";
 		break;
-	case ShaderProgram::SPT_PIXEL:
+	case SPT_PIXEL:
 		if (strlen(profile) == 0)
 			profile = "ps_3_0";
 		if (strlen(entryPoint) == 0)
@@ -137,24 +148,30 @@ const bool ShaderProgramDX9::Compile(const char* srcData, char* const errors, co
 	if (FAILED(hr))
 		return false;
 
+	unsigned int refCount = 0;
 	switch (m_eProgramType)
 	{
-	case ShaderProgram::SPT_VERTEX:
+	case SPT_VERTEX:
 		if (m_pVertexShader)
-			m_pVertexShader->Release();
+			refCount = m_pVertexShader->Release();
+		assert(refCount == 0);
 		hr = device->CreateVertexShader((DWORD*)(compiledData->GetBufferPointer()), &m_pVertexShader);
 		break;
-	case ShaderProgram::SPT_PIXEL:
+	case SPT_PIXEL:
 		if (m_pPixelShader)
-			m_pPixelShader->Release();
+			refCount = m_pPixelShader->Release();
+		assert(refCount == 0);
 		hr = device->CreatePixelShader((DWORD*)(compiledData->GetBufferPointer()), &m_pPixelShader);
 	}
 	assert(SUCCEEDED(hr));
 
 	if (compiledData)
-		compiledData->Release();
+		refCount = compiledData->Release();
+	assert(refCount == 0);
+
 	if (errorMsg)
-		errorMsg->Release();
+		refCount = errorMsg->Release();
+	assert(refCount == 0);
 
 	return true;
 }
@@ -178,7 +195,7 @@ const char* ShaderProgramDX9::GetConstantName(const unsigned int handle) const
 	return constDesc.Name;
 }
 
-const ShaderTemplate::InputType ShaderProgramDX9::GetConstantType(const unsigned int handle) const
+const InputType ShaderProgramDX9::GetConstantType(const unsigned int handle) const
 {
 	unsigned int count = 1u;
 	D3DXCONSTANT_DESC constDesc;
@@ -190,49 +207,49 @@ const ShaderTemplate::InputType ShaderProgramDX9::GetConstantType(const unsigned
 	{
 	case D3DXPT_VOID:
 		assert(false); // no structs or whatever
-		return ShaderTemplate::IT_NONE;
+		return IT_NONE;
 	case D3DXPT_BOOL:
-		return ShaderTemplate::IT_BOOL;
+		return IT_BOOL;
 	case D3DXPT_INT:
-		return ShaderTemplate::IT_INT;
+		return IT_INT;
 	case D3DXPT_FLOAT:
-		return ShaderTemplate::IT_FLOAT;
+		return IT_FLOAT;
 	case D3DXPT_STRING:
 		assert(false); // no strings
-		return ShaderTemplate::IT_NONE;
+		return IT_NONE;
 	case D3DXPT_TEXTURE:
 		assert(false); // DX9 documentation isn't very clear, but apparently this is only for the Effects framework
-		return ShaderTemplate::IT_TEXTURE;
+		return IT_TEXTURE;
 	case D3DXPT_TEXTURE1D:
 		assert(false); // DX9 documentation isn't very clear, but apparently this is only for the Effects framework
-		return ShaderTemplate::IT_TEXTURE1D;
+		return IT_TEXTURE1D;
 	case D3DXPT_TEXTURE2D:
 		assert(false); // DX9 documentation isn't very clear, but apparently this is only for the Effects framework
-		return ShaderTemplate::IT_TEXTURE2D;
+		return IT_TEXTURE2D;
 	case D3DXPT_TEXTURE3D:
 		assert(false); // DX9 documentation isn't very clear, but apparently this is only for the Effects framework
-		return ShaderTemplate::IT_TEXTURE3D;
+		return IT_TEXTURE3D;
 	case D3DXPT_TEXTURECUBE:
 		assert(false); // DX9 documentation isn't very clear, but apparently this is only for the Effects framework
-		return ShaderTemplate::IT_TEXTURECUBE;
+		return IT_TEXTURECUBE;
 	case D3DXPT_SAMPLER:
-		return ShaderTemplate::IT_SAMPLER;
+		return IT_SAMPLER;
 	case D3DXPT_SAMPLER1D:
-		return ShaderTemplate::IT_SAMPLER1D;
+		return IT_SAMPLER1D;
 	case D3DXPT_SAMPLER2D:
-		return ShaderTemplate::IT_SAMPLER2D;
+		return IT_SAMPLER2D;
 	case D3DXPT_SAMPLER3D:
-		return ShaderTemplate::IT_SAMPLER3D;
+		return IT_SAMPLER3D;
 	case D3DXPT_SAMPLERCUBE:
-		return ShaderTemplate::IT_SAMPLERCUBE;
+		return IT_SAMPLERCUBE;
 	default:
 		assert(false);
 	}
 
-	return ShaderTemplate::IT_NONE;
+	return IT_NONE;
 }
 
-const ShaderTemplate::RegisterType ShaderProgramDX9::GetConstantRegisterType(const unsigned int handle) const
+const RegisterType ShaderProgramDX9::GetConstantRegisterType(const unsigned int handle) const
 {
 	unsigned int count = 1u;
 	D3DXCONSTANT_DESC constDesc;
@@ -243,15 +260,15 @@ const ShaderTemplate::RegisterType ShaderProgramDX9::GetConstantRegisterType(con
 	switch (constDesc.RegisterSet)
 	{
 	case D3DXRS_BOOL:
-		return ShaderTemplate::RT_BOOL;
+		return RT_BOOL;
 	case D3DXRS_INT4:
-		return ShaderTemplate::RT_INT4;
+		return RT_INT4;
 	case D3DXRS_FLOAT4:
-		return ShaderTemplate::RT_FLOAT4;
+		return RT_FLOAT4;
 	case D3DXRS_SAMPLER:
-		return ShaderTemplate::RT_SAMPLER;
+		return RT_SAMPLER;
 	default:
-		return ShaderTemplate::RT_NONE;
+		return RT_NONE;
 	}
 }
 

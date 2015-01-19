@@ -24,7 +24,11 @@
 #include "VertexBufferDX9.h"
 #include "IndexBufferDX9.h"
 #include "TextureDX9.h"
+#include "RenderStateDX9.h"
+#include "SamplerStateDX9.h"
 using namespace LibRendererDll;
+
+#include <d3dx9.h>
 
 RendererDX9::RendererDX9()
 	: m_pD3D(nullptr)
@@ -46,11 +50,88 @@ RendererDX9::~RendererDX9()
 	assert(refCount == 0);
 }
 
-void RendererDX9::Initialize(void* hWnd, const int backBufferWidth, const int backBufferHeight)
+void RendererDX9::Initialize(void* hWnd)
 {
 	// Create the D3D object, which is needed to create the D3DDevice.
 	m_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
 	assert(m_pD3D);
+
+	// Verify supported adapter modes
+	int nMode = 0;
+	D3DDISPLAYMODE d3ddm;
+	int nMaxAdaptorModes = m_pD3D->GetAdapterModeCount(D3DADAPTER_DEFAULT, D3DFMT_X8R8G8B8);
+	for (nMode = 0; nMode < nMaxAdaptorModes; ++nMode)
+	{
+		if (FAILED(m_pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, D3DFMT_X8R8G8B8, nMode, &d3ddm)))
+		{
+			// TO DO: Respond to failure of EnumAdapterModes
+			assert(false);
+			return;
+		}
+
+		DeviceCaps::ScreenFormat sf;
+		sf.nWidth = d3ddm.Width;
+		sf.nHeight = d3ddm.Height;
+		sf.nRefreshRate = d3ddm.RefreshRate;
+		m_tDeviceCaps.arrSupportedScreenFormats.push_back(sf);
+	}
+
+	// Can we get a 32-bit back buffer?
+	if (FAILED(m_pD3D->CheckDeviceType(D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		D3DFMT_X8R8G8B8,
+		D3DFMT_X8R8G8B8,
+		FALSE)))
+	{
+		// TODO: Handle lack of support for a 32-bit back buffer...
+		assert(false);
+		return;
+	}
+
+	// Can we get a z-buffer that's at least 16 bits?
+	if (FAILED(m_pD3D->CheckDeviceFormat(D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		D3DFMT_X8R8G8B8,
+		D3DUSAGE_DEPTHSTENCIL,
+		D3DRTYPE_SURFACE,
+		D3DFMT_D16)))
+	{
+		// TODO: Handle lack of support for a 16-bit z-buffer...
+		assert(false);
+		return;
+	}
+
+	// Query the device for its capabilities.
+	D3DCAPS9 deviceCaps;
+	HRESULT hr = m_pD3D->GetDeviceCaps(
+		D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		&deviceCaps);
+	assert(SUCCEEDED(hr));
+
+	m_tDeviceCaps.bCanAutoGenMipmaps = (deviceCaps.Caps2 & D3DCAPS2_CANAUTOGENMIPMAP) != 0;
+	m_tDeviceCaps.bDynamicTextures = (deviceCaps.Caps2 & D3DCAPS2_DYNAMICTEXTURES) != 0;
+	m_tDeviceCaps.bPresentIntervalImmediate = (deviceCaps.PresentationIntervals & D3DPRESENT_INTERVAL_IMMEDIATE) != 0;
+	m_tDeviceCaps.bPresentIntervalOne = (deviceCaps.PresentationIntervals & D3DPRESENT_INTERVAL_ONE) != 0;
+	m_tDeviceCaps.bPresentIntervalTwo = (deviceCaps.PresentationIntervals & D3DPRESENT_INTERVAL_TWO) != 0;
+	m_tDeviceCaps.bPresentIntervalThree = (deviceCaps.PresentationIntervals & D3DPRESENT_INTERVAL_THREE) != 0;
+	m_tDeviceCaps.bPresentIntervalFour = (deviceCaps.PresentationIntervals & D3DPRESENT_INTERVAL_FOUR) != 0;
+	m_tDeviceCaps.bMrtIndependentBitDepths = (deviceCaps.PrimitiveMiscCaps & D3DPMISCCAPS_MRTINDEPENDENTBITDEPTHS) != 0;
+	m_tDeviceCaps.bMrtPostPixelShaderBlending = (deviceCaps.PrimitiveMiscCaps & D3DPMISCCAPS_MRTPOSTPIXELSHADERBLENDING) != 0;
+	m_tDeviceCaps.bAnisotropicFiltering = (deviceCaps.RasterCaps & D3DPRASTERCAPS_ANISOTROPY) != 0;
+	m_tDeviceCaps.bDepthBias = (deviceCaps.RasterCaps & D3DPRASTERCAPS_DEPTHBIAS) != 0;
+	m_tDeviceCaps.bSlopeScaledDepthBias = (deviceCaps.RasterCaps & D3DPRASTERCAPS_SLOPESCALEDEPTHBIAS) != 0;
+	m_tDeviceCaps.bMipmapLodBias = (deviceCaps.RasterCaps & D3DPRASTERCAPS_MIPMAPLODBIAS) != 0;
+	m_tDeviceCaps.bWBuffer = (deviceCaps.RasterCaps & D3DPRASTERCAPS_WBUFFER) != 0;
+	m_tDeviceCaps.bTexturePow2 = (deviceCaps.TextureCaps & D3DPTEXTURECAPS_POW2) != 0;
+	m_tDeviceCaps.nMaxTextureWidth = deviceCaps.MaxTextureWidth;
+	m_tDeviceCaps.nMaxTextureHeight = deviceCaps.MaxTextureHeight;
+	m_tDeviceCaps.nMaxTextureDepth = deviceCaps.MaxVolumeExtent;
+	m_tDeviceCaps.nVertexShaderVersionMajor = D3DSHADER_VERSION_MAJOR(deviceCaps.VertexShaderVersion);
+	m_tDeviceCaps.nVertexShaderVersionMinor = D3DSHADER_VERSION_MINOR(deviceCaps.VertexShaderVersion);
+	m_tDeviceCaps.nPixelShaderVersionMajor = D3DSHADER_VERSION_MAJOR(deviceCaps.PixelShaderVersion);
+	m_tDeviceCaps.nPixelShaderVersionMinor = D3DSHADER_VERSION_MINOR(deviceCaps.PixelShaderVersion);
+	m_tDeviceCaps.nNumSimultaneousRTs = deviceCaps.NumSimultaneousRTs;
 
 	// Set up the structure used to create the D3DDevice. Most parameters are
 	// zeroed out. We set Windowed to TRUE, since we want to do D3D in a
@@ -63,8 +144,8 @@ void RendererDX9::Initialize(void* hWnd, const int backBufferWidth, const int ba
 	d3dpp.Windowed = TRUE;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-	d3dpp.BackBufferWidth = backBufferWidth;
-	d3dpp.BackBufferHeight = backBufferHeight;
+	d3dpp.BackBufferWidth = m_vViewportSize[0];
+	d3dpp.BackBufferHeight = m_vViewportSize[1];
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -107,6 +188,20 @@ void RendererDX9::Initialize(void* hWnd, const int backBufferWidth, const int ba
 
 	assert(m_pd3dDevice);
 
+	D3DVIEWPORT9 vp;
+	vp.X = 0;
+	vp.Y = 0;
+	vp.Width = m_vViewportSize[0];
+	vp.Height = m_vViewportSize[1];
+	vp.MinZ = 0.f;
+	vp.MaxZ = 1.f;
+
+	hr = m_pd3dDevice->SetViewport(&vp);
+	assert(SUCCEEDED(hr));
+
+	m_pRenderState = new RenderStateDX9();
+	m_pSamplerState = new SamplerStateDX9();
+
 	CreateResources();
 }
 
@@ -122,6 +217,11 @@ static const aiScene* scene = nullptr;
 #include "ShaderProgramDX9.h"
 #include "ShaderInput.h"
 #include <fstream>
+static VertexFormatDX9* vf = nullptr;
+static VertexBufferDX9* vb = nullptr;
+static IndexBufferDX9* ib = nullptr;
+static TextureDX9* tex = nullptr;
+static TextureDX9* tex2 = nullptr;
 static ShaderProgramDX9* VProg = nullptr;
 static ShaderProgramDX9* PProg = nullptr;
 static ShaderTemplate* VTemp = nullptr;
@@ -137,6 +237,7 @@ void RendererDX9::CreateResources()
 	if (scene == nullptr)
 		scene = importer.ReadFile(
 			"models/COLLADA/teapot_instancenodes.DAE",
+			//"models/COLLADA/duck.dae",
 			//"sponza_scene/sponza.obj",
 			aiProcess_Triangulate |
 			aiProcess_JoinIdenticalVertices |
@@ -150,12 +251,6 @@ void RendererDX9::CreateResources()
 	hr = m_pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 	//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	assert(SUCCEEDED(hr));
-
-	// Set render parameters
-	GetBackBufferSize(m_RenderData.backBufferSize);
-	GetViewport(m_RenderData.viewport);
-	m_RenderData.dstRect.topLeft = Vec2i(0, 0);
-	m_RenderData.dstRect.bottomRight = Vec2i(MAXINT, MAXINT);
 
 	TextureLoader::ImageDesc desc = TextureLoader::LoadImageFile("sky-cubemap.dds", true);
 	tex = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth);
@@ -171,10 +266,10 @@ void RendererDX9::CreateResources()
 
 	vf = new VertexFormatDX9(3);
 	vf->Initialize(
-		VertexFormat::VAU_POSITION, VertexFormat::VAT_FLOAT3, 0
-		, VertexFormat::VAU_NORMAL, VertexFormat::VAT_FLOAT3, 0
-		, VertexFormat::VAU_TEXCOORD, VertexFormat::VAT_FLOAT2, 0
-		//, VertexFormat::VAU_COLOR, VertexFormat::VAT_UBYTE4, 0
+		VAU_POSITION, VAT_FLOAT3, 0
+		, VAU_NORMAL, VAT_FLOAT3, 0
+		, VAU_TEXCOORD, VAT_FLOAT2, 0
+		//, VAU_COLOR, VAT_UBYTE4, 0
 		);
 	vf->Update();
 
@@ -186,12 +281,12 @@ void RendererDX9::CreateResources()
 	}
 
 	//create our IB
-	ib = new IndexBufferDX9(totalNumIndices, IndexBuffer::IBF_INDEX32);
+	ib = new IndexBufferDX9(totalNumIndices, IBF_INDEX32);
 	//create our VB
 	vb = new VertexBufferDX9(vf, totalNumVertices, ib);
 
-	ib->Lock(Buffer::BL_WRITE_ONLY);
-	vb->Lock(Buffer::BL_WRITE_ONLY);
+	ib->Lock(BL_WRITE_ONLY);
+	vb->Lock(BL_WRITE_ONLY);
 
 	unsigned int iterIndices = 0, iterVertices = 0, indexOffset = 0;
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
@@ -241,8 +336,8 @@ void RendererDX9::CreateResources()
 	t.close();							// close file handle
 	buffer[length - 1] = '\0';
 
-	VProg = new ShaderProgramDX9(ShaderProgram::SPT_VERTEX, buffer);
-	PProg = new ShaderProgramDX9(ShaderProgram::SPT_PIXEL, buffer);
+	VProg = new ShaderProgramDX9(SPT_VERTEX, buffer);
+	PProg = new ShaderProgramDX9(SPT_PIXEL, buffer);
 
 	VTemp = new ShaderTemplate(VProg);
 	PTemp = new ShaderTemplate(PProg);
@@ -263,103 +358,58 @@ void RendererDX9::ReleaseResources()
 	delete PTemp;
 }
 
-void RendererDX9::GetBackBufferSize(Vec2i& backBufferSize)
+void RendererDX9::SetViewport(const Vec2i size, const Vec2i offset)
 {
-	assert(m_pd3dDevice);
+	if (size == m_vViewportSize && offset == m_vViewportOffset)
+		return;
 
-	// Get swap chain
-	LPDIRECT3DSWAPCHAIN9 sc;
-	HRESULT hr = m_pd3dDevice->GetSwapChain(0, &sc);
-	assert(SUCCEEDED(hr));
+	Vec2i oldVPSize = m_vViewportSize;
+	Renderer::SetViewport(size, offset);
 
-	// Get present parameters
-	D3DPRESENT_PARAMETERS pp;
-	hr = sc->GetPresentParameters(&pp);
-	assert(SUCCEEDED(hr));
+	if (!m_pd3dDevice)
+		return;
 
-	// Get back buffer size
-	backBufferSize[0] = pp.BackBufferWidth;
-	backBufferSize[1] = pp.BackBufferHeight;
+	HRESULT hr;
+	if (size != oldVPSize)
+	{
+		// Get swap chain
+		LPDIRECT3DSWAPCHAIN9 sc;
+		hr = m_pd3dDevice->GetSwapChain(0, &sc);
+		assert(SUCCEEDED(hr));
 
-	ULONG refCount = 0;
-	refCount = sc->Release();
-	assert(refCount == 0);
-}
+		// Get present parameters
+		D3DPRESENT_PARAMETERS pp;
+		hr = sc->GetPresentParameters(&pp);
+		assert(SUCCEEDED(hr));
 
-void RendererDX9::SetBackBufferSize(const Vec2i& backBufferSize)
-{
-	assert(m_pd3dDevice);
+		ULONG refCount = 0;
+		refCount = sc->Release();
+		assert(refCount == 0);
 
-	// Get swap chain
-	LPDIRECT3DSWAPCHAIN9 sc;
-	HRESULT hr = m_pd3dDevice->GetSwapChain(0, &sc);
-	assert(SUCCEEDED(hr));
-	
-	// Get present parameters
-	D3DPRESENT_PARAMETERS pp;
-	hr = sc->GetPresentParameters(&pp);
-	assert(SUCCEEDED(hr));
+		// Set back buffer size
+		pp.BackBufferWidth = m_vViewportSize[0];
+		pp.BackBufferHeight = m_vViewportSize[1];
 
-	ULONG refCount = 0;
-	refCount = sc->Release();
-	assert(refCount == 0);
+		// Destroy resources
+		ReleaseResources();
 
-	// Set back buffer size
-	pp.BackBufferWidth	= backBufferSize[0];
-	pp.BackBufferHeight = backBufferSize[1];
-	
-	// Destroy resources
-	ReleaseResources();
+		// Reset the device
+		hr = m_pd3dDevice->Reset(&pp);
+		assert(SUCCEEDED(hr));
 
-	// Reset the device
-	hr = m_pd3dDevice->Reset(&pp);
-	assert(SUCCEEDED(hr));
-
-	CreateResources();
-}
-
-void RendererDX9::GetViewport(RenderData::Viewport& viewport)
-{
-	D3DVIEWPORT9 vp;
-	HRESULT hr = m_pd3dDevice->GetViewport(&vp);
-	assert(SUCCEEDED(hr));
-
-	viewport.topLeft = Vec2i(vp.X, vp.Y);
-	viewport.sizeWH = Vec2i(vp.Width, vp.Height);
-	viewport.minMaxZ = Vec2f(vp.MinZ, vp.MaxZ);
-}
-
-void RendererDX9::SetViewport(const RenderData::Viewport& viewport)
-{
-	assert(m_pd3dDevice);
+		CreateResources();
+	}
 
 	D3DVIEWPORT9 vp;
+	vp.X = 0;
+	vp.Y = 0;
+	vp.Width = size[0];
+	vp.Height = size[1];
+	vp.MinZ = 0.f;
+	vp.MaxZ = 1.f;
 
-	vp.X = viewport.topLeft[0];
-	vp.Y = viewport.topLeft[1];
-	vp.Width = viewport.sizeWH[0];
-	vp.Height = viewport.sizeWH[1];
-	vp.MinZ = viewport.minMaxZ[0];
-	vp.MaxZ = viewport.minMaxZ[1];
-
-	HRESULT hr = m_pd3dDevice->SetViewport(&vp);
+	hr = m_pd3dDevice->SetViewport(&vp);
 	assert(SUCCEEDED(hr));
-}
-
-void RendererDX9::SetRenderData(const RenderData& renderParams)
-{
-	//((RenderData&)renderParams).backBufferSize[0] = ((RenderData&)renderParams).backBufferSize[1] = 512;
-	// Update the backbuffer
-	if (renderParams.backBufferSize != m_RenderData.backBufferSize)
-		SetBackBufferSize(renderParams.backBufferSize);
-
-	// Update the viewport
-	if (m_RenderData.viewport.topLeft != renderParams.viewport.topLeft ||
-		m_RenderData.viewport.sizeWH != renderParams.viewport.sizeWH ||
-		m_RenderData.viewport.minMaxZ != renderParams.viewport.minMaxZ)
-		SetViewport(m_RenderData.viewport);
-
-	m_RenderData = renderParams;
 }
 
 void RendererDX9::RenderScene()
@@ -399,7 +449,7 @@ void RendererDX9::RenderScene()
 		// the aspect ratio, and the near and far clipping planes (which define at
 		// what distances geometry should be no longer be rendered).
 		D3DXMATRIXA16 matProj;
-		float aspectRatio = (float)m_RenderData.backBufferSize[0] / (float)m_RenderData.backBufferSize[1];
+		float aspectRatio = (float)m_vViewportSize[0] / (float)m_vViewportSize[1];
 		D3DXMatrixPerspectiveFovLH(&matProj, 55 * D3DX_PI / 180, aspectRatio, 20.0f, 2000.0f);
 		
 		ShaderInput VInput(VTemp);
@@ -546,10 +596,10 @@ void RendererDX9::RenderScene()
 
 	// Present the backbuffer contents to the display
 	RECT dstRect;
-	dstRect.left = m_RenderData.dstRect.topLeft[0];
-	dstRect.top = m_RenderData.dstRect.topLeft[1];
-	dstRect.right = m_RenderData.dstRect.bottomRight[0];
-	dstRect.bottom = m_RenderData.dstRect.bottomRight[1];
+	dstRect.left = m_vViewportOffset[0];
+	dstRect.top = m_vViewportOffset[1];
+	dstRect.right = m_vViewportSize[0] + m_vViewportOffset[0];
+	dstRect.bottom = m_vViewportSize[1] + m_vViewportOffset[1];
 	
 	hr = m_pd3dDevice->Present(NULL, &dstRect, NULL, NULL);
 	assert(SUCCEEDED(hr));

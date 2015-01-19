@@ -18,27 +18,11 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-#include "ShaderProgram.h"
+#include "RenderState.h"
 using namespace LibRendererDll;
 
-ShaderProgram::ShaderProgram(ShaderProgramType programType)
-	: m_eProgramType(programType)
+RenderState::RenderState()
 {}
 
-ShaderProgram::~ShaderProgram()
+RenderState::~RenderState()
 {}
-
-void ShaderProgram::SetValue(const RegisterType registerType, const unsigned int registerIndex, const void* const data, const unsigned int registerCount)
-{
-	switch (registerType)
-	{
-	case RT_BOOL:
-		SetBool(registerIndex, (const bool* const)data, registerCount);
-		break;
-	case RT_INT4:
-		SetInt(registerIndex, (const int* const)data, registerCount);
-		break;
-	case RT_FLOAT4:
-		SetFloat(registerIndex, (const float* const)data, registerCount);
-	}
-}
