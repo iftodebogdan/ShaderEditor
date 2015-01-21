@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Page.h"
 #include <iostream>
+#include <fstream>
 
 /**
  * The class constructor.
@@ -35,6 +36,7 @@ PageWidget::~PageWidget()
 void PageWidget::buildPage()
 {
 	Gdk::Color color;
+	std::ifstream* file;
 
 	// Define the background color of the text editor.
 	color.set_green(52565);
@@ -44,6 +46,20 @@ void PageWidget::buildPage()
 	// Set the text editor color and border.
 	this->m_Textview.set_border_width(5);
 	this->m_Textview.modify_base(Gtk::STATE_NORMAL, color);
+
+	file = new std::ifstream(this->m_Filename);
+	if (file->good()) {
+		Glib::RefPtr<Gtk::TextBuffer> textBuffer = this->m_Textview.get_buffer();
+		Gtk::TextBuffer::iterator iterator;
+
+		iterator = textBuffer->get_iter_at_offset(0);
+		textBuffer->insert(
+			iterator,
+			static_cast<std::stringstream const&> (std::stringstream() << file->rdbuf()).str()
+		);
+
+		file->close();
+	}
 	
 	// Add click event listeners for Quit & Save-Quit buttons.
 	this->m_QuitButton.signal_clicked().connect(
@@ -93,6 +109,15 @@ std::string PageWidget::getName()
  */
 void PageWidget::onQuitButtonPressed(bool save)
 {
+	if (save) {
+		std::ofstream file(this->m_Filename);
+		Glib::RefPtr<Gtk::TextBuffer> textBuffer = this->m_Textview.get_buffer();
+
+		file<<textBuffer->get_text();
+
+		file.close();
+	}
+
 	(*this->m_Pages)[this->m_Name] = NULL;
 	this->m_Notebook->remove(*this);
 }
