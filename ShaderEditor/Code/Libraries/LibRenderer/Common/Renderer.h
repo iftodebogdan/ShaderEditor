@@ -56,6 +56,7 @@ namespace LibRendererDll
 		virtual	LIBRENDERER_DLL			void					RenderScene() = 0;
 
 				LIBRENDERER_DLL		RenderState*				GetRenderStateManager() { return m_pRenderState; }
+				LIBRENDERER_DLL		SamplerState*				GetSamplerStateManager() { return m_pSamplerState; }
 				LIBRENDERER_DLL		DeviceCaps					GetDeviceCaps() { return m_tDeviceCaps; }
 
 	protected:

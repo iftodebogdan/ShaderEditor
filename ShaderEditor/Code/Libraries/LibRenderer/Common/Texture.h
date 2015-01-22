@@ -102,7 +102,7 @@ namespace LibRendererDll
 		const	unsigned int	GetLockedMipmap() const { assert(m_bIsLocked); return m_nLockedMipmap; }
 		const	unsigned int	GetLockedCubeFace() const { assert(m_bIsLocked); return m_nLockedCubeFace; }
 
-				void			GenerateMipmaps();
+		const	bool			GenerateMipmaps();
 
 		/* Get the number of dimensions a texture of the specified type has */
 		static	const	unsigned int	GetDimensionCount(const TexType texType) { return ms_nDimensionCount[texType]; }

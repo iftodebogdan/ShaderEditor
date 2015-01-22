@@ -46,14 +46,14 @@ namespace LibRendererDll
 		virtual const bool SetAddressingModeW(const unsigned int slot, const SamplerAddressingMode samW) { assert(slot < MAX_NUM_PSAMPLERS); m_tCurrentState[slot].eAddressingMode[2] = samW; return true; }
 		virtual const bool SetAddressingMode(const unsigned int slot, const SamplerAddressingMode samUVW) { return SetAddressingModeU(slot, samUVW) && SetAddressingModeV(slot, samUVW) && SetAddressingModeW(slot, samUVW); }
 
-		const float GetAnisotropy(const unsigned int slot) { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].fAnisotropy; }
-		const float GetLodBias(const unsigned int slot) { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].fLodBias; }
-		const SamplerFilter GetFilter(const unsigned int slot) { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eFilter; }
-		const Vec4f GetBorderColor(const unsigned int slot) { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].vBorderColor; }
-		const SamplerAddressingMode GetAddressingModeU(const unsigned int slot) { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eAddressingMode[0]; }
-		const SamplerAddressingMode GetAddressingModeV(const unsigned int slot) { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eAddressingMode[1]; }
-		const SamplerAddressingMode GetAddressingModeW(const unsigned int slot) { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eAddressingMode[2]; }
-		const SamplerAddressingMode GetAddressingMode(const unsigned int slot) { return (GetAddressingModeU(slot) == GetAddressingModeV(slot) && GetAddressingModeV(slot) == GetAddressingModeW(slot)) ? GetAddressingModeU(slot) : SAM_NONE; }
+		const float GetAnisotropy(const unsigned int slot) const { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].fAnisotropy; }
+		const float GetLodBias(const unsigned int slot) const { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].fLodBias; }
+		const SamplerFilter GetFilter(const unsigned int slot) const { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eFilter; }
+		const Vec4f GetBorderColor(const unsigned int slot) const { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].vBorderColor; }
+		const SamplerAddressingMode GetAddressingModeU(const unsigned int slot) const { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eAddressingMode[0]; }
+		const SamplerAddressingMode GetAddressingModeV(const unsigned int slot) const { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eAddressingMode[1]; }
+		const SamplerAddressingMode GetAddressingModeW(const unsigned int slot) const { assert(slot < MAX_NUM_PSAMPLERS); return m_tCurrentState[slot].eAddressingMode[2]; }
+		const SamplerAddressingMode GetAddressingMode(const unsigned int slot) const { return (GetAddressingModeU(slot) == GetAddressingModeV(slot) && GetAddressingModeV(slot) == GetAddressingModeW(slot)) ? GetAddressingModeU(slot) : SAM_NONE; }
 
 		friend class Renderer;
 	};

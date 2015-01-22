@@ -213,6 +213,7 @@ void RendererDX9::Initialize(void* hWnd)
 Assimp::Importer importer;
 static const aiScene* scene = nullptr;
 
+#include "RenderTargetDX9.h"
 #include "ShaderTemplate.h"
 #include "ShaderProgramDX9.h"
 #include "ShaderInput.h"
@@ -226,6 +227,7 @@ static ShaderProgramDX9* VProg = nullptr;
 static ShaderProgramDX9* PProg = nullptr;
 static ShaderTemplate* VTemp = nullptr;
 static ShaderTemplate* PTemp = nullptr;
+static RenderTargetDX9* rt = nullptr;
 
 #include "Utility/TextureLoader.h"
 
@@ -244,25 +246,27 @@ void RendererDX9::CreateResources()
 			aiProcess_GenSmoothNormals |
 			aiProcess_GenUVCoords);
 
-	HRESULT hr;
+	//HRESULT hr;
 	// Turn off culling, so we see the front and back of the triangle
 	//hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	// Turn on the zbuffer
-	hr = m_pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	//hr = m_pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 	//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	assert(SUCCEEDED(hr));
+	//assert(SUCCEEDED(hr));
+	GetRenderStateManager()->SetZEnable(ZB_ENABLED);
 
 	TextureLoader::ImageDesc desc = TextureLoader::LoadImageFile("sky-cubemap.dds", true);
 	tex = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth);
 	TextureLoader::CopyImageData(tex);
 	
 	desc = TextureLoader::LoadImageFile("sponza_ceiling_a_diff.tga", true);
-	tex2 = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth);
+	tex2 = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth, 1, BU_DYNAMIC);
 	TextureLoader::CopyImageData(tex2);
 
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	m_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	GetSamplerStateManager()->SetFilter(0, SF_MIN_MAG_LINEAR_MIP_LINEAR);
 
 	vf = new VertexFormatDX9(3);
 	vf->Initialize(
@@ -343,6 +347,8 @@ void RendererDX9::CreateResources()
 	PTemp = new ShaderTemplate(PProg);
 
 	delete[] buffer;
+
+	rt = new RenderTargetDX9(1, tex2->GetTextureFormat(), tex2->GetWidth(), tex2->GetHeight(), false, true);
 }
 
 void RendererDX9::ReleaseResources()
@@ -356,6 +362,7 @@ void RendererDX9::ReleaseResources()
 	delete PProg;
 	delete VTemp;
 	delete PTemp;
+	delete rt;
 }
 
 void RendererDX9::SetViewport(const Vec2i size, const Vec2i offset)
@@ -584,7 +591,23 @@ void RendererDX9::RenderScene()
 		vb->Enable();
 		VTemp->Enable(VInput);
 		PTemp->Enable(PInput);
+
+		rt->Enable();
+		m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
+			D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
 		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
+		rt->Disable();
+
+		Texture* tex3 = tex2;
+		rt->CopyColorBuffer(0, tex3);
+		tex2->Lock(0, BL_WRITE_ONLY);
+		tex2->Update();
+		tex2->Unlock();
+		tex2 = (TextureDX9*)tex3;
+		//tex2->GenerateMipmaps();
+
+		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
+		
 		PTemp->Disable();
 		VTemp->Disable();
 		vb->Disable();

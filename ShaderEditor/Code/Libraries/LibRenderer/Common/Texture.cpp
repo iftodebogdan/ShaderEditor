@@ -197,13 +197,13 @@ void Texture::ComputeMipmapProperties()
 	m_nSize = totalByteCount * (m_eTexType == TT_CUBE ? 6u : 1u);
 }
 
-void Texture::GenerateMipmaps()
+const bool Texture::GenerateMipmaps()
 {
 	assert(GetTextureType() == TT_2D || GetTextureType() == TT_CUBE);
 	assert(GetTextureFormat() == PF_A8R8G8B8 || GetTextureFormat() == PF_A8B8G8R8);
 
 	if (IsLocked())
-		Unlock();
+		return false;
 
 	for (unsigned int face = 0; face < (m_eTexType == TT_CUBE ? 6u : 1u); face++)
 	{
@@ -243,4 +243,6 @@ void Texture::GenerateMipmaps()
 			Unlock();
 		}
 	}
+
+	return true;
 }

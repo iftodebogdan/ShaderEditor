@@ -211,6 +211,8 @@
     <ClInclude Include="Common\SamplerState.h" />
     <ClInclude Include="DX9\SamplerStateDX9.h" />
     <ClInclude Include="Common\RenderData.h" />
+    <ClInclude Include="Common\RenderTarget.h" />
+    <ClInclude Include="DX9\RenderTargetDX9.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -258,6 +260,8 @@
     <ClCompile Include="DX9\RenderStateDX9.cpp" />
     <ClCompile Include="Common\SamplerState.cpp" />
     <ClCompile Include="DX9\SamplerStateDX9.cpp" />
+    <ClCompile Include="Common\RenderTarget.cpp" />
+    <ClCompile Include="DX9\RenderTargetDX9.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />

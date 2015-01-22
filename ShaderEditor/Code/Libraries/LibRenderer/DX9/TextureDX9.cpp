@@ -42,6 +42,8 @@ TextureDX9::TextureDX9(
 		pool = D3DPOOL_DEFAULT;
 
 	HRESULT hr;
+	DWORD usageFlags;
+	bool bAutogenMipmaps = false;
 	switch (GetTextureType())
 	{
 	case TT_1D:
@@ -52,9 +54,16 @@ TextureDX9::TextureDX9(
 		break;
 
 	case TT_2D:
+		usageFlags = BufferUsageDX9[m_eBufferUsage];
+		if (m_eBufferUsage == BU_RENDERTAGET && mipmapLevelCount == 0)
+		{
+			// automatic mipmap generation for RTs
+			usageFlags |= D3DUSAGE_AUTOGENMIPMAP;
+			bAutogenMipmaps = true;
+		}
 		hr = device->CreateTexture(
-				GetWidth(), GetHeight(), GetMipmapLevelCount(),
-				BufferUsageDX9[m_eBufferUsage], TextureFormatDX9[m_eTexFormat],
+				GetWidth(), GetHeight(), bAutogenMipmaps ? 0 : GetMipmapLevelCount(),
+				usageFlags, TextureFormatDX9[m_eTexFormat],
 				pool, (IDirect3DTexture9**)&m_pTexture, 0);
 		break;
 
@@ -95,7 +104,7 @@ void TextureDX9::Disable(const unsigned int texUnit) const
 	HRESULT hr;
 
 #ifdef _DEBUG
-	IDirect3DBaseTexture9* activeTex = 0;
+	IDirect3DBaseTexture9* activeTex = nullptr;
 	hr = device->GetTexture(texUnit, &activeTex);
 	assert(SUCCEEDED(hr));
 	assert(activeTex == m_pTexture);
@@ -172,10 +181,12 @@ void TextureDX9::Unlock()
 void TextureDX9::Update()
 {
 	assert(m_pTempBuffer != nullptr);
+	//memcpy(m_pTempBuffer, m_pData, m_nMipmapLevelByteCount[m_nLockedMipmap]);
 	for (unsigned int j = 0; j < GetDepth(m_nLockedMipmap); j++)
 	{
 		for (unsigned int i = 0; i < GetHeight(m_nLockedMipmap); i++)
 		{
+			
 			memcpy(
 				(byte*)m_pTempBuffer + i * m_nRowPitch + j * m_nDepthPitch,
 				(GetTextureType() == TT_CUBE ? GetMipmapLevelData(m_nLockedCubeFace, m_nLockedMipmap) : GetMipmapLevelData(m_nLockedMipmap))

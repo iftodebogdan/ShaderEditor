@@ -16,37 +16,35 @@
 // You should have received a copy of the GNU General Public License    //
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //////////////////////////////////////////////////////////////////////////
-#ifndef RENDERERDX9_H
-#define RENDERERDX9_H
+#ifndef RENDERTARGETDX9_H
+#define RENDERTARGETDX9_H
 
 #include <d3d9.h>
-#include "Renderer.h"
+
+#include "RenderTarget.h"
 
 namespace LibRendererDll
 {
-	class RendererDX9 : public Renderer
+	class RenderTargetDX9 : public RenderTarget
 	{
-		// Used to create the D3DDevice
-		IDirect3D9*			m_pD3D;
-		// Our rendering device
-		IDirect3DDevice9*	m_pd3dDevice;
-		
-		void	CreateResources();
-		void	ReleaseResources();
-
 	public:
-		RendererDX9();
-		~RendererDX9();
+		RenderTargetDX9(const unsigned int targetCount, PixelFormat pixelFormat,
+			const unsigned int width, const unsigned int height, bool hasMipmaps, bool hasDepthStencil);
+		~RenderTargetDX9();
 
-		static	RendererDX9*	GetInstance() { assert(m_eAPI == API_DX9); return (RendererDX9*)m_pInstance; };
+		void	Enable();
+		void	Disable();
+		void	CopyColorBuffer(const unsigned int colorBufferIdx, Texture*& texture);
 
-		void					Initialize(void* hWnd);
-		void					SetViewport(const Vec2i size, const Vec2i offset = Vec2i(0, 0));
-		void					RenderScene();
+	protected:
+		IDirect3DSurface9**		m_pColorSurface;
+		IDirect3DSurface9*		m_pDepthSurface;
 
-		IDirect3DDevice9*		GetDevice() const { return m_pd3dDevice; };
-		IDirect3D9*				GetDriver() const { return m_pD3D; }
+		// These are used in the Enable/Disable() flow in order to
+		// save and restore render target 0 (i.e. the backbuffer)
+		IDirect3DSurface9*		m_pColorSurfaceBackup;
+		IDirect3DSurface9*		m_pDepthSurfaceBackup;
 	};
 }
 
-#endif	//RENDERDX9_H
+#endif // RENDERTARGETDX9_H
