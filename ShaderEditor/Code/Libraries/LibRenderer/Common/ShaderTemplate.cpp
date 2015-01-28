@@ -24,7 +24,7 @@
 #include "Texture.h"
 using namespace LibRendererDll;
 
-ShaderTemplate::ShaderTemplate(ShaderProgram* shaderProgram)
+ShaderTemplate::ShaderTemplate(ShaderProgram* const shaderProgram)
 	: m_pProgram(shaderProgram)
 	, m_pShaderInput(nullptr)
 {

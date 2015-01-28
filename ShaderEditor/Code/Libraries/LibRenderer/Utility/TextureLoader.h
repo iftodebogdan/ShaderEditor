@@ -37,14 +37,17 @@ namespace LibRendererDll
 			unsigned int mipmaps;
 		};
 
-		static ImageDesc LoadImageFile(const char* const path, const bool convertToARGB = false);
-		static void CopyImageData(Texture* outTex);
-		static void UnloadImageFile();
-
 	private:
 		TextureLoader() {}
 		~TextureLoader() {}
 		static bool bIsInitialized;
+
+		static ImageDesc LoadImageFile(const char* const path, const bool convertToARGB = false);
+		static void CopyImageData(Texture* outTex);
+		static void UnloadImageFile();
+
+		friend class ResourceManager;
+		friend class RendererDX9;
 	};
 }
 

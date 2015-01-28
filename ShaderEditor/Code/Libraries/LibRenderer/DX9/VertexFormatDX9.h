@@ -28,16 +28,21 @@ namespace LibRendererDll
 	class VertexFormatDX9 : public VertexFormat
 	{
 	public:
-				VertexFormatDX9(const unsigned int attributeCount);
-				~VertexFormatDX9();
-
 		void	Enable();
 		void	Disable();
 		void	Update();
 
+		void	Bind();
+		void	Unbind();
+
 	private:
+		VertexFormatDX9(const unsigned int attributeCount);
+		~VertexFormatDX9();
+
 		D3DVERTEXELEMENT9 m_pVertexElements[VF_MAX_ATTRIBUTES + 1];
 		IDirect3DVertexDeclaration9* m_pVertexDeclaration;
+
+		friend class ResourceManagerDX9;
 	};
 }
 

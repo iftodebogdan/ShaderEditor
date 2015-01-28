@@ -94,6 +94,7 @@ Texture::Texture(
 	, m_bIsLocked(false)
 	, m_nLockedMipmap(-1)
 	, m_nLockedCubeFace(-1)
+	, m_bAutogenMipmaps(false)
 {
 	assert(sizeX > 0);
 	assert(sizeY > 0);

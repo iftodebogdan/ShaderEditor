@@ -43,7 +43,6 @@ TextureDX9::TextureDX9(
 
 	HRESULT hr;
 	DWORD usageFlags;
-	bool bAutogenMipmaps = false;
 	switch (GetTextureType())
 	{
 	case TT_1D:
@@ -59,10 +58,10 @@ TextureDX9::TextureDX9(
 		{
 			// automatic mipmap generation for RTs
 			usageFlags |= D3DUSAGE_AUTOGENMIPMAP;
-			bAutogenMipmaps = true;
+			m_bAutogenMipmaps = true;
 		}
 		hr = device->CreateTexture(
-				GetWidth(), GetHeight(), bAutogenMipmaps ? 0 : GetMipmapLevelCount(),
+				GetWidth(), GetHeight(), m_bAutogenMipmaps ? 0 : GetMipmapLevelCount(),
 				usageFlags, TextureFormatDX9[m_eTexFormat],
 				pool, (IDirect3DTexture9**)&m_pTexture, 0);
 		break;
@@ -85,9 +84,7 @@ TextureDX9::TextureDX9(
 
 TextureDX9::~TextureDX9()
 {
-	unsigned int refCount = 0;
-	refCount = m_pTexture->Release();
-	assert(refCount == 0);
+	Unbind();
 }
 
 void TextureDX9::Enable(const unsigned int texUnit) const
@@ -119,7 +116,7 @@ void TextureDX9::Disable(const unsigned int texUnit) const
 
 const bool TextureDX9::Lock(const unsigned int mipmapLevel, const BufferLocking lockMode)
 {
-	if (m_bIsLocked)
+	if (m_bIsLocked || m_eBufferUsage == BU_RENDERTAGET || m_eBufferUsage == BU_DEPTHSTENCIL)
 		return false;
 
 	assert(m_pTempBuffer == nullptr);
@@ -195,4 +192,97 @@ void TextureDX9::Update()
 				);
 		}
 	}
+}
+
+void TextureDX9::Bind()
+{
+	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
+
+	D3DPOOL pool;
+	if (GetUsage() == BU_TEXTURE)
+		pool = D3DPOOL_MANAGED;
+	else
+		pool = D3DPOOL_DEFAULT;
+
+	HRESULT hr;
+	DWORD usageFlags;
+	switch (GetTextureType())
+	{
+	case TT_1D:
+		hr = device->CreateTexture(
+			GetWidth(), 1u, GetMipmapLevelCount(),
+			BufferUsageDX9[m_eBufferUsage], TextureFormatDX9[m_eTexFormat],
+			pool, (IDirect3DTexture9**)&m_pTexture, 0);
+		break;
+
+	case TT_2D:
+		usageFlags = BufferUsageDX9[m_eBufferUsage];
+		if (m_eBufferUsage == BU_RENDERTAGET && m_bAutogenMipmaps == true)
+		{
+			// automatic mipmap generation for RTs
+			usageFlags |= D3DUSAGE_AUTOGENMIPMAP;
+		}
+		hr = device->CreateTexture(
+			GetWidth(), GetHeight(), m_bAutogenMipmaps ? 0 : GetMipmapLevelCount(),
+			usageFlags, TextureFormatDX9[m_eTexFormat],
+			pool, (IDirect3DTexture9**)&m_pTexture, 0);
+		break;
+
+	case TT_3D:
+		hr = device->CreateVolumeTexture(
+			GetWidth(), GetHeight(), GetDepth(), GetMipmapLevelCount(),
+			BufferUsageDX9[m_eBufferUsage], TextureFormatDX9[m_eTexFormat],
+			pool, (IDirect3DVolumeTexture9**)&m_pTexture, 0);
+		break;
+
+	case TT_CUBE:
+		hr = device->CreateCubeTexture(
+			GetWidth(), GetMipmapLevelCount(),
+			BufferUsageDX9[m_eBufferUsage], TextureFormatDX9[m_eTexFormat],
+			pool, (IDirect3DCubeTexture9**)&m_pTexture, 0);
+	}
+	assert(SUCCEEDED(hr));
+
+	switch (GetTextureType())
+	{
+	case TT_1D:
+	case TT_2D:
+	case TT_3D:
+		for (unsigned int mip = 0; mip < GetMipmapLevelCount(); mip++)
+		{
+			if (Lock(mip, BL_WRITE_ONLY))
+			{
+				Update();
+				Unlock();
+			}
+			else
+				if (m_eBufferUsage != BU_RENDERTAGET && m_eBufferUsage != BU_DEPTHSTENCIL)
+					assert(false);
+		}
+		break;
+	case TT_CUBE:
+		for (unsigned int face = 0; face < 6; face++)
+		{
+			for (unsigned int mip = 0; mip < GetMipmapLevelCount(); mip++)
+			{
+				if (Lock(face, mip, BL_WRITE_ONLY))
+				{
+					Update();
+					Unlock();
+				}
+				else
+					assert(false);
+			}
+		}
+	}
+}
+
+void TextureDX9::Unbind()
+{
+	unsigned int refCount = 0;
+	if (m_pTexture)
+		refCount = m_pTexture->Release();
+	if (m_eBufferUsage == BU_TEXTURE)
+		assert(refCount == 0);
+	m_pTexture = nullptr;
 }

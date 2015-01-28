@@ -38,8 +38,4 @@
 // Include common header files
 #include <assert.h>
 
-// Declare new data types
-typedef unsigned char byte;
-typedef unsigned long DWORD;
-
 #endif //STDAFX_H

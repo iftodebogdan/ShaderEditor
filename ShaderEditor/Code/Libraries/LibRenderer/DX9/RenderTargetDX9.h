@@ -28,15 +28,18 @@ namespace LibRendererDll
 	class RenderTargetDX9 : public RenderTarget
 	{
 	public:
+		void	Enable();
+		void	Disable();
+		void	CopyColorBuffer(const unsigned int colorBufferIdx, Texture* texture);
+
+		void	Bind();
+		void	Unbind();
+
+	protected:
 		RenderTargetDX9(const unsigned int targetCount, PixelFormat pixelFormat,
 			const unsigned int width, const unsigned int height, bool hasMipmaps, bool hasDepthStencil);
 		~RenderTargetDX9();
 
-		void	Enable();
-		void	Disable();
-		void	CopyColorBuffer(const unsigned int colorBufferIdx, Texture*& texture);
-
-	protected:
 		IDirect3DSurface9**		m_pColorSurface;
 		IDirect3DSurface9*		m_pDepthSurface;
 
@@ -44,6 +47,8 @@ namespace LibRendererDll
 		// save and restore render target 0 (i.e. the backbuffer)
 		IDirect3DSurface9*		m_pColorSurfaceBackup;
 		IDirect3DSurface9*		m_pDepthSurfaceBackup;
+
+		friend class ResourceManagerDX9;
 	};
 }
 

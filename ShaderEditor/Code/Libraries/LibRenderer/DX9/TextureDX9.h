@@ -27,12 +27,6 @@ namespace LibRendererDll
 	class TextureDX9 : public Texture
 	{
 	public:
-		TextureDX9(
-			const PixelFormat texFormat, const TexType texType,
-			const unsigned int sizeX, const unsigned int sizeY = 1, const unsigned int sizeZ = 1,
-			const unsigned int mipmapLevelCount = 0, const BufferUsage usage = BU_TEXTURE);
-		~TextureDX9();
-
 		void		Enable(const unsigned int texUnit) const;
 		void		Disable(const unsigned int texUnit) const;
 		const bool	Lock(const unsigned int mipmapLevel, const BufferLocking lockMode);
@@ -40,15 +34,26 @@ namespace LibRendererDll
 		void		Unlock();
 		void		Update();
 
+		void		Bind();
+		void		Unbind();
+
 		IDirect3DBaseTexture9* const	GetTextureDX9() const { return m_pTexture; }
 
 	private:
+		TextureDX9(
+			const PixelFormat texFormat, const TexType texType,
+			const unsigned int sizeX, const unsigned int sizeY = 1, const unsigned int sizeZ = 1,
+			const unsigned int mipmapLevelCount = 0, const BufferUsage usage = BU_TEXTURE);
+		~TextureDX9();
+
 		IDirect3DBaseTexture9* m_pTexture;
 
 		// A temporary pointer used in the Lock->Update->Unlock flow
 		void*			m_pTempBuffer;
 		unsigned int	m_nRowPitch;
 		unsigned int	m_nDepthPitch;
+
+		friend class ResourceManagerDX9;
 	};
 }
 

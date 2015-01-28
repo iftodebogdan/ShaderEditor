@@ -27,22 +27,27 @@ namespace LibRendererDll
 	class IndexBufferDX9 : public IndexBuffer
 	{
 	public:
-				IndexBufferDX9::IndexBufferDX9(
-					const unsigned int indexCount, const IndexBufferFormat indexFormat,
-					const BufferUsage usage = BU_STATIC);
-				IndexBufferDX9::~IndexBufferDX9();
-
 		void	Enable();
 		void	Disable();
 		void	Lock(const BufferLocking lockMode);
 		void	Unlock();
 		void	Update();
 
+		void	Bind();
+		void	Unbind();
+
 	private:
+		IndexBufferDX9::IndexBufferDX9(
+			const unsigned int indexCount, const IndexBufferFormat indexFormat,
+			const BufferUsage usage = BU_STATIC);
+		IndexBufferDX9::~IndexBufferDX9();
+
 		IDirect3DIndexBuffer9* m_pIndexBuffer;
 
 		// A temporary pointer used in the Lock->Update->Unlock flow
 		void*	m_pTempBuffer;
+
+		friend class ResourceManagerDX9;
 	};
 }
 

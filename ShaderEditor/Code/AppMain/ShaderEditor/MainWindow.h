@@ -7,6 +7,8 @@
 #include <gtkmm/frame.h>
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/notebook.h>
+#include "Renderer.h"
+using namespace LibRendererDll;
 
 class MainWindow : public Gtk::Window
 {
@@ -19,6 +21,21 @@ protected:
 	void OnCreate();
 	// Called every frame
 	bool OnUpdate();
+	// Called on mouse events
+	void CenterPointerInWidget(Gtk::Widget* widget);
+	bool OnButtonPress(GdkEventButton* ev);
+	bool OnButtonRelease(GdkEventButton* ev);
+	bool OnMouseMove(GdkEventMotion* ev);
+	bool OnKeyPress(GdkEventKey* ev);
+	bool OnKeyRelease(GdkEventKey* ev);
+	bool m_bLeftClick, m_bRightClick;
+	Vec3f m_vMove;
+	float m_fSpeedFactor;
+	struct Camera
+	{
+		Vec3f vPos;
+		Matrix44f mRot;
+	} m_tCamera;
 
 	// Child widgets:
 	Gtk::VPaned			m_VPaned;
@@ -33,6 +50,15 @@ protected:
 	// Components
 	MenuWidget*			m_MenuWidget;
 	Gtk::Notebook		m_Notebook;
+
+	VertexBuffer*		m_pVB;
+	Texture*			m_pTex1;
+	Texture*			m_pTex2;
+	ShaderTemplate*		m_pVertexShader;
+	ShaderTemplate*		m_pPixelShader;
+	ShaderInput*		m_pVSInput;
+	ShaderInput*		m_pPSInput;
+	RenderTarget*		m_pRT;
 };
 
 #endif

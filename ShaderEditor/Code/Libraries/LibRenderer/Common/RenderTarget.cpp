@@ -25,26 +25,63 @@ using namespace LibRendererDll;
 RenderTarget::RenderTarget(const unsigned int targetCount, PixelFormat pixelFormat,
 	const unsigned int width, const unsigned int height, bool hasMipmaps, bool hasDepthStencil)
 	: m_nTargetCount(targetCount)
+	, m_ePixelFormat(pixelFormat)
+	, m_nWidth(width)
+	, m_nHeight(height)
 	, m_bHasMipmaps(hasMipmaps)
+	, m_bHasDepthStencil(hasDepthStencil)
+	, m_nColorBufferTexIdx(nullptr)
+	, m_nDepthBufferTexIdx(UINT_MAX)
 	, m_pColorBuffer(nullptr)
 	, m_pDepthBuffer(nullptr)
 {
 	assert(targetCount > 0);
-	assert(targetCount <= RendererDX9::GetInstance()->GetDeviceCaps().nNumSimultaneousRTs);
+	assert(targetCount <= Renderer::GetInstance()->GetDeviceCaps().nNumSimultaneousRTs);
 
-	// Actual texture creation will be done individually in each API implementation.
-	// On the other hand, since the Renderer class is a singleton, we could retrieve
-	// it and create the texture from here, which would be more intuitive;
-	// Then again, if we ever wanted to support multiple renderers at the same time
-	// (e.g. DX9 and OpenGL rendering in the same window), then we can't create
-	// the textures from here since the renderer wouldn't be a singleton anymore.
-	// TODO: Decide between code consistency and flexibility.
+	m_nColorBufferTexIdx = new unsigned int[m_nTargetCount];
 	m_pColorBuffer = new Texture*[m_nTargetCount];
-	memset(m_pColorBuffer, 0, m_nTargetCount * sizeof(Texture*));
+	
+	for (unsigned int i = 0; i < m_nTargetCount; i++)
+	{
+		m_nColorBufferTexIdx[i] = Renderer::GetInstance()->GetResourceManager()->CreateTexture(
+			pixelFormat, TT_2D, width, height, 1, hasMipmaps ? 0 : 1, BU_RENDERTAGET);
+		m_pColorBuffer[i] = Renderer::GetInstance()->GetResourceManager()->GetTexture(m_nColorBufferTexIdx[i]);
+	}
+
+	if (hasDepthStencil)
+	{
+		m_nDepthBufferTexIdx = Renderer::GetInstance()->GetResourceManager()->CreateTexture(
+			PF_D24S8, TT_2D, width, height, 1, 1, BU_DEPTHSTENCIL);
+		m_pDepthBuffer = Renderer::GetInstance()->GetResourceManager()->GetTexture(m_nDepthBufferTexIdx);
+	}
 }
 
 RenderTarget::~RenderTarget()
 {
+	Unbind();
+
 	if (m_pColorBuffer)
 		delete[] m_pColorBuffer;
+
+	if (m_nColorBufferTexIdx)
+		delete[] m_nColorBufferTexIdx;
+}
+
+void RenderTarget::Bind()
+{
+	for (unsigned int i = 0; i < m_nTargetCount; i++)
+		m_pColorBuffer[i]->Bind();
+
+	if (m_bHasDepthStencil)
+		m_pDepthBuffer->Bind();
+}
+
+void RenderTarget::Unbind()
+{
+	for (unsigned int i = 0; i < m_nTargetCount; i++)
+		if (m_pColorBuffer && m_pColorBuffer[i])
+			m_pColorBuffer[i]->Unbind();
+
+	if (m_pDepthBuffer)
+		m_pDepthBuffer->Unbind();
 }

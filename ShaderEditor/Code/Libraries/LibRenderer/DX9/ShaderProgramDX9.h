@@ -29,15 +29,17 @@ namespace LibRendererDll
 
 	class ShaderProgramDX9 : public ShaderProgram
 	{
-	public:
+	private:
 		ShaderProgramDX9(const ShaderProgramType programType, const char* srcData = "", const char* entryPoint = "", const char* profile = "");
 		~ShaderProgramDX9();
 
-	private:
 		void Enable();
 		void Disable();
 		const bool Compile(const char* srcData, char* const errors, const char* entryPoint = "", const char* profile = "");
 		
+		void Bind();
+		void Unbind();
+
 		const unsigned int GetConstantCount() const;
 		const char* GetConstantName(const unsigned int handle) const;
 		const InputType GetConstantType(const unsigned int handle) const;
@@ -58,6 +60,8 @@ namespace LibRendererDll
 		IDirect3DVertexShader9* m_pVertexShader;
 		IDirect3DPixelShader9* m_pPixelShader;
 		LPD3DXCONSTANTTABLE m_pConstantTable;
+
+		friend class ResourceManagerDX9;
 	};
 }
 

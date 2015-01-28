@@ -137,7 +137,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\vld\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\gmtl\include;$(ProjectDir)SDK\vld\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,7 +159,7 @@ xcopy /y /d "$(ProjectDir)SDK\vld\bin\$(PlatformTarget)\*.*" "$(OutDir)"</Comman
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;D3D_DEBUG_INFO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\vld\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\gmtl\include;$(ProjectDir)SDK\vld\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -185,7 +185,7 @@ xcopy /y /d "$(ProjectDir)SDK\vld\bin\$(PlatformTarget)\*.*" "$(OutDir)"</Comman
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\gmtl\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -210,7 +210,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\gmtl\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -236,7 +236,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\gmtl\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -263,7 +263,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)DX9;$(ProjectDir)SDK\DX9\include;$(ProjectDir)SDK\DevIL\include;$(ProjectDir)SDK\assimp\include;$(ProjectDir)SDK\gmtl\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -288,6 +288,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
   <ItemGroup>
     <ClInclude Include="Common\RenderData.h" />
     <ClInclude Include="Common\RenderTarget.h" />
+    <ClInclude Include="Common\ResourceManager.h" />
     <ClInclude Include="Common\SamplerState.h" />
     <ClInclude Include="Common\ShaderInput.h" />
     <ClInclude Include="Common\ShaderProgram.h" />
@@ -296,6 +297,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
     <ClInclude Include="DX9\MappingsDX9.h" />
     <ClInclude Include="DX9\RenderStateDX9.h" />
     <ClInclude Include="DX9\RenderTargetDX9.h" />
+    <ClInclude Include="DX9\ResourceManagerDX9.h" />
     <ClInclude Include="DX9\SamplerStateDX9.h" />
     <ClInclude Include="DX9\ShaderProgramDX9.h" />
     <ClInclude Include="DX9\TextureDX9.h" />
@@ -421,11 +423,13 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Common\VertexBuffer.h" />
     <ClInclude Include="DX9\VertexBufferDX9.h" />
+    <ClInclude Include="Utility\ModelLoader.h" />
     <ClInclude Include="Utility\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\RenderState.cpp" />
     <ClCompile Include="Common\RenderTarget.cpp" />
+    <ClCompile Include="Common\ResourceManager.cpp" />
     <ClCompile Include="Common\SamplerState.cpp" />
     <ClCompile Include="Common\ShaderInput.cpp" />
     <ClCompile Include="Common\ShaderProgram.cpp" />
@@ -434,6 +438,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
     <ClCompile Include="DX9\MappingsDX9.cpp" />
     <ClCompile Include="DX9\RenderStateDX9.cpp" />
     <ClCompile Include="DX9\RenderTargetDX9.cpp" />
+    <ClCompile Include="DX9\ResourceManagerDX9.cpp" />
     <ClCompile Include="DX9\SamplerStateDX9.cpp" />
     <ClCompile Include="DX9\ShaderProgramDX9.cpp" />
     <ClCompile Include="DX9\TextureDX9.cpp" />
@@ -474,6 +479,7 @@ xcopy /y /d "$(ProjectDir)SDK\DevIL\bin\$(PlatformTarget)\*.dll" "$(OutDir)"</Co
     </ClCompile>
     <ClCompile Include="Common\VertexBuffer.cpp" />
     <ClCompile Include="DX9\VertexBufferDX9.cpp" />
+    <ClCompile Include="Utility\ModelLoader.cpp" />
     <ClCompile Include="Utility\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>

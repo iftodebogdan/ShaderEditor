@@ -36,9 +36,7 @@ IndexBufferDX9::IndexBufferDX9(const unsigned int indexCount, const IndexBufferF
 
 IndexBufferDX9::~IndexBufferDX9()
 {
-	ULONG refCount = 0;
-	refCount = m_pIndexBuffer->Release();
-	assert(refCount == 0);
+	Unbind();
 }
 
 void IndexBufferDX9::Enable()
@@ -86,4 +84,23 @@ void IndexBufferDX9::Update()
 {
 	assert(m_pTempBuffer != nullptr);
 	memcpy(m_pTempBuffer, GetData(), GetSize());
+}
+
+void IndexBufferDX9::Bind()
+{
+	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
+	HRESULT hr = device->CreateIndexBuffer((UINT)m_nSize, BufferUsageDX9[m_eBufferUsage], IndexBufferFormatDX9[m_eIndexFormat], D3DPOOL_DEFAULT, &m_pIndexBuffer, 0);
+	assert(SUCCEEDED(hr));
+
+	Lock(BL_WRITE_ONLY);
+	Update();
+	Unlock();
+}
+
+void IndexBufferDX9::Unbind()
+{
+	ULONG refCount = 0;
+	refCount = m_pIndexBuffer->Release();
+	assert(refCount == 0);
+	m_pIndexBuffer = nullptr;
 }

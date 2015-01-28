@@ -24,6 +24,7 @@
 #include "VertexBufferDX9.h"
 #include "IndexBufferDX9.h"
 #include "TextureDX9.h"
+#include "ResourceManagerDX9.h"
 #include "RenderStateDX9.h"
 #include "SamplerStateDX9.h"
 using namespace LibRendererDll;
@@ -33,12 +34,11 @@ using namespace LibRendererDll;
 RendererDX9::RendererDX9()
 	: m_pD3D(nullptr)
 	, m_pd3dDevice(nullptr)
+	, m_bDeviceLost(false)
 {}
 
 RendererDX9::~RendererDX9()
 {
-	ReleaseResources();
-
 	ULONG refCount = 0;
 
 	if (m_pd3dDevice)
@@ -64,7 +64,7 @@ void RendererDX9::Initialize(void* hWnd)
 	{
 		if (FAILED(m_pD3D->EnumAdapterModes(D3DADAPTER_DEFAULT, D3DFMT_X8R8G8B8, nMode, &d3ddm)))
 		{
-			// TO DO: Respond to failure of EnumAdapterModes
+			// TODO: Respond to failure of EnumAdapterModes
 			assert(false);
 			return;
 		}
@@ -139,16 +139,15 @@ void RendererDX9::Initialize(void* hWnd)
 	// efficient method of presenting the back buffer to the display. And 
 	// we request a back buffer format that matches the current desktop display 
 	// format.
-	D3DPRESENT_PARAMETERS d3dpp;
-	ZeroMemory(&d3dpp, sizeof(d3dpp));
-	d3dpp.Windowed = TRUE;
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-	d3dpp.BackBufferWidth = m_vViewportSize[0];
-	d3dpp.BackBufferHeight = m_vViewportSize[1];
-	d3dpp.EnableAutoDepthStencil = TRUE;
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
-	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	ZeroMemory(&m_ePresentParameters, sizeof(m_ePresentParameters));
+	m_ePresentParameters.Windowed = TRUE;
+	m_ePresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	m_ePresentParameters.BackBufferFormat = D3DFMT_UNKNOWN;
+	m_ePresentParameters.BackBufferWidth = m_vViewportSize[0];
+	m_ePresentParameters.BackBufferHeight = m_vViewportSize[1];
+	m_ePresentParameters.EnableAutoDepthStencil = TRUE;
+	m_ePresentParameters.AutoDepthStencilFormat = D3DFMT_D24S8;
+	m_ePresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 	
 	// Create the Direct3D device. Here we are using the default adapter (most
 	// systems only have one, unless they have multiple graphics hardware cards
@@ -179,11 +178,11 @@ void RendererDX9::Initialize(void* hWnd)
 
 	if (FAILED(m_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, (HWND)hWnd,
 		BehaviorFlags,
-		&d3dpp, &m_pd3dDevice)))
+		&m_ePresentParameters, &m_pd3dDevice)))
 	{
 		m_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, (HWND)hWnd,
 			BehaviorFlags,
-			&d3dpp, &m_pd3dDevice);
+			&m_ePresentParameters, &m_pd3dDevice);
 	}
 
 	assert(m_pd3dDevice);
@@ -199,170 +198,9 @@ void RendererDX9::Initialize(void* hWnd)
 	hr = m_pd3dDevice->SetViewport(&vp);
 	assert(SUCCEEDED(hr));
 
+	m_pResourceManager = new ResourceManagerDX9();
 	m_pRenderState = new RenderStateDX9();
 	m_pSamplerState = new SamplerStateDX9();
-
-	CreateResources();
-}
-
-#include <Importer.hpp> // C++ importer interface
-#include <scene.h> // Output data structure
-#include <postprocess.h> // Post processing flags
-
-// Create an instance of the Importer class
-Assimp::Importer importer;
-static const aiScene* scene = nullptr;
-
-#include "RenderTargetDX9.h"
-#include "ShaderTemplate.h"
-#include "ShaderProgramDX9.h"
-#include "ShaderInput.h"
-#include <fstream>
-static VertexFormatDX9* vf = nullptr;
-static VertexBufferDX9* vb = nullptr;
-static IndexBufferDX9* ib = nullptr;
-static TextureDX9* tex = nullptr;
-static TextureDX9* tex2 = nullptr;
-static ShaderProgramDX9* VProg = nullptr;
-static ShaderProgramDX9* PProg = nullptr;
-static ShaderTemplate* VTemp = nullptr;
-static ShaderTemplate* PTemp = nullptr;
-static RenderTargetDX9* rt = nullptr;
-
-#include "Utility/TextureLoader.h"
-
-void RendererDX9::CreateResources()
-{
-	// And have it read the given file with some example postprocessing
-	// Usually - if speed is not the most important aspect for you - you'll
-	// propably to request more postprocessing than we do in this example.
-	if (scene == nullptr)
-		scene = importer.ReadFile(
-			"models/COLLADA/teapot_instancenodes.DAE",
-			//"models/COLLADA/duck.dae",
-			//"sponza_scene/sponza.obj",
-			aiProcess_Triangulate |
-			aiProcess_JoinIdenticalVertices |
-			aiProcess_GenSmoothNormals |
-			aiProcess_GenUVCoords);
-
-	//HRESULT hr;
-	// Turn off culling, so we see the front and back of the triangle
-	//hr = m_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	// Turn on the zbuffer
-	//hr = m_pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-	//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	//assert(SUCCEEDED(hr));
-	GetRenderStateManager()->SetZEnable(ZB_ENABLED);
-
-	TextureLoader::ImageDesc desc = TextureLoader::LoadImageFile("sky-cubemap.dds", true);
-	tex = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth);
-	TextureLoader::CopyImageData(tex);
-	
-	desc = TextureLoader::LoadImageFile("sponza_ceiling_a_diff.tga", true);
-	tex2 = new TextureDX9(desc.format, desc.type, desc.width, desc.height, desc.depth, 1, BU_DYNAMIC);
-	TextureLoader::CopyImageData(tex2);
-
-	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//m_pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	GetSamplerStateManager()->SetFilter(0, SF_MIN_MAG_LINEAR_MIP_LINEAR);
-
-	vf = new VertexFormatDX9(3);
-	vf->Initialize(
-		VAU_POSITION, VAT_FLOAT3, 0
-		, VAU_NORMAL, VAT_FLOAT3, 0
-		, VAU_TEXCOORD, VAT_FLOAT2, 0
-		//, VAU_COLOR, VAT_UBYTE4, 0
-		);
-	vf->Update();
-
-	unsigned int totalNumVertices = 0, totalNumIndices = 0;
-	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
-	{
-		totalNumIndices		+= scene->mMeshes[i]->mNumFaces * 3;
-		totalNumVertices	+= scene->mMeshes[i]->mNumVertices;
-	}
-
-	//create our IB
-	ib = new IndexBufferDX9(totalNumIndices, IBF_INDEX32);
-	//create our VB
-	vb = new VertexBufferDX9(vf, totalNumVertices, ib);
-
-	ib->Lock(BL_WRITE_ONLY);
-	vb->Lock(BL_WRITE_ONLY);
-
-	unsigned int iterIndices = 0, iterVertices = 0, indexOffset = 0;
-	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
-	{
-		// Populate our IB
-		for (unsigned int j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
-		{
-			for (int k = 0; k < 3; k++)
-			{
-				assert(scene->mMeshes[i]->mFaces[j].mNumIndices == 3);
-				ib->SetIndex(iterIndices++, scene->mMeshes[i]->mFaces[j].mIndices[k] + indexOffset);
-			}
-		}
-		indexOffset += scene->mMeshes[i]->mNumVertices;
-
-		// Populate our VB
-		for (unsigned int j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
-		{
-			vb->Position<Vec3f>(iterVertices) = Vec3f(
-				scene->mMeshes[i]->mVertices[j].x,
-				scene->mMeshes[i]->mVertices[j].y,
-				scene->mMeshes[i]->mVertices[j].z);
-			vb->Normal<Vec3f>(iterVertices) = Vec3f(
-				scene->mMeshes[i]->mNormals[j].x,
-				scene->mMeshes[i]->mNormals[j].y,
-				scene->mMeshes[i]->mNormals[j].z);
-			//vb->Color<D3DCOLOR>(iterVertices, 0) = D3DCOLOR_XRGB(255, 255, 255);
-			vb->TexCoord<Vec2f>(iterVertices++, 0) = Vec2f(
-				scene->mMeshes[i]->mTextureCoords[0][j].x,
-				scene->mMeshes[i]->mTextureCoords[0][j].y);
-		}
-	}
-	assert(iterIndices == totalNumIndices && iterVertices == totalNumVertices);
-
-	ib->Update();
-	ib->Unlock();
-	vb->Update();
-	vb->Unlock();
-
-	std::ifstream t("test.hlsl");
-	int length;
-	t.seekg(0, std::ios::end);			// go to the end
-	length = (int)t.tellg();			// report location (this is the length)
-	t.seekg(0, std::ios::beg);			// go back to the beginning
-	char* buffer = new char[length];    // allocate memory for a buffer of appropriate dimension
-	t.read(buffer, length);				// read the whole file into the buffer
-	t.close();							// close file handle
-	buffer[length - 1] = '\0';
-
-	VProg = new ShaderProgramDX9(SPT_VERTEX, buffer);
-	PProg = new ShaderProgramDX9(SPT_PIXEL, buffer);
-
-	VTemp = new ShaderTemplate(VProg);
-	PTemp = new ShaderTemplate(PProg);
-
-	delete[] buffer;
-
-	rt = new RenderTargetDX9(1, tex2->GetTextureFormat(), tex2->GetWidth(), tex2->GetHeight(), false, true);
-}
-
-void RendererDX9::ReleaseResources()
-{
-	delete vb;
-	delete vf;
-	delete ib;
-	delete tex;
-	delete tex2;
-	delete VProg;
-	delete PProg;
-	delete VTemp;
-	delete PTemp;
-	delete rt;
 }
 
 void RendererDX9::SetViewport(const Vec2i size, const Vec2i offset)
@@ -397,14 +235,16 @@ void RendererDX9::SetViewport(const Vec2i size, const Vec2i offset)
 		pp.BackBufferWidth = m_vViewportSize[0];
 		pp.BackBufferHeight = m_vViewportSize[1];
 
-		// Destroy resources
-		ReleaseResources();
+		// Unbind resources
+		GetResourceManager()->UnbindAll();
 
 		// Reset the device
 		hr = m_pd3dDevice->Reset(&pp);
+		m_ePresentParameters = pp;
 		assert(SUCCEEDED(hr));
 
-		CreateResources();
+		// Rebind resources
+		GetResourceManager()->BindAll();
 	}
 
 	D3DVIEWPORT9 vp;
@@ -419,211 +259,98 @@ void RendererDX9::SetViewport(const Vec2i size, const Vec2i offset)
 	assert(SUCCEEDED(hr));
 }
 
-void RendererDX9::RenderScene()
+const bool RendererDX9::BeginFrame()
 {
-	assert(m_pd3dDevice);
-
-	HRESULT hr;
-
-	// Clear the backbuffer and the zbuffer
-	m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-						D3DCOLOR_XRGB(128, 128, 128), 1.0f, 0);
-	
-	// Begin the scene
-	if (SUCCEEDED(m_pd3dDevice->BeginScene()))
+	HRESULT hr = m_pd3dDevice->TestCooperativeLevel();
+	if (hr == D3DERR_DEVICELOST)
 	{
-		// Set up world matrix
-		D3DXMATRIXA16 matWorldRot, matWorldPos, matWorld;
-		D3DXMatrixRotationX(&matWorldPos, -Math::PI_OVER_2);
-		D3DXMatrixRotationY(&matWorldRot, (float)GetTickCount() / 5000.0f);
+		if (!m_bDeviceLost)
+			m_bDeviceLost = true;
 
-		// Set up our view matrix. A view matrix can be defined given an eye point,
-		// a point to lookat, and a direction for which way is up. Here, we set the
-		// eye five units back along the z-axis and up three units, look at the
-		// origin, and define "up" to be in the y-direction.
-		D3DXVECTOR3 vEyePt(200.f * cosf(GetTickCount() / 1000.f), 100.f, 200.f* sinf(GetTickCount() / 1000.f));
-		//D3DXVECTOR3 vEyePt(0.f, 10.f, 0.f);
-		D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);
-		//D3DXVECTOR3 vLookatPt(100.0f, 30.0f, 0.0f);
-		D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
-		D3DXMATRIXA16 matView;
-		D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
+		Sleep(1);
+		return false;
+	}
+	else if (hr == D3DERR_DEVICENOTRESET)
+	{
+		// We need to recreate all resources, apart from shaders and textures,
+		// which are managed. However, we recreate everything for safety.
+		GetResourceManager()->UnbindAll();
 
-		// For the projection matrix, we set up a perspective transform (which
-		// transforms geometry from 3D view space to 2D viewport space, with
-		// a perspective divide making objects smaller in the distance). To build
-		// a perpsective transform, we need the field of view (1/4 pi is common),
-		// the aspect ratio, and the near and far clipping planes (which define at
-		// what distances geometry should be no longer be rendered).
-		D3DXMATRIXA16 matProj;
-		float aspectRatio = (float)m_vViewportSize[0] / (float)m_vViewportSize[1];
-		D3DXMatrixPerspectiveFovLH(&matProj, 55 * D3DX_PI / 180, aspectRatio, 20.0f, 2000.0f);
-		
-		ShaderInput VInput(VTemp);
-		ShaderInput PInput(PTemp);
-		Matrix44f matWVP[3];
-		for (unsigned int i = 0; i < 3; i++)
-		{
-			D3DXMATRIX mat;
-			switch (i)
-			{
-			case 0:
-				mat = matWorldPos;
-				//mat = matWorldRot;
-				break;
-			case 1:
-				mat = matView;
-				break;
-			case 2:
-				mat = matProj;
-			}
-			matWVP[i](0, 0) = mat._11; matWVP[i](0, 1) = mat._12; matWVP[i](0, 2) = mat._13; matWVP[i](0, 3) = mat._14;
-			matWVP[i](1, 0) = mat._21; matWVP[i](1, 1) = mat._22; matWVP[i](1, 2) = mat._23; matWVP[i](1, 3) = mat._24;
-			matWVP[i](2, 0) = mat._31; matWVP[i](2, 1) = mat._32; matWVP[i](2, 2) = mat._33; matWVP[i](2, 3) = mat._34;
-			matWVP[i](3, 0) = mat._41; matWVP[i](3, 1) = mat._42; matWVP[i](3, 2) = mat._43; matWVP[i](3, 3) = mat._44;
-		}
-		unsigned int handle;
-		VInput.GetInputHandleByName("matWVP", handle);
-		VInput.SetMatrixArray<4, 4>(handle, matWVP);
+		// Reset the device
+		hr = m_pd3dDevice->Reset(&m_ePresentParameters);
+		if (FAILED(hr))
+			return false;
 
-		assert(VInput.GetMatrix4x4(handle, 0) == matWVP[0]);
-		assert(VInput.GetMatrix4x4(handle, 1) == matWVP[1]);
-		assert(VInput.GetMatrix4x4(handle, 2) == matWVP[2]);
-
-		Matrix33f matTest33;
-		//matTest33[1][0] = 2.f;
-		VInput.GetInputHandleByName("matTest33", handle);
-		VInput.SetMatrix3x3(handle, matTest33);
-		assert(VInput.GetMatrix3x3(handle) == matTest33);
-
-		Matrix22f matTest22;
-		//matTest22[0][1] = 1.f;
-		VInput.GetInputHandleByName("matTest22", handle);
-		VInput.SetMatrix<2, 2>(handle, matTest22);
-		assert((VInput.GetMatrix<2, 2>(handle)) == matTest22);
-
-		//Matrix32f matTest32;
-		////matTest32[2][0] = -1.f;
-		//VInput.GetInputHandleByName("matTest32", handle);
-		//VInput.SetMatrix<3, 2>(handle, matTest32);
-		//assert((VInput.GetMatrix<3, 2>(handle)) == matTest32);
-
-		bool bData[3] = { true, true, true };
-		bool b1 = true;
-		Vec<bool, 2> b2 = Vec<bool, 2>(true, true);
-		Vec<bool, 3> b3 = Vec<bool, 3>(true, true, true);
-		Vec<bool, 4> b4 = Vec<bool, 4>(true, true, true, true);
-		VInput.GetInputHandleByName("bArr", handle);
-		VInput.SetBoolArray(handle, bData);
-		assert(VInput.GetBool(handle, 0) == bData[0]);
-		assert(VInput.GetBool(handle, 1) == bData[1]);
-		assert(VInput.GetBool(handle, 2) == bData[2]);
-		VInput.GetInputHandleByName("b1", handle);
-		VInput.SetBool(handle, b1);
-		assert(VInput.GetBool(handle) == b1);
-		VInput.GetInputHandleByName("b2", handle);
-		VInput.SetBool2(handle, b2);
-		assert(VInput.GetBool2(handle) == b2);
-		VInput.GetInputHandleByName("b3", handle);
-		VInput.SetBool3(handle, b3);
-		assert(VInput.GetBool3(handle) == b3);
-		VInput.GetInputHandleByName("b4", handle);
-		VInput.SetBool4(handle, b4);
-		assert(VInput.GetBool4(handle) == b4);
-		
-		int iData[3] = { 1, 2, 3 };
-		int i1 = 4;
-		Vec<int, 2> i2 = Vec<int, 2>(5, 6);
-		Vec<int, 3> i3 = Vec<int, 3>(7, 8, 9);
-		Vec<int, 4> i4 = Vec<int, 4>(10, 11, 12, 13);
-		VInput.GetInputHandleByName("iArr", handle);
-		VInput.SetIntArray(handle, iData);
-		assert(VInput.GetInt(handle, 0) == iData[0]);
-		assert(VInput.GetInt(handle, 1) == iData[1]);
-		assert(VInput.GetInt(handle, 2) == iData[2]);
-		VInput.GetInputHandleByName("i1", handle);
-		VInput.SetInt(handle, i1);
-		assert(VInput.GetInt(handle) == i1);
-		VInput.GetInputHandleByName("i2", handle);
-		VInput.SetInt2(handle, i2);
-		assert(VInput.GetInt2(handle) == i2);
-		VInput.GetInputHandleByName("i3", handle);
-		VInput.SetInt3(handle, i3);
-		assert(VInput.GetInt3(handle) == i3);
-		VInput.GetInputHandleByName("i4", handle);
-		VInput.SetInt4(handle, i4);
-		assert(VInput.GetInt4(handle) == i4);
-		
-		float fData[9] = { 14.f, 15.f, 16.f, 17.f, 18.f, 19.f, 20.f, 21.f, 22.f };
-		float f1 = 23.f;
-		Vec<float, 2> f2 = Vec<float, 2>(24.f, 25.f);
-		Vec<float, 3> f3 = Vec<float, 3>(26.f, 27.f, 28.f);
-		Vec<float, 4> f4 = Vec<float, 4>(29.f, 30.f, 31.f, 32.f);
-		VInput.GetInputHandleByName("fArr", handle);
-		VInput.SetFloatArray(handle, fData);
-		assert(VInput.GetFloat3(handle, 0)[0] == fData[0]);
-		assert(VInput.GetFloat3(handle, 0)[1] == fData[1]);
-		assert(VInput.GetFloat3(handle, 0)[2] == fData[2]);
-		assert(VInput.GetFloat3(handle, 1)[0] == fData[3]);
-		assert(VInput.GetFloat3(handle, 1)[1] == fData[4]);
-		assert(VInput.GetFloat3(handle, 1)[2] == fData[5]);
-		assert(VInput.GetFloat3(handle, 2)[0] == fData[6]);
-		assert(VInput.GetFloat3(handle, 2)[1] == fData[7]);
-		assert(VInput.GetFloat3(handle, 2)[2] == fData[8]);
-		VInput.GetInputHandleByName("f1", handle);
-		VInput.SetFloat(handle, f1);
-		assert(VInput.GetFloat(handle) == f1);
-		VInput.GetInputHandleByName("f2", handle);
-		VInput.SetFloat2(handle, f2);
-		assert(VInput.GetFloat2(handle) == f2);
-		VInput.GetInputHandleByName("f3", handle);
-		VInput.SetFloat3(handle, f3);
-		assert(VInput.GetFloat3(handle) == f3);
-		VInput.GetInputHandleByName("f4", handle);
-		VInput.SetFloat4(handle, f4);
-		assert(VInput.GetFloat4(handle) == f4);
-
-		PInput.GetInputHandleByName("s2D", handle);
-		PInput.SetTexture(handle, tex2);
-		PInput.GetInputHandleByName("sCube", handle);
-		PInput.SetTexture(handle, tex);
-
-		vb->Enable();
-		VTemp->Enable(VInput);
-		PTemp->Enable(PInput);
-
-		rt->Enable();
-		m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-			D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
-		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
-		rt->Disable();
-
-		Texture* tex3 = tex2;
-		rt->CopyColorBuffer(0, tex3);
-		tex2->Lock(0, BL_WRITE_ONLY);
-		tex2->Update();
-		tex2->Unlock();
-		tex2 = (TextureDX9*)tex3;
-		//tex2->GenerateMipmaps();
-
-		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, ib->GetElementCount() / 3);
-		
-		PTemp->Disable();
-		VTemp->Disable();
-		vb->Disable();
-
-		// End the scene
-		hr = m_pd3dDevice->EndScene();
-		assert(SUCCEEDED(hr));
+		GetResourceManager()->BindAll();
 	}
 
+	hr = m_pd3dDevice->BeginScene();
+	assert(SUCCEEDED(hr));
+
+	return true;
+}
+
+void RendererDX9::EndFrame()
+{
+	HRESULT hr = m_pd3dDevice->EndScene();
+	assert(SUCCEEDED(hr));
+}
+
+void RendererDX9::SwapBuffers()
+{
 	// Present the backbuffer contents to the display
 	RECT dstRect;
 	dstRect.left = m_vViewportOffset[0];
 	dstRect.top = m_vViewportOffset[1];
 	dstRect.right = m_vViewportSize[0] + m_vViewportOffset[0];
 	dstRect.bottom = m_vViewportSize[1] + m_vViewportOffset[1];
-	
-	hr = m_pd3dDevice->Present(NULL, &dstRect, NULL, NULL);
+
+	HRESULT hr = m_pd3dDevice->Present(NULL, &dstRect, NULL, NULL);
+	assert(SUCCEEDED(hr) || hr == D3DERR_DEVICELOST);
+}
+
+void RendererDX9::DrawVertexBuffer(VertexBuffer* vb)
+{
+	assert(vb);
+	vb->Enable();
+	if (vb->GetIndexBuffer())
+		m_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vb->GetElementCount(), 0, vb->GetIndexBuffer()->GetElementCount() / 3);
+	else
+		assert(false); // TODO: not yet implemented
+	vb->Disable();
+}
+
+void RendererDX9::Clear(const Vec4f rgba, const float z, const unsigned int stencil)
+{
+	HRESULT hr;
+	DWORD flags = D3DCLEAR_TARGET;
+	IDirect3DSurface9* depthStencil = nullptr;
+
+	hr = m_pd3dDevice->GetDepthStencilSurface(&depthStencil);
 	assert(SUCCEEDED(hr));
+	if (hr != D3DERR_NOTFOUND)
+	{
+		flags |= D3DCLEAR_ZBUFFER;
+		D3DSURFACE_DESC desc;
+		memset(&desc, 0, sizeof(desc));
+		depthStencil->GetDesc(&desc);
+		if (desc.Format == D3DFMT_D24S8)
+			flags |= D3DCLEAR_STENCIL;
+	}
+	depthStencil->Release();
+
+	hr = m_pd3dDevice->Clear(0, NULL, flags, D3DCOLOR_RGBA((DWORD)rgba[0], (DWORD)rgba[1], (DWORD)rgba[2], (DWORD)rgba[3]), 1.0f, 0);
+	assert(SUCCEEDED(hr));
+}
+
+void RendererDX9::CreateProjectionMatrix(Matrix44f& matProj, float fovYRad, float aspectRatio, float zNear, float zFar)
+{
+	D3DXMATRIXA16 mat;
+	D3DXMatrixPerspectiveFovLH(&mat, fovYRad, aspectRatio, zNear, zFar);
+
+	// Transpose our matrix, making it column-major in order to adhere to the GMTL standard
+	matProj(0, 0) = mat._11; matProj(0, 1) = mat._21; matProj(0, 2) = mat._31; matProj(0, 3) = mat._41;
+	matProj(1, 0) = mat._12; matProj(1, 1) = mat._22; matProj(1, 2) = mat._32; matProj(1, 3) = mat._42;
+	matProj(2, 0) = mat._13; matProj(2, 1) = mat._23; matProj(2, 2) = mat._33; matProj(2, 3) = mat._43;
+	matProj(3, 0) = mat._14; matProj(3, 1) = mat._24; matProj(3, 2) = mat._34; matProj(3, 3) = mat._44;
 }

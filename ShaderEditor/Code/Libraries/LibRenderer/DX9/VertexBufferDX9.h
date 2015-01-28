@@ -31,22 +31,27 @@ namespace LibRendererDll
 	class VertexBufferDX9 : public VertexBuffer
 	{
 	public:
-				VertexBufferDX9(
-					VertexFormatDX9* const vertexFormat, const unsigned int vertexCount,
-					IndexBufferDX9* const indexBuffer = nullptr, const BufferUsage usage = BU_STATIC);
-				~VertexBufferDX9();
-
 		void	Enable(const unsigned int offset = 0);
 		void	Disable();
 		void	Lock(const BufferLocking lockMode);
 		void	Unlock();
 		void	Update();
 
+		void	Bind();
+		void	Unbind();
+
 	private:
+		VertexBufferDX9(
+			VertexFormatDX9* const vertexFormat, const unsigned int vertexCount,
+			IndexBufferDX9* const indexBuffer = nullptr, const BufferUsage usage = BU_STATIC);
+		~VertexBufferDX9();
+
 		IDirect3DVertexBuffer9*		m_pVertexBuffer;
 
 		// A temporary pointer used in the Lock->Update->Unlock flow
 		void*						m_pTempBuffer;
+
+		friend class ResourceManagerDX9;
 	};
 }
 

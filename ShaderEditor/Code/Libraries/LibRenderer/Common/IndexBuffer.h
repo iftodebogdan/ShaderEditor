@@ -19,6 +19,14 @@
 #ifndef INDEXBUFFER_H
 #define INDEXBUFFER_H
 
+#ifndef LIBRENDERER_DLL
+#ifdef LIBRENDERER_EXPORTS
+#define LIBRENDERER_DLL __declspec(dllexport) 
+#else
+#define LIBRENDERER_DLL __declspec(dllimport) 
+#endif
+#endif // LIBRENDERER_DLL
+
 #include "Buffer.h"
 
 namespace LibRendererDll
@@ -27,29 +35,38 @@ namespace LibRendererDll
 	class IndexBuffer : public Buffer
 	{
 	public:
-
 		// Enable the index buffer
-		virtual void	Enable() = 0;
+		virtual LIBRENDERER_DLL void	Enable() = 0;
 		// Disable the index buffer
-		virtual void	Disable() = 0;
+		virtual LIBRENDERER_DLL void	Disable() = 0;
 		// Lock the index buffer for reading/writing
-		virtual void	Lock(const BufferLocking lockMode) = 0;
+		virtual LIBRENDERER_DLL void	Lock(const BufferLocking lockMode) = 0;
 		// Unlock the index buffer
-		virtual void	Unlock() = 0;
+		virtual LIBRENDERER_DLL void	Unlock() = 0;
 		// Update the index buffer with the changes made
-		virtual void	Update() = 0;
+		virtual LIBRENDERER_DLL void	Update() = 0;
 
-		// Set an index
-		void	SetIndex(const unsigned int indexIdx, const unsigned int indexVal);
-		// Copy 'size' elements to the index buffer from the array, starting from the 'offset'-th element of the index buffer
-		void	SetIndices(const unsigned int indicesVal[], const unsigned int size, const unsigned int offset = 0);
+		// Create a corresponding platform specific resource
+		virtual	LIBRENDERER_DLL void	Bind() = 0;
+		// Destroy the platform specific resource
+		virtual	LIBRENDERER_DLL void	Unbind() = 0;
+
+				// Set an index
+				LIBRENDERER_DLL void	SetIndex(const unsigned int indexIdx, const unsigned int indexVal);
+				// Copy [size] elements to the index buffer from the array, starting from the [offset]-th element of the index buffer
+				LIBRENDERER_DLL void	SetIndices(const unsigned int indicesVal[], const unsigned int size, const unsigned int offset = 0);
 
 	protected:
-						IndexBuffer(const unsigned int indexCount, const IndexBufferFormat indexFormat = IBF_INDEX16, const BufferUsage usage = BU_STATIC);
-		virtual			~IndexBuffer();
+		IndexBuffer(const unsigned int indexCount, const IndexBufferFormat indexFormat = IBF_INDEX16, const BufferUsage usage = BU_STATIC);
+		virtual ~IndexBuffer();
+
+		// The format of the index buffer
+			IndexBufferFormat		m_eIndexFormat;
 
 		// An array containing the sizes in bytes of indices of the specified format
-		static const unsigned int IndexBufferFormatSize[IBF_MAX];
+		static const unsigned int	IndexBufferFormatSize[IBF_MAX];
+
+		friend class ResourceManager;
 	};
 }
 

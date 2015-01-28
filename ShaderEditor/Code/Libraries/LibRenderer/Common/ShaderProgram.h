@@ -25,6 +25,8 @@ namespace LibRendererDll
 {
 	class Texture;
 
+	// This class holds the actual shader program
+	// NB: Currently, all member functions are protected. Use shader templates!
 	class ShaderProgram
 	{
 	protected:
@@ -34,6 +36,14 @@ namespace LibRendererDll
 		virtual void Enable() = 0;
 		virtual void Disable() = 0;
 		virtual const bool Compile(const char* srcData, char* const errors = nullptr, const char* entryPoint = "", const char* profile = "") = 0;
+
+		virtual void Bind() = 0;
+		virtual void Unbind() = 0;
+
+		const char* const GetSourceCode() const { return m_szSrcData.c_str(); }
+		const char* const GetCompilationErrors() const { return m_szErrors.c_str(); }
+		const char* const GetEntryPoint() const { return m_szEntryPoint.c_str(); }
+		const char* const GetProfile() const { return m_szProfile.c_str(); }
 
 		virtual const unsigned int GetConstantCount() const = 0;
 		virtual const char* GetConstantName(const unsigned int handle) const = 0;
@@ -54,8 +64,13 @@ namespace LibRendererDll
 		virtual void SetTexture(const unsigned int registerIndex, const Texture* const tex) = 0;
 
 		ShaderProgramType m_eProgramType;
+		std::string m_szSrcData;
+		std::string m_szErrors;
+		std::string m_szEntryPoint;
+		std::string m_szProfile;
 
 		friend class ShaderTemplate;
+		friend class ResourceManager;
 	};
 }
 

@@ -22,7 +22,7 @@
 #include "VertexFormat.h"
 using namespace LibRendererDll;
 
-//This holds the size if bytes for each vertex attribute type
+//This holds the size in bytes for each vertex attribute type
 const unsigned int VertexFormat::VertexAttributeTypeSize[VAT_MAX] =
 {
 	0,  // AT_NONE

@@ -59,7 +59,6 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 	imgDesc.width = ilGetInteger(IL_IMAGE_WIDTH);
 	imgDesc.height = ilGetInteger(IL_IMAGE_HEIGHT);
 	imgDesc.depth = ilGetInteger(IL_IMAGE_DEPTH);
-	imgDesc.bpp = ilGetInteger(IL_IMAGE_BITS_PER_PIXEL);
 	imgDesc.mipmaps = ilGetInteger(IL_NUM_MIPMAPS) + 1;
 	
 	if (ilGetInteger(IL_IMAGE_CUBEFLAGS) == IL_CUBEMAP_POSITIVEX)
@@ -82,6 +81,7 @@ TextureLoader::ImageDesc TextureLoader::LoadImageFile(const char* const path, co
 		else
 			ilConvertImage(IL_BGRA, IL_UNSIGNED_BYTE);
 	}
+	imgDesc.bpp = ilGetInteger(IL_IMAGE_BITS_PER_PIXEL);
 
 	switch (ilGetInteger(IL_IMAGE_FORMAT))
 	{

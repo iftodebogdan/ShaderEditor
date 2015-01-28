@@ -30,9 +30,7 @@ VertexFormatDX9::VertexFormatDX9(const unsigned int attributeCount)
 
 VertexFormatDX9::~VertexFormatDX9()
 {
-	ULONG refCount = 0;
-	refCount = m_pVertexDeclaration->Release();
-	assert(refCount == 0);
+	Unbind();
 }
 
 void VertexFormatDX9::Enable()
@@ -98,4 +96,17 @@ void VertexFormatDX9::Update()
 
 	HRESULT hr = device->CreateVertexDeclaration(m_pVertexElements, &m_pVertexDeclaration);
 	assert(SUCCEEDED(hr));
+}
+
+void VertexFormatDX9::Bind()
+{
+	Update();
+}
+
+void VertexFormatDX9::Unbind()
+{
+	ULONG refCount = 0;
+	refCount = m_pVertexDeclaration->Release();
+	assert(refCount == 0);
+	m_pVertexDeclaration = nullptr;
 }

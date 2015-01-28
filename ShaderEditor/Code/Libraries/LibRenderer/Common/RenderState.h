@@ -19,6 +19,14 @@
 #ifndef RENDERSTATE_H
 #define RENDERSTATE_H
 
+#ifndef LIBRENDERER_DLL
+#ifdef LIBRENDERER_EXPORTS
+#define LIBRENDERER_DLL __declspec(dllexport) 
+#else
+#define LIBRENDERER_DLL __declspec(dllimport) 
+#endif
+#endif // LIBRENDERER_DLL
+
 #include <gmtl/gmtl.h>
 using namespace gmtl;
 
@@ -28,67 +36,68 @@ namespace LibRendererDll
 {
 	class Renderer;
 
+	// This is the platform independent render state manager class
 	class RenderState
 	{
 	public:
-		virtual const bool SetAlphaBlendEnable(const bool enabled) { m_bAlphaBlendEnable = enabled; return true; }
-		virtual const bool SetAlphaSrcBlend(const Blend alphaSrc) { m_eAlphaSrcBlend = alphaSrc; return true; }
-		virtual const bool SetAlphaDstBlend(const Blend alphaDst) { m_eAlphaDstBlend = alphaDst; return true; }
-		virtual const bool SetAlphaTestEnable(const bool enabled) { m_bAlphaTestEnable = enabled; return true; }
-		virtual const bool SetAlphaFunc(const Cmp alphaFunc) { m_eAlphaFunc = alphaFunc; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetAlphaBlendEnable(const bool enabled) { m_bAlphaBlendEnable = enabled; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetAlphaSrcBlend(const Blend alphaSrc) { m_eAlphaSrcBlend = alphaSrc; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetAlphaDstBlend(const Blend alphaDst) { m_eAlphaDstBlend = alphaDst; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetAlphaTestEnable(const bool enabled) { m_bAlphaTestEnable = enabled; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetAlphaFunc(const Cmp alphaFunc) { m_eAlphaFunc = alphaFunc; return true; }
 		// normAlphaRef is normalized (i.e. between [0, 1])
-		virtual const bool SetAlphaRef(const float normAlphaRef) { m_fAlphaRef = normAlphaRef; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetAlphaRef(const float normAlphaRef) { m_fAlphaRef = normAlphaRef; return true; }
 		// Color components are normalized (i.e. between [0, 1])
-		virtual const bool SetBlendFactor(const Vec4f rgba) { m_vBlendFactor = rgba; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetBlendFactor(const Vec4f rgba) { m_vBlendFactor = rgba; return true; }
 
-		virtual const bool SetCullMode(const Cull cullMode) { m_eCullMode = cullMode; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetCullMode(const Cull cullMode) { m_eCullMode = cullMode; return true; }
 
-		virtual const bool SetZEnable(const ZBuffer enabled) { m_eZEnable = enabled; return true; }
-		virtual const bool SetZFunc(const Cmp zFunc) { m_eZFunc = zFunc; return true; }
-		virtual const bool SetZWriteEnabled(const bool enabled) { m_bZWriteEnable = enabled; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetZEnable(const ZBuffer enabled) { m_eZEnable = enabled; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetZFunc(const Cmp zFunc) { m_eZFunc = zFunc; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetZWriteEnabled(const bool enabled) { m_bZWriteEnable = enabled; return true; }
 
-		virtual const bool SetSlopeScaleDepthBias(const float scale) { m_fSlopeScaleDepthBias = scale; return true; }
-		virtual const bool SetDepthBias(const float bias) { m_fDepthBias = bias; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetSlopeScaleDepthBias(const float scale) { m_fSlopeScaleDepthBias = scale; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetDepthBias(const float bias) { m_fDepthBias = bias; return true; }
 
-		virtual const bool SetStencilEnable(const bool enabled) { m_bStencilEnable = enabled; return true; }
-		virtual const bool SetStencilFunc(const Cmp stencilFunc) { m_eStencilFunc = stencilFunc; return true; }
-		virtual const bool SetStencilRef(const unsigned long stencilRef) { m_lStencilRef = stencilRef; return true; }
-		virtual const bool SetStencilMask(const unsigned long stencilMask) { m_lStencilMask = stencilMask; return true; }
-		virtual const bool SetStencilWriteMask(const unsigned long stencilWriteMask) { m_lStencilWriteMask = stencilWriteMask; return true; }
-		virtual const bool SetStencilFail(const StencilOp stencilFail) { m_eStencilFail = stencilFail; return true; }
-		virtual const bool SetStencilZFail(const StencilOp stencilZFail) { m_eStencilZFail = stencilZFail; return true; }
-		virtual const bool SetStencilPass(const StencilOp stencilPass) { m_eStencilPass = stencilPass; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilEnable(const bool enabled) { m_bStencilEnable = enabled; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilFunc(const Cmp stencilFunc) { m_eStencilFunc = stencilFunc; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilRef(const unsigned long stencilRef) { m_lStencilRef = stencilRef; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilMask(const unsigned long stencilMask) { m_lStencilMask = stencilMask; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilWriteMask(const unsigned long stencilWriteMask) { m_lStencilWriteMask = stencilWriteMask; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilFail(const StencilOp stencilFail) { m_eStencilFail = stencilFail; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilZFail(const StencilOp stencilZFail) { m_eStencilZFail = stencilZFail; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetStencilPass(const StencilOp stencilPass) { m_eStencilPass = stencilPass; return true; }
 
-		virtual const bool SetFillMode(const Fill fillMode) { m_eFillMode = fillMode; return true; }
+		virtual	LIBRENDERER_DLL	const bool			SetFillMode(const Fill fillMode) { m_eFillMode = fillMode; return true; }
 
 
-		const bool GetAlphaBlendEnable() const { return m_bAlphaBlendEnable; }
-		const Blend GetAlphaSrcBlend() const { return m_eAlphaSrcBlend; }
-		const Blend GetAlphaDstBlend() const { return m_eAlphaDstBlend; }
-		const bool GetAlphaTestEnable() const { return m_bAlphaTestEnable; }
-		const Cmp GetAlphaFunc() const { return m_eAlphaFunc; }
-		const float GetAlphaRef() const { return m_fAlphaRef; }
-		const Vec4f GetBlendFactor() const { return m_vBlendFactor; }
+				LIBRENDERER_DLL	const bool			GetAlphaBlendEnable() const { return m_bAlphaBlendEnable; }
+				LIBRENDERER_DLL	const Blend			GetAlphaSrcBlend() const { return m_eAlphaSrcBlend; }
+				LIBRENDERER_DLL	const Blend			GetAlphaDstBlend() const { return m_eAlphaDstBlend; }
+				LIBRENDERER_DLL	const bool			GetAlphaTestEnable() const { return m_bAlphaTestEnable; }
+				LIBRENDERER_DLL	const Cmp			GetAlphaFunc() const { return m_eAlphaFunc; }
+				LIBRENDERER_DLL	const float			GetAlphaRef() const { return m_fAlphaRef; }
+				LIBRENDERER_DLL	const Vec4f			GetBlendFactor() const { return m_vBlendFactor; }
 
-		const Cull GetCullMode() const { return m_eCullMode; }
+				LIBRENDERER_DLL	const Cull			GetCullMode() const { return m_eCullMode; }
 
-		const ZBuffer GetZEnable() const { return m_eZEnable; }
-		const Cmp GetZFunc() const { return m_eZFunc; }
-		const bool GetZWriteEnabled() const { return m_bZWriteEnable; }
+				LIBRENDERER_DLL	const ZBuffer		GetZEnable() const { return m_eZEnable; }
+				LIBRENDERER_DLL	const Cmp			GetZFunc() const { return m_eZFunc; }
+				LIBRENDERER_DLL	const bool			GetZWriteEnabled() const { return m_bZWriteEnable; }
 
-		const float GetSlopeScaleDepthBias() const { return m_fSlopeScaleDepthBias; }
-		const float GetDepthBias() const { return m_fDepthBias; }
+				LIBRENDERER_DLL	const float			GetSlopeScaleDepthBias() const { return m_fSlopeScaleDepthBias; }
+				LIBRENDERER_DLL	const float			GetDepthBias() const { return m_fDepthBias; }
 
-		const bool GetStencilEnable() const { return m_bStencilEnable; }
-		const Cmp GetStencilFunc() const { return m_eStencilFunc; }
-		const unsigned long GetStencilRef() const { return m_lStencilRef; }
-		const unsigned long GetStencilMask() const { return m_lStencilMask; }
-		const unsigned long GetStencilWriteMask() const { return m_lStencilWriteMask; }
-		const StencilOp GetStencilFail() const { return m_eStencilFail; }
-		const StencilOp GetStencilZFail() const { return m_eStencilZFail; }
-		const StencilOp GetStencilPass() const { return m_eStencilPass; }
+				LIBRENDERER_DLL	const bool			GetStencilEnable() const { return m_bStencilEnable; }
+				LIBRENDERER_DLL	const Cmp			GetStencilFunc() const { return m_eStencilFunc; }
+				LIBRENDERER_DLL	const unsigned long	GetStencilRef() const { return m_lStencilRef; }
+				LIBRENDERER_DLL	const unsigned long	GetStencilMask() const { return m_lStencilMask; }
+				LIBRENDERER_DLL	const unsigned long	GetStencilWriteMask() const { return m_lStencilWriteMask; }
+				LIBRENDERER_DLL	const StencilOp		GetStencilFail() const { return m_eStencilFail; }
+				LIBRENDERER_DLL	const StencilOp		GetStencilZFail() const { return m_eStencilZFail; }
+				LIBRENDERER_DLL	const StencilOp		GetStencilPass() const { return m_eStencilPass; }
 
-		const Fill GetFillMode() const { return m_eFillMode; }
+				LIBRENDERER_DLL	const Fill			GetFillMode() const { return m_eFillMode; }
 
 
 	protected:

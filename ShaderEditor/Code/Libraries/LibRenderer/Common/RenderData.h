@@ -24,8 +24,18 @@
 #include <gmtl/gmtl.h>
 using namespace gmtl;
 
+// This header holds all defines, enums and
+// descriptor structures used by the rendering library
+
+// Declare new data types
+typedef unsigned char byte;
+typedef unsigned long DWORD;
+
 namespace LibRendererDll
 {
+	// APIS /////////////////////////////////////////////////////////////
+
+	// Available rendering APIs to be used when instantiating the renderer
 	enum API
 	{
 		API_NULL,	// Null render
@@ -33,7 +43,10 @@ namespace LibRendererDll
 		API_DX9,	// Direct3D 9
 	};
 
+	/////////////////////////////////////////////////////////////////////
+
 	// BUFFERS /////////////////////////////////////////////////////////
+
 	// Usage options that identify how resources are to be used
 	enum BufferUsage
 	{
@@ -66,12 +79,15 @@ namespace LibRendererDll
 
 		IBF_MAX			// DO NOT USE! INTERNAL USAGE ONLY!
 	};
+
 	///////////////////////////////////////////////////////////
 
 	// RENDER STATES //////////////////////////////////////////
+
+	// Render states for color blend modes
 	enum Blend
 	{
-		BLEND = 0,
+		BLEND = 0,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		BLEND_ZERO,
 		BLEND_ONE,
@@ -89,12 +105,13 @@ namespace LibRendererDll
 		BLEND_BLENDFACTOR,
 		BLEND_INVBLENDFACTOR,
 
-		BLEND_MAX
+		BLEND_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// Render states for comparison functions
 	enum Cmp
 	{
-		CMP = BLEND_MAX + 1,
+		CMP = BLEND_MAX + 1,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		CMP_NEVER,
 		CMP_LESS,
@@ -105,34 +122,37 @@ namespace LibRendererDll
 		CMP_GREATEQUAL,
 		CMP_ALWAYS,
 
-		CMP_MAX,
+		CMP_MAX,	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// Render states for culling
 	enum Cull
 	{
-		CULL = CMP_MAX + 1,
+		CULL = CMP_MAX + 1,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		CULL_NONE,
 		CULL_CW,
 		CULL_CCW,
 
-		CULL_MAX
+		CULL_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// Render states for Z and W buffers
 	enum ZBuffer
 	{
-		ZB = CULL_MAX + 1,
+		ZB = CULL_MAX + 1,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		ZB_ENABLED,
 		ZB_DISABLED,
 		ZB_USEW,
 
-		ZB_MAX,
+		ZB_MAX,	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// Render states for stencil
 	enum StencilOp
 	{
-		STENCILOP = ZB_MAX + 1,
+		STENCILOP = ZB_MAX + 1,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		STENCILOP_KEEP,
 		STENCILOP_ZERO,
@@ -143,36 +163,39 @@ namespace LibRendererDll
 		STENCILOP_INCR,
 		STENCILOP_DECR,
 
-		STENCILOP_MAX
+		STENCILOP_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// Render states for geometry fill modes
 	enum Fill
 	{
-		FILL = STENCILOP_MAX + 1,
+		FILL = STENCILOP_MAX + 1,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		FILL_POINT,
 		FILL_WIREFRAME,
 		FILL_SOLID,
 
-		FILL_MAX
+		FILL_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
 	enum
 	{
-		RS_MAX = FILL_MAX + 1
+		RS_MAX = FILL_MAX + 1	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
+
 	///////////////////////////////////////////////////////////
 
 	// SAMPLER STATES /////////////////////////////////////////
+
 	enum
 	{
-		MAX_NUM_VSAMPLERS = 4,  // vs3.0 has 4, vs2.0 has 0.
-		MAX_NUM_PSAMPLERS = 16  // ps2.0 and ps3.0 have 16.
+		MAX_NUM_VSAMPLERS = 4,  // Maximum number of texture samplers: vs3.0 has 4, vs2.0 has 0
+		MAX_NUM_PSAMPLERS = 16  // Maximum number of texture samplers: ps2.0 and ps3.0 have 16
 	};
 
 	enum SamplerFilter
 	{
-		SF_NONE,
+		SF_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		SF_MIN_MAG_POINT_MIP_NONE,
 		SF_MIN_MAG_LINEAR_MIP_NONE,
@@ -181,21 +204,22 @@ namespace LibRendererDll
 		SF_MIN_MAG_LINEAR_MIP_POINT,
 		SF_MIN_MAG_LINEAR_MIP_LINEAR,
 
-		SF_MAX
+		SF_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
 	enum SamplerAddressingMode
 	{
-		SAM_NONE,
+		SAM_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		SAM_CLAMP,
 		SAM_WRAP,
 		SAM_MIRROR,
 		SAM_BORDER,
 
-		SAM_MAX
+		SAM_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// A structure that describes a texture sampler
 	struct SamplerStateDesc
 	{
 		float					fAnisotropy;
@@ -204,22 +228,26 @@ namespace LibRendererDll
 		Vec4f					vBorderColor;
 		SamplerAddressingMode	eAddressingMode[3];
 	};
+
 	//////////////////////////////////////////////////////////////
 
 	// SHADERS //////////////////////////////////////////////////
+
+	// The types of shader programs
 	enum ShaderProgramType
 	{
-		SPT_NONE,
+		SPT_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		SPT_VERTEX,
 		SPT_PIXEL,
 
-		SPT_MAX
+		SPT_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// Shader input types
 	enum InputType
 	{
-		IT_NONE,
+		IT_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		IT_VOID,
 		IT_BOOL,
@@ -236,21 +264,23 @@ namespace LibRendererDll
 		IT_SAMPLER3D,
 		IT_SAMPLERCUBE,
 
-		IT_MAX
+		IT_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// Shader input register types
 	enum RegisterType
 	{
-		RT_NONE,
+		RT_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		RT_BOOL,
 		RT_INT4,
 		RT_FLOAT4,
 		RT_SAMPLER,
 
-		RT_MAX
+		RT_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// A structure describing a shader input
 	struct ShaderInputDesc
 	{
 		std::string szName;
@@ -264,13 +294,15 @@ namespace LibRendererDll
 		unsigned int nBytes;
 		unsigned int nOffsetInBytes;
 	};
+
 	/////////////////////////////////////////////////////////
 
 	// TEXTURES /////////////////////////////////////////////
+
 	// Specifies the format of the pixel
 	enum PixelFormat
 	{
-		PF_NONE,
+		PF_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
 
 		// Small-bit color formats
 		PF_R5G6B5,
@@ -328,20 +360,23 @@ namespace LibRendererDll
 		// A 32768x32768 texture has a maximum of 16 levels.
 		TEX_MAX_MIPMAP_LEVELS = 16
 	};
+
 	/////////////////////////////////////////////////////////////////////
 
 	// VERTEX FORMATS ///////////////////////////////////////////////////
+
 	enum
 	{
-		VF_MAX_ATTRIBUTES = 16,
-		VF_MAX_TCOORD_UNITS = 8,
-		VF_MAX_COLOR_UNITS = 2
+		VF_MAX_ATTRIBUTES = 16,		// The maximum number of attribues
+		VF_MAX_TCOORD_UNITS = 8,	// The maximum number of texcoord units
+		VF_MAX_COLOR_UNITS = 2		// The maximum number of vertex color units
 	};
 
 	//These flags describe the type of data which compose the vertex attributes
 	enum VertexAttributeType
 	{
-		VAT_NONE,
+		VAT_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
+
 		VAT_FLOAT1,
 		VAT_FLOAT2,
 		VAT_FLOAT3,
@@ -352,13 +387,14 @@ namespace LibRendererDll
 		VAT_SHORT2,
 		VAT_SHORT4,
 
-		VAT_MAX
+		VAT_MAX	// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
 	//These flags describe an attribute's purpose
 	enum VertexAttributeUsage
 	{
-		VAU_NONE,
+		VAU_NONE,	// DO NOT USE! INTERNAL USAGE ONLY!
+
 		VAU_POSITION,
 		VAU_NORMAL,
 		VAU_TANGENT,
@@ -370,9 +406,10 @@ namespace LibRendererDll
 		VAU_FOGCOORD,
 		VAU_PSIZE,
 
-		VAU_MAX
+		VAU_MAX// DO NOT USE! INTERNAL USAGE ONLY!
 	};
 
+	// A structure describing a vertex element
 	struct VertexElement
 	{
 		unsigned int			nOffset;	// The element's offset in the vertex format
@@ -380,9 +417,12 @@ namespace LibRendererDll
 		VertexAttributeUsage	eUsage;		// The usage/semantic of the element
 		unsigned int			nUsageIdx;	// The usage/semantic index of the element
 	};
+
 	//////////////////////////////////////////////////////////////////
 
 	// DEVICE CAPS ///////////////////////////////////////////////////
+
+	// Structure describing device capabilities
 	struct DeviceCaps
 	{
 		bool bCanAutoGenMipmaps;
@@ -417,6 +457,8 @@ namespace LibRendererDll
 		};
 		std::vector<ScreenFormat> arrSupportedScreenFormats;
 	};
+
+	//////////////////////////////////////////////////////////////////
 }
 
 #endif // RENDERDATA_H

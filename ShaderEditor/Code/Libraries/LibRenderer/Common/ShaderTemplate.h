@@ -19,6 +19,14 @@
 #ifndef SHADERTEMPLATE_H
 #define SHADERTEMPLATE_H
 
+#ifndef LIBRENDERER_DLL
+#ifdef LIBRENDERER_EXPORTS
+#define LIBRENDERER_DLL __declspec(dllexport) 
+#else
+#define LIBRENDERER_DLL __declspec(dllimport) 
+#endif
+#endif // LIBRENDERER_DLL
+
 #include <vector>
 #include "RenderData.h"
 
@@ -27,17 +35,21 @@ namespace LibRendererDll
 	class ShaderProgram;
 	class ShaderInput;
 
+	// This class is the bridge between a shader program and its inputs
 	class ShaderTemplate
 	{
 	public:
-		ShaderTemplate(ShaderProgram* shaderProgram);
-		virtual ~ShaderTemplate();
-
-		void Enable(ShaderInput* shaderInput);
-		void Enable(ShaderInput& shaderInput) { Enable(&shaderInput); }
-		void Disable();
+		// Set the shader inputs and set the shader to an active state
+		LIBRENDERER_DLL void Enable(ShaderInput* const shaderInput);
+		// Set the shader inputs and set the shader to an active state
+		LIBRENDERER_DLL void Enable(ShaderInput& shaderInput) { Enable(&shaderInput); }
+		// Disable the shader
+		LIBRENDERER_DLL void Disable();
 		
 	protected:
+		ShaderTemplate(ShaderProgram* const shaderProgram);
+		virtual ~ShaderTemplate();
+
 		void DescribeShaderInputs();
 		const unsigned int GetTotalNumberOfUsedRegisters() const;
 		const unsigned int GetTotalSizeOfInputConstants() const;
@@ -47,6 +59,7 @@ namespace LibRendererDll
 		ShaderInput* m_pShaderInput;
 
 		friend class ShaderInput;
+		friend class ResourceManager;
 	};
 }
 

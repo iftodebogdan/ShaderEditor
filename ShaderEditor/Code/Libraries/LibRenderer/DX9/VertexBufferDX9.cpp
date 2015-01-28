@@ -38,9 +38,7 @@ VertexBufferDX9::VertexBufferDX9(VertexFormatDX9* const vertexFormat, const unsi
 
 VertexBufferDX9::~VertexBufferDX9()
 {
-	ULONG refCount = 0;
-	refCount = m_pVertexBuffer->Release();
-	assert(refCount == 0);
+	Unbind();
 }
 
 void VertexBufferDX9::Enable(const unsigned int offset)
@@ -110,4 +108,23 @@ void VertexBufferDX9::Update()
 	//Copy the local changes to our vertex buffer to where the locked data is
 	assert(m_pTempBuffer != nullptr);
 	memcpy(m_pTempBuffer, GetData(), GetSize());
+}
+
+void VertexBufferDX9::Bind()
+{
+	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
+	HRESULT hr = device->CreateVertexBuffer((UINT)m_nSize, BufferUsageDX9[m_eBufferUsage], 0, D3DPOOL_DEFAULT, &m_pVertexBuffer, 0);
+	assert(SUCCEEDED(hr));
+
+	Lock(BL_WRITE_ONLY);
+	Update();
+	Unlock();
+}
+
+void VertexBufferDX9::Unbind()
+{
+	ULONG refCount = 0;
+	refCount = m_pVertexBuffer->Release();
+	assert(refCount == 0);
+	m_pVertexBuffer = nullptr;
 }

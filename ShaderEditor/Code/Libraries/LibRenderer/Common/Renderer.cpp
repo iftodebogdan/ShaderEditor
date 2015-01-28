@@ -23,6 +23,7 @@
 #include "stdafx.h"
 
 #include "Renderer.h"
+#include "ResourceManager.h"
 #include "RenderState.h"
 #include "SamplerState.h"
 #include "RendererDX9.h"
@@ -35,12 +36,16 @@ API Renderer::m_eAPI = API_NULL;
 Renderer::Renderer()
 	: m_vViewportSize(800, 600)
 	, m_vViewportOffset(0, 0)
+	, m_pResourceManager(nullptr)
 	, m_pRenderState(nullptr)
 	, m_pSamplerState(nullptr)
 {}
 
 Renderer::~Renderer()
 {
+	if (m_pResourceManager)
+		delete m_pResourceManager;
+
 	if (m_pRenderState)
 		delete m_pRenderState;
 
@@ -62,6 +67,7 @@ void Renderer::DestroyInstance()
 {
 	if (m_pInstance)
 	{
+		m_pInstance->GetResourceManager()->ReleaseAll();
 		delete m_pInstance;
 		m_pInstance = nullptr;
 	}

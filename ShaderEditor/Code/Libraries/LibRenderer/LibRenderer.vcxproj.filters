@@ -213,6 +213,9 @@
     <ClInclude Include="Common\RenderData.h" />
     <ClInclude Include="Common\RenderTarget.h" />
     <ClInclude Include="DX9\RenderTargetDX9.h" />
+    <ClInclude Include="Utility\ModelLoader.h" />
+    <ClInclude Include="Common\ResourceManager.h" />
+    <ClInclude Include="DX9\ResourceManagerDX9.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -262,6 +265,9 @@
     <ClCompile Include="DX9\SamplerStateDX9.cpp" />
     <ClCompile Include="Common\RenderTarget.cpp" />
     <ClCompile Include="DX9\RenderTargetDX9.cpp" />
+    <ClCompile Include="Utility\ModelLoader.cpp" />
+    <ClCompile Include="Common\ResourceManager.cpp" />
+    <ClCompile Include="DX9\ResourceManagerDX9.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LibRenderer.licenseheader" />

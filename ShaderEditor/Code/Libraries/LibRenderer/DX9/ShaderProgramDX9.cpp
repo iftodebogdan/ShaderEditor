@@ -39,19 +39,7 @@ ShaderProgramDX9::ShaderProgramDX9(const ShaderProgramType programType,
 
 ShaderProgramDX9::~ShaderProgramDX9()
 {
-	unsigned int refCount = 0;
-	
-	if (m_pVertexShader)
-		refCount = m_pVertexShader->Release();
-	assert(refCount == 0);
-
-	if (m_pPixelShader)
-		refCount = m_pPixelShader->Release();
-	assert(refCount == 0);
-
-	if (m_pConstantTable)
-		refCount = m_pConstantTable->Release();
-	assert(refCount == 0);
+	Unbind();
 }
 
 void ShaderProgramDX9::Enable()
@@ -111,6 +99,8 @@ void ShaderProgramDX9::Disable()
 
 const bool ShaderProgramDX9::Compile(const char* srcData, char* const errors, const char* entryPoint, const char* profile)
 {
+	m_szSrcData = srcData;
+
 	IDirect3DDevice9* device = RendererDX9::GetInstance()->GetDevice();
 
 	switch (m_eProgramType)
@@ -129,6 +119,8 @@ const bool ShaderProgramDX9::Compile(const char* srcData, char* const errors, co
 	}
 	LPD3DXBUFFER compiledData = nullptr;
 	LPD3DXBUFFER errorMsg = nullptr;
+	m_szEntryPoint = entryPoint;
+	m_szProfile = profile;
 	HRESULT hr = D3DXCompileShader(srcData, (UINT)strlen(srcData), NULL, NULL, entryPoint, profile,
 		NULL, &compiledData, &errorMsg, &m_pConstantTable);
 
@@ -142,8 +134,13 @@ const bool ShaderProgramDX9::Compile(const char* srcData, char* const errors, co
 	}
 #endif
 
-	if (errors)
+	if (errors && errorMsg)
 		strcpy_s(errors, (int)errorMsg->GetBufferSize(), (const char*)errorMsg->GetBufferPointer());
+
+	if (errorMsg)
+		m_szErrors = (const char*)errorMsg->GetBufferPointer();
+	else
+		m_szErrors.clear();
 
 	if (FAILED(hr))
 		return false;
@@ -398,4 +395,36 @@ void ShaderProgramDX9::SetTexture(const unsigned int registerIndex, const Textur
 {
 	assert(tex);
 	tex->Enable(registerIndex);
+}
+
+void ShaderProgramDX9::Bind()
+{
+	if (m_szSrcData.length())
+		Compile(m_szSrcData.c_str(), nullptr, m_szEntryPoint.c_str(), m_szProfile.c_str());
+}
+
+void ShaderProgramDX9::Unbind()
+{
+	unsigned int refCount = 0;
+
+	if (m_pVertexShader)
+	{
+		refCount = m_pVertexShader->Release();
+		m_pVertexShader = nullptr;
+	}
+	assert(refCount == 0);
+
+	if (m_pPixelShader)
+	{
+		refCount = m_pPixelShader->Release();
+		m_pPixelShader = nullptr;
+	}
+	assert(refCount == 0);
+
+	if (m_pConstantTable)
+	{
+		refCount = m_pConstantTable->Release();
+		m_pConstantTable = nullptr;
+	}
+	assert(refCount == 0);
 }

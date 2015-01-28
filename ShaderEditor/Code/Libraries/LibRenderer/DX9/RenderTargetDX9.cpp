@@ -38,8 +38,8 @@ RenderTargetDX9::RenderTargetDX9(const unsigned int targetCount, PixelFormat pix
 
 	for (unsigned int i = 0; i < m_nTargetCount; i++)
 	{
-		m_pColorBuffer[i] = new TextureDX9(pixelFormat, TT_2D, width, height, 1,
-			m_bHasMipmaps ? 0 : 1, BU_RENDERTAGET);
+		//m_pColorBuffer[i] = new TextureDX9(pixelFormat, TT_2D, width, height, 1,
+		//	m_bHasMipmaps ? 0 : 1, BU_RENDERTAGET);
 		IDirect3DTexture9* dxTex = (IDirect3DTexture9*)((TextureDX9*)m_pColorBuffer[i])->GetTextureDX9();
 		hr = ((IDirect3DTexture9*)(((TextureDX9*)(m_pColorBuffer[i]))->GetTextureDX9()))->GetSurfaceLevel(0, &m_pColorSurface[i]);
 		assert(SUCCEEDED(hr));
@@ -47,7 +47,7 @@ RenderTargetDX9::RenderTargetDX9(const unsigned int targetCount, PixelFormat pix
 
 	if (hasDepthStencil)
 	{
-		m_pDepthBuffer = new TextureDX9(PF_D24S8, TT_2D, width, height, 1, 1, BU_DEPTHSTENCIL);
+		//m_pDepthBuffer = new TextureDX9(PF_D24S8, TT_2D, width, height, 1, 1, BU_DEPTHSTENCIL);
 		hr = ((IDirect3DTexture9*)(((TextureDX9*)m_pDepthBuffer)->GetTextureDX9()))->GetSurfaceLevel(0, &m_pDepthSurface);
 		assert(SUCCEEDED(hr));
 	}
@@ -55,28 +55,13 @@ RenderTargetDX9::RenderTargetDX9(const unsigned int targetCount, PixelFormat pix
 
 RenderTargetDX9::~RenderTargetDX9()
 {
-	unsigned int refCount = 0;
-
-	for (unsigned int i = 0; i < m_nTargetCount; i++)
-	{
-		if (m_pColorSurface && m_pColorSurface[i])
-			refCount = m_pColorSurface[i]->Release();
-		//assert(refCount == 0);
-	}
+	Unbind();
 
 	if (m_pColorSurface)
+	{
 		delete[] m_pColorSurface;
-
-	if (m_pDepthSurface)
-		refCount = m_pDepthSurface->Release();
-	//assert(refCount == 0);
-
-	for (unsigned int i = 0; i < m_nTargetCount; i++)
-		if (m_pColorBuffer && m_pColorBuffer[i])
-			delete m_pColorBuffer[i];
-	
-	if (m_pDepthBuffer)
-		delete m_pDepthBuffer;
+		m_pColorSurface = nullptr;
+	}
 }
 
 void RenderTargetDX9::Enable()
@@ -136,7 +121,7 @@ void RenderTargetDX9::Disable()
 	m_pDepthSurfaceBackup = nullptr;
 }
 
-void RenderTargetDX9::CopyColorBuffer(const unsigned int colorBufferIdx, Texture*& texture)
+void RenderTargetDX9::CopyColorBuffer(const unsigned int colorBufferIdx, Texture* texture)
 {
 	assert(m_pColorSurfaceBackup == nullptr);
 	assert(colorBufferIdx >= 0 && colorBufferIdx < m_nTargetCount);
@@ -147,21 +132,13 @@ void RenderTargetDX9::CopyColorBuffer(const unsigned int colorBufferIdx, Texture
 	HRESULT hr;
 
 	// Validate texture
-	if (texture)
+	if (texture->GetWidth() != GetWidth() ||
+		texture->GetHeight() != GetHeight() ||
+		texture->GetTextureFormat() != GetFormat() ||
+		texture->GetTextureType() != TT_2D)
 	{
-		if (texture->GetWidth() != GetWidth() ||
-			texture->GetHeight() != GetHeight() ||
-			texture->GetTextureFormat() != GetFormat() ||
-			texture->GetTextureType() != TT_2D)
-		{
-			assert(false);
-			delete texture;
-			texture = new TextureDX9(GetFormat(), TT_2D, GetWidth(), GetHeight(), 1, 1);
-		}
-	}
-	else
-	{
-		texture = new TextureDX9(GetFormat(), TT_2D, GetWidth(), GetHeight(), 1, 1);
+		assert(false);
+		return;
 	}
 
 	// Back up our current render target, if required
@@ -232,4 +209,58 @@ void RenderTargetDX9::CopyColorBuffer(const unsigned int colorBufferIdx, Texture
 	//	refCount = destSurface->Release();
 	//	assert(refCount == 1);
 	//}
+}
+
+void RenderTargetDX9::Bind()
+{
+	HRESULT hr;
+
+	for (unsigned int i = 0; i < m_nTargetCount; i++)
+	{
+		IDirect3DTexture9* dxTex = (IDirect3DTexture9*)((TextureDX9*)m_pColorBuffer[i])->GetTextureDX9();
+		hr = ((IDirect3DTexture9*)(((TextureDX9*)(m_pColorBuffer[i]))->GetTextureDX9()))->GetSurfaceLevel(0, &m_pColorSurface[i]);
+		assert(SUCCEEDED(hr));
+	}
+
+	if (m_bHasDepthStencil)
+	{
+		hr = ((IDirect3DTexture9*)(((TextureDX9*)m_pDepthBuffer)->GetTextureDX9()))->GetSurfaceLevel(0, &m_pDepthSurface);
+		assert(SUCCEEDED(hr));
+	}
+}
+
+void RenderTargetDX9::Unbind()
+{
+	unsigned int refCount = 0;
+
+	if (m_pColorSurfaceBackup)
+	{
+		m_pColorSurfaceBackup->Release();
+		m_pColorSurfaceBackup = nullptr;
+	}
+
+	if (m_pDepthSurfaceBackup)
+	{
+		m_pDepthSurfaceBackup->Release();
+		m_pDepthSurfaceBackup = nullptr;
+	}
+
+	for (unsigned int i = 0; i < m_nTargetCount; i++)
+	{
+		if (m_pColorSurface && m_pColorSurface[i])
+		{
+			refCount = m_pColorSurface[i]->Release();
+			m_pColorSurface[i] = nullptr;
+		}
+		// Inconsistent between the retail and debug DX9 runtimes
+		//assert(refCount == 1);
+	}
+	
+	if (m_pDepthSurface)
+	{
+		refCount = m_pDepthSurface->Release();
+		m_pDepthSurface = nullptr;
+	}
+	// Inconsistent between the retail and debug DX9 runtimes
+	//assert(refCount == 1);
 }

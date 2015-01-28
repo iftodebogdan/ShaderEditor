@@ -29,6 +29,7 @@ const unsigned int IndexBuffer::IndexBufferFormatSize[IBF_MAX] =
 
 IndexBuffer::IndexBuffer(const unsigned int indexCount, const IndexBufferFormat indexFormat, const BufferUsage usage)
 	: Buffer(indexCount, IndexBufferFormatSize[indexFormat], usage)
+	, m_eIndexFormat(indexFormat)
 {}
 
 IndexBuffer::~IndexBuffer()

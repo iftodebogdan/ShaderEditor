@@ -19,6 +19,14 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#ifndef LIBRENDERER_DLL
+#ifdef LIBRENDERER_EXPORTS
+#define LIBRENDERER_DLL __declspec(dllexport) 
+#else
+#define LIBRENDERER_DLL __declspec(dllimport) 
+#endif
+#endif //LIBRENDERER_DLL
+
 #include "RenderData.h"
 
 namespace LibRendererDll
@@ -27,27 +35,28 @@ namespace LibRendererDll
 	class Buffer
 	{
 	public:
-
 		// Returns the number of elements (vertices, indices, pixels, etc.) in the buffer
-		const	unsigned int	GetElementCount() const { return m_nElementCount; }
+		LIBRENDERER_DLL const unsigned int	GetElementCount() const { return m_nElementCount; }
 		// Returns the size in bytes of an element
-		const	unsigned int	GetElementSize() const { return m_nElementSize; }
+		LIBRENDERER_DLL const unsigned int	GetElementSize() const { return m_nElementSize; }
 		// Returns the usage option of the buffer
-		const	BufferUsage		GetUsage() const { return m_eBufferUsage; }
+		LIBRENDERER_DLL const BufferUsage	GetUsage() const { return m_eBufferUsage; }
 		// Returns the size in bytes of the entire buffer
-		const	unsigned int	GetSize() const { return m_nSize; }
+		LIBRENDERER_DLL const unsigned int	GetSize() const { return m_nSize; }
 		// Returns a pointer to the beginning of the buffer
-				byte*			GetData() const { return m_pData; }
+		LIBRENDERER_DLL	byte*				GetData() const { return m_pData; }
 
 	protected:
-						Buffer(const unsigned int elementCount, const unsigned int elementSize, const BufferUsage usage);
-		virtual			~Buffer();
+		Buffer(const unsigned int elementCount, const unsigned int elementSize, const BufferUsage usage);
+		virtual ~Buffer();
 
 		unsigned int	m_nElementCount;	// Holds the number of elements
 		unsigned int	m_nElementSize;		// Holds the size in bytes of an element
 		BufferUsage		m_eBufferUsage;		// Holds the type of usage of the buffer
 		unsigned int	m_nSize;			// Holds the total size in bytes of the buffer
 		byte*			m_pData;			// Pointer to the beginning of the buffer
+
+		friend class ResourceManager;
 	};
 }
 

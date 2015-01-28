@@ -26,26 +26,34 @@ namespace LibRendererDll
 {
 	class RendererDX9 : public Renderer
 	{
-		// Used to create the D3DDevice
-		IDirect3D9*			m_pD3D;
-		// Our rendering device
-		IDirect3DDevice9*	m_pd3dDevice;
-		
-		void	CreateResources();
-		void	ReleaseResources();
-
-	public:
 		RendererDX9();
 		~RendererDX9();
 
+		// Used to create the D3DDevice
+		IDirect3D9*				m_pD3D;
+		// Our rendering device
+		IDirect3DDevice9*		m_pd3dDevice;
+		D3DPRESENT_PARAMETERS	m_ePresentParameters;
+		bool					m_bDeviceLost;
+
+		friend class Renderer;
+
+	public:
 		static	RendererDX9*	GetInstance() { assert(m_eAPI == API_DX9); return (RendererDX9*)m_pInstance; };
 
-		void					Initialize(void* hWnd);
-		void					SetViewport(const Vec2i size, const Vec2i offset = Vec2i(0, 0));
-		void					RenderScene();
+		void	Initialize(void* hWnd);
+		void	SetViewport(const Vec2i size, const Vec2i offset = Vec2i(0, 0));
+		void	CreateProjectionMatrix(Matrix44f& matProj, float fovYRad, float aspectRatio, float zNear, float zFar);
 
-		IDirect3DDevice9*		GetDevice() const { return m_pd3dDevice; };
-		IDirect3D9*				GetDriver() const { return m_pD3D; }
+		const bool	BeginFrame();
+		void		EndFrame();
+		void		SwapBuffers();
+		void		Clear(const Vec4f rgba, const float z, const unsigned int stencil);
+		void		DrawVertexBuffer(VertexBuffer* vb);
+
+		IDirect3DDevice9*	GetDevice() const { return m_pd3dDevice; };
+		IDirect3D9*		 	GetDriver() const { return m_pD3D; }
+		const bool		 	IsDeviceLost() const { return m_bDeviceLost; }
 	};
 }
 
