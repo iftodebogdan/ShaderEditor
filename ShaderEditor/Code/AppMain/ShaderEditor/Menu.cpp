@@ -13,7 +13,7 @@ MenuWidget::MenuWidget()
  */
 MenuWidget::MenuWidget(
 	Gtk::Window* window,
-	Gtk::Frame* container,
+	Gtk::Box* container,
 	std::map<int, std::map<std::string, std::string>> items,
 	Gtk::Notebook* notebook
 ) {
@@ -34,6 +34,7 @@ MenuWidget::MenuWidget(
  */
 MenuWidget::~MenuWidget()
 {
+	this->m_Container->remove(*this->m_MenuBar);
 }
 
 /**
@@ -77,7 +78,10 @@ void MenuWidget::buildMenu()
 
 	// Add the menu bar and the accel_group to the window.
 	this->m_Window->add_accel_group(this->m_UIManager->get_accel_group());
-	this->m_Container->add(*menuBar);
+	this->m_Container->pack_start(*menuBar);
+
+	// Store the menu bar.
+	this->m_MenuBar = menuBar;
 }
 
 /**
@@ -133,4 +137,12 @@ int MenuWidget::getPageIndexByName(std::string name)
 	}
 
 	return -1;
+}
+
+/**
+ * Menu items setter.
+ */
+void MenuWidget::setItems(std::map<int, std::map<std::string, std::string>>	items)
+{
+	this->m_Items = items;
 }

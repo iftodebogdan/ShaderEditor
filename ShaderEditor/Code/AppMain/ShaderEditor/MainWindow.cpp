@@ -2,6 +2,7 @@
 
 #include "Menu.h"
 #include "MainWindow.h"
+#include "AddStepPrompt.h"
 #include <gdk/gdkwin32.h>
 #include <fstream>
 
@@ -19,6 +20,8 @@ MainWindow::MainWindow()
 	, m_bLeftClick(false)
 	, m_bRightClick(false)
 	, m_fSpeedFactor(1.f)
+	, m_AddStepButton("Add Step")
+	, m_RemoveStepButton("Remove Step")
 {
 	// Set window properties
 	set_title("ShdEd");
@@ -28,20 +31,26 @@ MainWindow::MainWindow()
 	// are valid later when we retrieve them
 	maximize();
 	show();
+	
+	// Add the menu widget.
+	this->m_MenuWidget = new MenuWidget(this, &m_MenuContainer, m_MenuItems, &m_Notebook);
+	
+	// Add the menu container to the menu box.
+	m_MenuBox.pack_start(m_MenuContainer);
 
-	// Menu items list. Defined for example purposes.
-	std::map<int, std::map<std::string, std::string>> items;
-	items[0]["name"] = "New";
-	items[0]["file"] = "New";
-	items[1]["name"] = "Quit";
-	items[1]["file"] = "New";
-	items[2]["name"] = "Shader";
-	items[2]["file"] = "New";
-	items[3]["name"] = "Set";
-	items[3]["file"] = "New";
+	// Add the Add & Remove buttons.
+	m_AddStepButton.get_allocation().set_height(20);
+	m_AddStepButton.get_allocation().set_width(20);
+	m_AddStepButton.signal_clicked().connect(sigc::mem_fun(this, &MainWindow::OnAddStepButtonClicked));
+	m_MenuBox.pack_start(m_AddStepButton, Gtk::PACK_SHRINK);
 
-	// Build the workspace frame menu.
-	m_MenuWidget = new MenuWidget(this, &m_WorkspaceFrame, items, &m_Notebook);
+	m_RemoveStepButton.get_allocation().set_height(20);
+	m_RemoveStepButton.get_allocation().set_width(20);
+	m_RemoveStepButton.signal_clicked().connect(sigc::mem_fun(this, &MainWindow::OnRemoveStepButtonClicked));
+	m_MenuBox.pack_start(m_RemoveStepButton, Gtk::PACK_SHRINK);
+
+	// Add the menu box to the workspace frame.
+	m_WorkspaceFrame.add(m_MenuBox);
 
 	// Add the notebook to the editor frame.
 	m_EditorFrame.add(m_Notebook);
@@ -435,4 +444,59 @@ bool MainWindow::OnKeyRelease(GdkEventKey* ev)
 	if (ev->keyval == GDK_Shift_L || ev->keyval == GDK_Shift_R)
 		m_fSpeedFactor = 1.f;
 	return true;
+}
+
+/**
+ * "Add step" button click event handler.
+ */
+void MainWindow::OnAddStepButtonClicked()
+{
+	AddStepPrompt stepPrompt;
+	std::map<std::string, std::string> newItem;
+	std::map<int, std::map<std::string, std::string>>::iterator itemsIterator;
+
+	// Show the 'Add step' prompt, which lets the user define a rendering step.
+	Gtk::Main::run(stepPrompt);
+
+	// Fetch the newly defined step.
+	newItem["name"] = stepPrompt.getItemName();
+	newItem["file"] = stepPrompt.getItemName();
+
+	// If the menu item already exists, do not rebuild the menu.
+	for (itemsIterator = this->m_MenuItems.begin(); itemsIterator != this->m_MenuItems.end(); ++itemsIterator) {
+		if (itemsIterator->second["name"] == newItem["name"]) {
+			return;
+		}
+	}
+	
+	// Add the new item into the menu items list.
+	this->m_MenuItems[this->m_MenuItems.size()] = newItem;
+
+	// Rebuild the menu bar.
+	delete this->m_MenuWidget;
+	this->m_MenuWidget = new MenuWidget(this, &m_MenuContainer, m_MenuItems, &m_Notebook);
+}
+
+void MainWindow::OnRemoveStepButtonClicked()
+{
+	std::string removedPageName;
+	int nrPages, i;
+	PageWidget* widget;
+
+	removedPageName = this->m_MenuItems[this->m_MenuItems.size() - 1]["name"];
+	nrPages = this->m_Notebook.get_n_pages();
+	for (i = 0; i < nrPages; i++) {
+		widget = (PageWidget*) this->m_Notebook.pages()[i].get_child();
+		if (removedPageName == widget->getName()) {
+			this->m_Notebook.remove(*widget);
+			
+			break;
+		}
+	}
+
+	this->m_MenuItems.erase(this->m_MenuItems.size() - 1);
+
+	// Rebuild the menu bar.
+	delete this->m_MenuWidget;
+	this->m_MenuWidget = new MenuWidget(this, &m_MenuContainer, m_MenuItems, &m_Notebook);
 }

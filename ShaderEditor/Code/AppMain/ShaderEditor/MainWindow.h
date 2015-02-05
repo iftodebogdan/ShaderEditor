@@ -28,6 +28,8 @@ protected:
 	bool OnMouseMove(GdkEventMotion* ev);
 	bool OnKeyPress(GdkEventKey* ev);
 	bool OnKeyRelease(GdkEventKey* ev);
+	void OnAddStepButtonClicked();
+	void OnRemoveStepButtonClicked();
 	bool m_bLeftClick, m_bRightClick;
 	Vec3f m_vMove;
 	float m_fSpeedFactor;
@@ -36,12 +38,17 @@ protected:
 		Vec3f vPos;
 		Matrix44f mRot;
 	} m_tCamera;
+	std::map<int, std::map<std::string, std::string>> m_MenuItems;
 
 	// Child widgets:
 	Gtk::VPaned			m_VPaned;
 	Gtk::HPaned			m_HPanedTop;
 	Gtk::HPaned			m_HPanedBottom;
 	Gtk::Frame			m_WorkspaceFrame;
+	Gtk::VBox			m_MenuBox;
+	Gtk::VBox			m_MenuContainer;
+	Gtk::Button			m_AddStepButton;
+	Gtk::Button			m_RemoveStepButton;
 	Gtk::Frame			m_EditorFrame;
 	Gtk::Frame			m_PreviewFrame;
 	Gtk::DrawingArea	m_PreviewDrawingArea;
