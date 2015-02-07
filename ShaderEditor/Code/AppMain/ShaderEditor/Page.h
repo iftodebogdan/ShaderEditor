@@ -41,11 +41,15 @@ protected:
 	Gtk::HButtonBox						m_ButtonBox;
 	Gtk::Button							m_QuitButton;
 	Gtk::Button							m_SaveQuitButton;
+	Gtk::Button							m_CompileButton;
+	Gtk::Button							m_RunButton;
 
 	// Method which builds the content of the page.
 	void								buildPage();
 	// Quit and Save & Quit buttons click callback.
 	void								onQuitButtonPressed(bool save);
+	void								onCompileButtonPressed(bool);
+	void								onRunButtonPressed(bool);
 };
 
 #endif

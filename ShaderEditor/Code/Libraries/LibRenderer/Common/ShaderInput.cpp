@@ -59,7 +59,9 @@ const bool ShaderInput::GetInputHandleByName(const char* const inputName, unsign
 		}
 	}
 
-	assert(false);
+	inputHandle = ~0u;
+
+	//assert(false);
 	return false;
 }
 

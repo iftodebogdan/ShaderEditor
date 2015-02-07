@@ -105,7 +105,8 @@ void ShaderTemplate::Enable(ShaderInput* shaderInput)
 			{
 				//m_pProgram->SetTexture(m_arrInputDesc[i].nRegisterIndex, (Texture*)*(unsigned long long*)(shaderInput->GetData() + m_arrInputDesc[i].nOffsetInBytes));
 				Texture* tex = (Texture*)*(unsigned long long*)(shaderInput->GetData() + m_arrInputDesc[i].nOffsetInBytes);
-				tex->Enable(m_arrInputDesc[i].nRegisterIndex);
+				if (tex)
+					tex->Enable(m_arrInputDesc[i].nRegisterIndex);
 			}
 			else
 				assert(false); // shouldn't happen
@@ -126,7 +127,8 @@ void ShaderTemplate::Disable()
 		if (m_arrInputDesc[i].eInputType >= IT_SAMPLER && m_arrInputDesc[i].eInputType <= IT_SAMPLERCUBE)
 		{
 			Texture* tex = (Texture*)*(unsigned long long*)(m_pShaderInput->GetData() + m_arrInputDesc[i].nOffsetInBytes);
-			tex->Disable(m_arrInputDesc[i].nRegisterIndex);
+			if (tex)
+				tex->Disable(m_arrInputDesc[i].nRegisterIndex);
 		}
 	}
 

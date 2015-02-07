@@ -57,6 +57,9 @@ namespace LibRendererDll
 		virtual	LIBRENDERER_DLL void				SetViewport(const Vec2i size, const Vec2i offset = Vec2i(0, 0)) { m_vViewportSize = size; m_vViewportOffset = offset; }
 		/* Create a projection matrix for the corresponding API */
 		virtual LIBRENDERER_DLL void				CreateProjectionMatrix(Matrix44f& matProj, float fovYRad, float aspectRatio, float zNear, float zFar) = 0;
+		/* Convert a GMTL / OpenGL projection matrix to a DirectX compliant projection matrix */
+		static	LIBRENDERER_DLL	void				ConvertOGLProjMatToD3D(Matrix44f& matProj);
+		static	LIBRENDERER_DLL	void				ConvertOGLProjMatToD3D(Matrix44f* const matProj) { ConvertOGLProjMatToD3D(*matProj); }
 
 		/* Try to begin a new frame (don't try to draw anything if it fails) */
 		virtual	LIBRENDERER_DLL const bool			BeginFrame() = 0;

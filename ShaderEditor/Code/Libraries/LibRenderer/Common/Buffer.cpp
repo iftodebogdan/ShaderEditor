@@ -42,6 +42,6 @@ Buffer::Buffer(const unsigned int elementCount, const unsigned int elementSize, 
 
 Buffer::~Buffer()
 {
-	assert(m_pData != nullptr);
+	//assert(m_pData != nullptr);
 	delete[] m_pData;
 }

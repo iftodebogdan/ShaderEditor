@@ -15,6 +15,9 @@ class MainWindow : public Gtk::Window
 public:
 			MainWindow();
 	virtual	~MainWindow();
+
+	void CompileShader();
+	void RunShader();
 	
 protected:
 	// Called when the window has been created
@@ -53,6 +56,7 @@ protected:
 	Gtk::Frame			m_PreviewFrame;
 	Gtk::DrawingArea	m_PreviewDrawingArea;
 	Gtk::Frame			m_OutputFrame;
+	Gtk::Label			m_OutputLabel;
 
 	// Components
 	MenuWidget*			m_MenuWidget;

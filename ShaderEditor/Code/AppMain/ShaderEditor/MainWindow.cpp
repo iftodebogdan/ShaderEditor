@@ -2,7 +2,6 @@
 
 #include "Menu.h"
 #include "MainWindow.h"
-#include "AddStepPrompt.h"
 #include <gdk/gdkwin32.h>
 #include <fstream>
 
@@ -20,8 +19,6 @@ MainWindow::MainWindow()
 	, m_bLeftClick(false)
 	, m_bRightClick(false)
 	, m_fSpeedFactor(1.f)
-	, m_AddStepButton("Add Step")
-	, m_RemoveStepButton("Remove Step")
 {
 	// Set window properties
 	set_title("ShdEd");
@@ -31,26 +28,26 @@ MainWindow::MainWindow()
 	// are valid later when we retrieve them
 	maximize();
 	show();
-	
-	// Add the menu widget.
-	this->m_MenuWidget = new MenuWidget(this, &m_MenuContainer, m_MenuItems, &m_Notebook);
-	
-	// Add the menu container to the menu box.
-	m_MenuBox.pack_start(m_MenuContainer);
 
-	// Add the Add & Remove buttons.
-	m_AddStepButton.get_allocation().set_height(20);
-	m_AddStepButton.get_allocation().set_width(20);
-	m_AddStepButton.signal_clicked().connect(sigc::mem_fun(this, &MainWindow::OnAddStepButtonClicked));
-	m_MenuBox.pack_start(m_AddStepButton, Gtk::PACK_SHRINK);
+	// Menu items list. Defined for example purposes.
+	std::map<int, std::map<std::string, std::string>> items;
+	items[0]["name"] = "New";
+	items[0]["file"] = "New";
+	items[1]["name"] = "Quit";
+	items[1]["file"] = "New";
+	items[2]["name"] = "Shader";
+	items[2]["file"] = "New";
+	items[3]["name"] = "Set";
+	items[3]["file"] = "New";
 
-	m_RemoveStepButton.get_allocation().set_height(20);
-	m_RemoveStepButton.get_allocation().set_width(20);
-	m_RemoveStepButton.signal_clicked().connect(sigc::mem_fun(this, &MainWindow::OnRemoveStepButtonClicked));
-	m_MenuBox.pack_start(m_RemoveStepButton, Gtk::PACK_SHRINK);
+	// Build the workspace frame menu.
+	m_MenuWidget = new MenuWidget(this, &m_WorkspaceFrame, items, &m_Notebook);
 
-	// Add the menu box to the workspace frame.
-	m_WorkspaceFrame.add(m_MenuBox);
+	// Add and configure output label
+	m_OutputFrame.add(m_OutputLabel);
+	m_OutputLabel.set_selectable();
+	m_OutputLabel.set_line_wrap();
+	m_OutputLabel.set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP);
 
 	// Add the notebook to the editor frame.
 	m_EditorFrame.add(m_Notebook);
@@ -115,240 +112,188 @@ void MainWindow::OnCreate()
 	HGDIOBJ handle = GDK_WINDOW_HWND(get_window()->gobj());
 	Renderer *renderer = Renderer::GetInstance();
 	renderer->Initialize((void*)handle);
+}
 
-	// The resource manager is the only way to
-	// allocate resources to be used by the renderer
-	// NB: when creating a resource, the resource manager
-	// will return an index, with which you can retrieve
-	// a pointer to the actual resource
-	ResourceManager* resMan = renderer->GetResourceManager();
-
-	// First of all, create a vertex buffer from a model file
-	// A vertex buffer contains all the points we need to form
-	// our triangles later when drawing
-	const unsigned int vbIdx = resMan->CreateVertexBuffer(
-		"models/COLLADA/teapot_instancenodes.DAE"
-		//"sponza_scene/sponza.obj"
-		);
-	// Retrieve the actual resource
-	m_pVB = resMan->GetVertexBuffer(vbIdx);
-
-	// Create a texture from an image file
-	const unsigned int tex1Idx = resMan->CreateTexture("sponza_curtain_diff.tga");
-	m_pTex1 = resMan->GetTexture(tex1Idx);
-
-	// Now, create a blank texture which we will be using later.
-	// PF_A8R8G8B8 is the pixel format: 8 bits per channel in the order Alpha, Red, Green, Blue (the order counts!).
-	// TT_2D means that it will be a 2D texture (as opposed  to 1D, 3D or cubemap textures).
-	// 512 x 512 x 1 are the width, height and depth (just like a 1D texture is a 2D texture
-	// with a height of 1, a 2D texture is a 3D texture with a depth of 1).
-	// Next is the mipmap count, which is 1. Mipmaps are a sequence of textures, each a 
-	// progressively lower resolution representation of the original image (mip 0).
-	// Mipmaps are used to increase rendering speed (lower resolution textures increase cache coherency
-	// because they are smaller in size, less texels are required to cover the same area and so
-	// cache misses are less frequent).
-	// Finally, BU_DYNAMIC means that the resource is dynamic, or in other words
-	// will be often accessed by the CPU for reading/writing (it's not cheap
-	// to copy memory from video RAM to system RAM and back again).
-	// As such, we request the driver to allocate it in AGP memory, which is a part of the
-	// system memory in which the CPU can write quickly and the GPU can read relatively quickly.
-	const unsigned int tex2Idx = resMan->CreateTexture(PF_A8R8G8B8, TT_2D, 512, 512, 1, 1, BU_DYNAMIC);
-	m_pTex2 = resMan->GetTexture(tex2Idx);
-
-	// Read the contents of the file
-	std::ifstream t("test.hlsl");
-	int length;
-	t.seekg(0, std::ios::end);			// go to the end
-	length = (int)t.tellg();			// report location (this is the length)
-	t.seekg(0, std::ios::beg);			// go back to the beginning
-	char* buffer = new char[length];    // allocate memory for a buffer of appropriate dimension
-	t.read(buffer, length);				// read the whole file into the buffer
-	t.close();							// close file handle
-	buffer[t.gcount()] = '\0';			// maybe there where less characters than expected (CRLF converted to LF)
-
-	// Compile and create the vertex program
-	const unsigned int vspIdx = resMan->CreateShaderProgram(SPT_VERTEX, buffer);
-	// Compile and create the pixel program
-	const unsigned int pspIdx = resMan->CreateShaderProgram(SPT_PIXEL, buffer);
-	// Create a shader template for our vertex program
-	const unsigned int vstIdx = resMan->CreateShaderTemplate(resMan->GetShaderProgram(vspIdx));
-	m_pVertexShader = resMan->GetShaderTemplate(vstIdx);
-	// Create a shader template for our pixel program
-	const unsigned int pstIdx = resMan->CreateShaderTemplate(resMan->GetShaderProgram(pspIdx));
-	m_pPixelShader = resMan->GetShaderTemplate(pstIdx);
-
-	// Shader inputs are separated from templates so that one could use the same
-	// shader with different inputs, without having to create multiple copies of
-	// the same template. A ShaderTemplate is a descriptor for what the shader expects
-	// as input, whereas a ShaderInput is the instance of those inputs.
-	const unsigned int vsiIdx = resMan->CreateShaderInput(m_pVertexShader);
-	m_pVSInput = resMan->GetShaderInput(vsiIdx);
-	const unsigned int psiIdx = resMan->CreateShaderInput(m_pPixelShader);
-	m_pPSInput = resMan->GetShaderInput(psiIdx);
-
-	// Create a render target
-	// If the function parameters remind you of the ones from CreateTexture(),
-	// it's because a render target is also a texture! ...sort of.
-	// Unlike regular textures, the renderer doesn't store a copy of the data
-	// in system memory (nor does the driver for that matter), since it is
-	// composited by the GPU in GPU memory. Copying the data to a system RAM
-	// is VERY expensive and should definitely not be done on a per-frame
-	// basis (we're going to do it anyway!).
-	// A render target can contain a maximum of 4 color buffer and 1 depth
-	// buffer (which you can visualise as 5 textures). A pixel shader can
-	// render to all these buffers simultaneously with a single draw call!
-	const unsigned int rtIdx = resMan->CreateRenderTarget(1, PF_A8R8G8B8, 512, 512, false, true);
-	m_pRT = resMan->GetRenderTarget(rtIdx);
-
-	delete[] buffer;
+void SetInput(ShaderInput* const shdInput, const unsigned int handle, const unsigned int passIdx, const unsigned int constIdx)
+{
+	MenuWidget::ShaderPassDesc::ShaderConstants constDesc = MenuWidget::m_arrShaderPassDesc[passIdx].constants[constIdx];
+	switch (constDesc.inputType)
+	{
+	case IT_BOOL:
+	case IT_FLOAT:
+	case IT_INT:
+		if (constDesc.rows == 1)
+		{
+			shdInput->SetFloatArray(handle, constDesc.valueFloat);
+		}
+		else
+		{
+			if (constDesc.rows == 3 && constDesc.cols == 3)
+			{
+				Matrix33f mat;
+				for (unsigned int r = 0; r < constDesc.rows; r++)
+					for (unsigned int c = 0; c < constDesc.cols; c++)
+					{
+						mat[r][c] = constDesc.valueFloat[r * constDesc.cols + c];
+					}
+				shdInput->SetMatrix3x3(handle, mat);
+			}
+			else if (constDesc.rows == 4 && constDesc.cols == 4)
+			{
+				Matrix44f mat;
+				for (unsigned int r = 0; r < constDesc.rows; r++)
+					for (unsigned int c = 0; c < constDesc.cols; c++)
+					{
+						mat[r][c] = constDesc.valueFloat[r * constDesc.cols + c];
+					}
+				shdInput->SetMatrix4x4(handle, mat);
+			}
+		}
+		break;
+	case IT_SAMPLER:
+	case IT_SAMPLER1D:
+	case IT_SAMPLER2D:
+	case IT_SAMPLER3D:
+	case IT_SAMPLERCUBE:
+		if (constDesc.sampler.boundTexture)
+			shdInput->SetTexture(handle, constDesc.sampler.boundTexture);
+		Renderer::GetInstance()->GetSamplerStateManager()->SetFilter(shdInput->GetInputDesc(handle).nRegisterIndex, SF_MIN_MAG_LINEAR_MIP_LINEAR);
+		break;
+	default:
+		return;
+	}
 }
 
 bool MainWindow::OnUpdate()
 {
-	// After creating the resources required for compositing the scene, let's build our frame
-	Renderer *renderer = Renderer::GetInstance();
-	// First off, set our viewport to the size and offset of the widget containing our renderer
-	Vec2i vp = Vec2i(m_PreviewDrawingArea.get_allocation().get_width() + 1, m_PreviewDrawingArea.get_allocation().get_height() + 1);
-	Vec2i vpOffset = Vec2i(m_PreviewDrawingArea.get_allocation().get_x() - 1, m_PreviewDrawingArea.get_allocation().get_y() - 1);
-	renderer->SetViewport(vp, vpOffset);
-
-	unsigned int handle;
-	//Obtain a handle for our shader inputs
-	if (m_pVSInput->GetInputHandleByName("matWVP", handle))
+	for (unsigned int pass = 0; pass < MenuWidget::m_arrShaderPassDesc.size(); pass++)
 	{
-		// Here we will build 3 matrices:
-		// *the world matrix which positions/rotates/scales our object in the world
-		// *the view matrix which determines the position and rotation of the camera (i.e. transforms world coordinates into local camera coordinates)
-		// *the projection matrix which determines the kind of projection (orthographic or perspective)
-		Matrix44f matWVP[3];
+		// declare local variables
+		Matrix44f worldMat, viewMat, projMat, worldViewProjMat;
+		unsigned int vsInputIdx = ~0u, psInputIdx = ~0u;
+		ShaderInput *vsInput = nullptr, *psInput = nullptr;
 
-		// First, we build a world matrix by composing a rotation matrix with a translation matrix.
-		// The order in which we compose the matrices matter, so here, since GMTL matrices are column-major,
-		// the final world matrix will FIRST rotate the object by 90 degrees on the X axis and then
-		// translate it 200 units on the Z axis.
-		matWVP[0] = makeTrans(Vec3f(0, 0, 200), Type2Type<Matrix44f>()) * makeRot(AxisAnglef(Math::PI_OVER_2, Vec3f(1.f, 0.f, 0.f)), Type2Type<Matrix44f>());
+		// get pointer to renderer instance and resource manager
+		Renderer *renderer = Renderer::GetInstance();
+		ResourceManager* resMan = renderer->GetResourceManager();
 
-		// Now create our view matrix, which actually is the INVERSE world matrix of the camera.
-		// So we could either build a world matrix for the camera, then invert it, or, as we do here,
-		// we build a matrix with inverse translation and rotation from the get-go. In other words,
-		// if we want our camera to be at position x, y, z then we need to build a matrix that
-		// translates to -x, -y, -z
+		// set viewport
+		Vec2i vp = Vec2i(m_PreviewDrawingArea.get_allocation().get_width() + 1, m_PreviewDrawingArea.get_allocation().get_height() + 1);
+		Vec2i vpOffset = Vec2i(m_PreviewDrawingArea.get_allocation().get_x() - 1, m_PreviewDrawingArea.get_allocation().get_y() - 1);
+		renderer->SetViewport(vp, vpOffset);
+
+		// create shader inputs managers
+		if (MenuWidget::m_arrShaderPassDesc[pass].vertexShader.program)
+		{
+			vsInputIdx = resMan->CreateShaderInput(MenuWidget::m_arrShaderPassDesc[pass].vertexShader.program);
+			vsInput = resMan->GetShaderInput(vsInputIdx);
+		}
+		if (MenuWidget::m_arrShaderPassDesc[pass].pixelShader.program)
+		{
+			psInputIdx = resMan->CreateShaderInput(MenuWidget::m_arrShaderPassDesc[pass].pixelShader.program);
+			psInput = resMan->GetShaderInput(psInputIdx);
+		}
+
+		// calculate transform matrices
+		worldMat = makeTrans(Vec3f(0, 0, 200), Type2Type<Matrix44f>());// *makeRot(AxisAnglef(Math::PI_OVER_2, Vec3f(1.f, 0.f, 0.f)), Type2Type<Matrix44f>());
 		normalize(m_vMove);
-		m_tCamera.vPos -= 
+		m_tCamera.vPos -=
 			Vec3f(m_tCamera.mRot[2][0] * m_vMove[2] * m_fSpeedFactor, m_tCamera.mRot[2][1] * m_vMove[2] * m_fSpeedFactor, m_tCamera.mRot[2][2] * m_vMove[2] * m_fSpeedFactor) +
 			Vec3f(m_tCamera.mRot[0][0] * m_vMove[0] * m_fSpeedFactor, m_tCamera.mRot[0][1] * m_vMove[0] * m_fSpeedFactor, m_tCamera.mRot[0][2] * m_vMove[0] * m_fSpeedFactor);
-		matWVP[1] = m_tCamera.mRot * makeTrans(m_tCamera.vPos, Type2Type<Matrix44f>());
-
-		// Create the projection matrix according to the convention of the rendering API used.
-		// A projection matrix transforms view-space coordinates into perspective-correct (if
-		// using a perspective matrix) clip-space coordinates. What it does is transform a
-		// frustum into a cuboid (cube in OpenGL) with edges ranging between (-1, 1)
-		// for X and Y coordinates and (0, 1) for Z coordinate. Any geometry that falls
-		// outside of this range after application of the projection matrix gets clipped 
-		// (this is why it's called clip-space) before rasterization.
-		renderer->CreateProjectionMatrix(matWVP[2], Math::deg2Rad(55.f), (float)vp[0] / (float)vp[1], 20.f, 2000.f);
+		viewMat = m_tCamera.mRot * makeTrans(m_tCamera.vPos, Type2Type<Matrix44f>());
+		setPerspective(projMat, 55.f, (float)vp[0] / (float)vp[1], 20.f, 2000.f);
+		if (Renderer::GetAPI() == API_DX9)
+			Renderer::ConvertOGLProjMatToD3D(projMat);
+		worldViewProjMat = projMat * viewMat * worldMat;
 		
-		// Set our matrices as input to the vertex shader, which will then transform
-		// each vertex from the vertex buffer
-		m_pVSInput->SetMatrixArray<4, 4>(handle, matWVP);
+		// set transform matrices
+		unsigned int handle;
+		if (vsInput && vsInput->GetInputHandleByName("worldMat", handle))
+		{
+			vsInput->SetMatrix4x4(handle, worldMat);
+		}
+		if (psInput && psInput->GetInputHandleByName("worldMat", handle))
+		{
+			psInput->SetMatrix4x4(handle, worldMat);
+		}
+		if (vsInput && vsInput->GetInputHandleByName("viewMat", handle))
+		{
+			vsInput->SetMatrix4x4(handle, viewMat);
+		}
+		if (psInput && psInput->GetInputHandleByName("viewMat", handle))
+		{
+			psInput->SetMatrix4x4(handle, viewMat);
+		}
+		if (vsInput && vsInput->GetInputHandleByName("projMat", handle))
+		{
+			vsInput->SetMatrix4x4(handle, projMat);
+		}
+		if (psInput && psInput->GetInputHandleByName("projMat", handle))
+		{
+			psInput->SetMatrix4x4(handle, projMat);
+		}
+		if (vsInput && vsInput->GetInputHandleByName("worldViewProjMat", handle))
+		{
+			vsInput->SetMatrix4x4(handle, worldViewProjMat);
+		}
+		if (psInput && psInput->GetInputHandleByName("worldViewProjMat", handle))
+		{
+			psInput->SetMatrix4x4(handle, worldViewProjMat);
+		}
+
+		// set other constants
+		for (unsigned int i = 0; i < MenuWidget::m_arrShaderPassDesc[pass].constants.size(); i++)
+		{
+			if (MenuWidget::m_arrShaderPassDesc[pass].constants[i].name == "worldMat" ||
+				MenuWidget::m_arrShaderPassDesc[pass].constants[i].name == "viewMat" ||
+				MenuWidget::m_arrShaderPassDesc[pass].constants[i].name == "projMat" ||
+				MenuWidget::m_arrShaderPassDesc[pass].constants[i].name == "worldViewProjMat"
+				)
+				continue;
+
+			if (vsInput && vsInput->GetInputHandleByName(MenuWidget::m_arrShaderPassDesc[pass].constants[i].name.c_str(), handle))
+			{
+				SetInput(vsInput, handle, pass, i);
+			}
+			if (psInput && psInput->GetInputHandleByName(MenuWidget::m_arrShaderPassDesc[pass].constants[i].name.c_str(), handle))
+			{
+				SetInput(psInput, handle, pass, i);
+			}
+		}
+
+		// clear backbuffer
+		renderer->Clear(Vec4f(0.f, 0.f, 0.f, 0.f), 1.f, 0);
+
+		// begin frame
+		if (renderer->BeginFrame())
+		{
+			// bind shaders
+			if (vsInput && MenuWidget::m_arrShaderPassDesc[pass].vertexShader.program)
+				MenuWidget::m_arrShaderPassDesc[pass].vertexShader.program->Enable(vsInput->GetInputCount() ? vsInput : nullptr);
+			if (psInput && MenuWidget::m_arrShaderPassDesc[pass].pixelShader.program)
+				MenuWidget::m_arrShaderPassDesc[pass].pixelShader.program->Enable(psInput->GetInputCount() ? psInput : nullptr);
+
+			// draw vertex buffer
+			if (MenuWidget::m_arrShaderPassDesc[pass].model)
+				renderer->DrawVertexBuffer(MenuWidget::m_arrShaderPassDesc[pass].model);
+
+			// unbind shaders
+			if (MenuWidget::m_arrShaderPassDesc[pass].vertexShader.program)
+				MenuWidget::m_arrShaderPassDesc[pass].vertexShader.program->Disable();
+			if (MenuWidget::m_arrShaderPassDesc[pass].pixelShader.program)
+				MenuWidget::m_arrShaderPassDesc[pass].pixelShader.program->Disable();
+
+			// end frame and present backbuffer
+			renderer->EndFrame();
+			renderer->SwapBuffers();
+		}
+
+		if (vsInputIdx != ~0u)
+			resMan->ReleaseShaderInput(vsInputIdx);
+		if (psInputIdx != ~0u)
+			resMan->ReleaseShaderInput(psInputIdx);
 	}
 
-	if (m_pPSInput->GetInputHandleByName("tex1", handle))
-	{
-		// Set the texture as an input to the pixel shader
-		m_pPSInput->SetTexture(handle, m_pTex1);
-		// Also set the sampling filter to linearly interpolate between texels and mips
-		renderer->GetSamplerStateManager()->SetFilter(m_pPSInput->GetInputDesc(handle).nRegisterIndex, SF_MIN_MAG_LINEAR_MIP_LINEAR);
-	}
-	if (m_pPSInput->GetInputHandleByName("tex2", handle))
-	{
-		// Set the second texture as an input to the pixel shader
-		// Remember that this texture is blank (for the moment!)
-		m_pPSInput->SetTexture(handle, m_pTex2);
-	}
-	
-	// Clear our backbuffer so that we have a nice black background
-	// and a depth value that's as far away as possible (at our Z far, which is 2000.f)
-	renderer->Clear(Vec4f(255.f, 255.f, 255.f, 255.f), 1.f, 0);
-	// If we couldn't begin the frame, something might have gone wrong.
-	// Usually everything goes smooth as butter, but sometimes, in DX9,
-	// the device can get lost (Alt+Tab, Win+L, Ctrl+Alt+Delete, etc.).
-	// When this happens, all video memory allocated by the renderer
-	// has to be freed, then the device reset. The renderer takes care
-	// of that for you. All you have to do is remember not to try and
-	// render anything while the device is in limbo, so check the
-	// return value of BeginFrame() before submiting draw calls!
-	if (renderer->BeginFrame())
-	{
-		// Set the vertex and pixel shaders used to render the scene
-		m_pVertexShader->Enable(m_pVSInput);
-		m_pPixelShader->Enable(m_pPSInput);
-		
-		// Enable rendering into an off-screen render target
-		// which we will use later
-		m_pRT->Enable();
-		// Clear the render target, just like we cleared our backbuffer
-		renderer->Clear(Vec4f(255.f, 255.f, 255.f, 255.f), 1.f, 0);
-		// Draw our scene in the off-screen render target
-		renderer->DrawVertexBuffer(m_pVB);
-		// Restore our backbuffer
-		m_pRT->Disable();
-		
-		// This isn't really required here, but for
-		// consistency sake, we unset the shaders.
-		// If we had different shaders with
-		// different shader inputs for our second
-		// pass, this would have been a must.
-		m_pVertexShader->Disable();
-		m_pPixelShader->Disable();
-
-		// Lock our blank texture.
-		// Remember when we created this texture with
-		// dynamic usage? This is why: we are locking
-		// it and writing in it on a per-frame basis
-		// which isn't a smart thing to do!
-		// For demonstration purposes it'll have to do.
-		m_pTex2->Lock(0, BL_WRITE_ONLY);
-		// Copy the contents of our off-screen
-		// render target to the dynamnic texture
-		m_pRT->CopyColorBuffer(0, m_pTex2);
-		// Commit changes
-		m_pTex2->Update();
-		// Unlock it, copying to GPU-accessible memory
-		// (note how I didn't say video memory, because
-		// our dynamic texture is in AGP memory!)
-		m_pTex2->Unlock();
-
-		// Set our vertex and pixel shader
-		m_pVertexShader->Enable(m_pVSInput);
-		m_pPixelShader->Enable(m_pPSInput);
-
-		// Draw the contents of the vertex buffer, this time
-		// on the backbuffer. The model will be drawn using
-		// both the static and dynamic textures resulting in
-		// a teapot-ception (if you haven't seen the movie
-		// 'Inception', you must live in a cave... on another
-		// planet... in another solar system) effect.
-		// Pretty cool, huh?
-		renderer->DrawVertexBuffer(m_pVB);
-
-		// Disable shaders
-		m_pVertexShader->Disable();
-		m_pPixelShader->Disable();
-
-		// End the frame
-		renderer->EndFrame();
-		// I'm sure you are aware of the fact that that pixels on your screen are progressively
-		// refreshed and not all at once. Imagine that during that refreshing time, we render into
-		// the backbuffer. The image on the screen will contain a part of the old backbuffer and
-		// a part of the new one, resulting in what is known as screen tearing. To avoid this,
-		// we use a double buffered system in which we allocate two buffers: a backbuffer in
-		// which we render to, and a frontbuffer which is presented on the screen. When we finish
-		// rendering our scene into our backbuffer, we swap them at a time when the screen is not
-		// refreshing. By doing this, we avoid screen tearing.
-		renderer->SwapBuffers();
-	}
-	
 	return true;
 }
 
@@ -446,62 +391,60 @@ bool MainWindow::OnKeyRelease(GdkEventKey* ev)
 	return true;
 }
 
-/**
- * "Add step" button click event handler.
- */
-void MainWindow::OnAddStepButtonClicked()
+void MainWindow::CompileShader()
 {
-	AddStepPrompt stepPrompt;
-	std::map<std::string, std::string> newItem;
-	std::map<int, std::map<std::string, std::string>>::iterator itemsIterator;
+	Renderer *renderer = Renderer::GetInstance();
+	ResourceManager* resMan = renderer->GetResourceManager();
 
-	// Show the 'Add step' prompt, which lets the user define a rendering step.
-	Gtk::Main::run(stepPrompt);
+	for (unsigned int i = 0; i < m_MenuWidget->m_arrShaderPassDesc.size(); i++)
+	{
+		char vertexErrors[2048] = "";
+		char pixelErrors[2048] = "";
+		// Compile and create the vertex program
+		const unsigned int vspIdx = resMan->CreateShaderProgram(SPT_VERTEX, m_MenuWidget->m_arrShaderPassDesc[i].vertexShader.src.c_str(), vertexErrors);
+		// Compile and create the pixel program
+		const unsigned int pspIdx = resMan->CreateShaderProgram(SPT_PIXEL, m_MenuWidget->m_arrShaderPassDesc[i].pixelShader.src.c_str(), pixelErrors);
 
-	// Fetch the newly defined step.
-	newItem["name"] = stepPrompt.getItemName();
-	newItem["file"] = stepPrompt.getItemName();
-
-	// If the menu item already exists, do not rebuild the menu.
-	for (itemsIterator = this->m_MenuItems.begin(); itemsIterator != this->m_MenuItems.end(); ++itemsIterator) {
-		if (itemsIterator->second["name"] == newItem["name"]) {
+		if (strlen(vertexErrors) || strlen(pixelErrors))
+		{
+			std::cout << "Error compiling shaders!" << std::endl;
+			std::string vErr = vertexErrors, pErr = pixelErrors;
+			m_OutputLabel.set_text(
+				(vErr.length() ? ("Error in pass \"" +
+				m_MenuWidget->m_arrShaderPassDesc[i].name +
+				"\" - Vertex shader:\n") : "") +
+				vErr +
+				((vErr.length() && pErr.length()) ? "\n" : "") +
+				(pErr.length() ? ("Error in pass \"" +
+				m_MenuWidget->m_arrShaderPassDesc[i].name +
+				"\" - Pixel shader:\n") : "") +
+				pErr
+				);
 			return;
 		}
-	}
-	
-	// Add the new item into the menu items list.
-	this->m_MenuItems[this->m_MenuItems.size()] = newItem;
+		else
+		{
+			std::cout << "Successfully compiled shaders!" << std::endl;
+			m_OutputLabel.set_text("Successfully compiled shaders!");
+		}
 
-	// Rebuild the menu bar.
-	delete this->m_MenuWidget;
-	this->m_MenuWidget = new MenuWidget(this, &m_MenuContainer, m_MenuItems, &m_Notebook);
+		// Create a shader template for our vertex program
+		const unsigned int vstIdx = resMan->CreateShaderTemplate(resMan->GetShaderProgram(vspIdx));
+		m_MenuWidget->m_arrShaderPassDesc[i].vertexShader.program = resMan->GetShaderTemplate(vstIdx);
+		// Create a shader template for our pixel program
+		const unsigned int pstIdx = resMan->CreateShaderTemplate(resMan->GetShaderProgram(pspIdx));
+		m_MenuWidget->m_arrShaderPassDesc[i].pixelShader.program = resMan->GetShaderTemplate(pstIdx);
+
+		std::vector<ShaderInputDesc> inputsDesc;
+		std::vector<ShaderInputDesc> vertexInputsDesc = resMan->GetShaderTemplate(vstIdx)->GetConstantTable();
+		std::vector<ShaderInputDesc> pixelInputsDesc = resMan->GetShaderTemplate(pstIdx)->GetConstantTable();
+		inputsDesc.insert(inputsDesc.end(), vertexInputsDesc.begin(), vertexInputsDesc.end());
+		inputsDesc.insert(inputsDesc.end(), pixelInputsDesc.begin(), pixelInputsDesc.end());
+		m_MenuWidget->UpdateConstantTable(i, inputsDesc);
+	}
 }
 
-/**
- * Remove step button click event handler.
- */
-void MainWindow::OnRemoveStepButtonClicked()
+void MainWindow::RunShader()
 {
-	std::string removedPageName;
-	int nrPages, i;
-	PageWidget* widget;
 
-	// Close the notebook widget if it was opened.
-	removedPageName = this->m_MenuItems[this->m_MenuItems.size() - 1]["name"];
-	nrPages = this->m_Notebook.get_n_pages();
-	for (i = 0; i < nrPages; i++) {
-		widget = (PageWidget*) this->m_Notebook.pages()[i].get_child();
-		if (removedPageName == widget->getName()) {
-			this->m_Notebook.remove(*widget);
-			
-			break;
-		}
-	}
-	
-	// Erase the menu item.
-	this->m_MenuItems.erase(this->m_MenuItems.size() - 1);
-
-	// Rebuild the menu bar.
-	delete this->m_MenuWidget;
-	this->m_MenuWidget = new MenuWidget(this, &m_MenuContainer, m_MenuItems, &m_Notebook);
 }

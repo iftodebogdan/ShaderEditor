@@ -130,7 +130,7 @@ const bool ShaderProgramDX9::Compile(const char* srcData, char* const errors, co
 		DWORD size = errorMsg->GetBufferSize();
 		const char* data = (const char*)errorMsg->GetBufferPointer();
 		cout << endl << data << endl;
-		assert(compiledData);
+		//assert(compiledData);
 	}
 #endif
 

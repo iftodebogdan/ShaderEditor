@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Page.h"
+#include "MainWindow.h"
 #include <iostream>
 #include <fstream>
 
@@ -11,11 +12,13 @@ PageWidget::PageWidget(
 	std::string name,
 	std::string filename,
 	std::map<std::string, Gtk::VBox*>* pages
-)
+	)
 	: m_QuitButton("Quit"),
 	m_SaveQuitButton("Save & Quit"),
-	m_Label_Shader("Shader Editor"),
-	m_Label_Pixel("Pixel Editor")
+	m_CompileButton("Compile"),
+	m_RunButton("Run"),
+	m_Label_Shader("Vertex Shader"),
+	m_Label_Pixel("Pixel Shader")
 {
 	this->m_Notebook = notebook;
 	this->m_Name = name;
@@ -105,10 +108,30 @@ void PageWidget::buildPage()
 			true
 		)
 	);
+	this->m_CompileButton.signal_clicked().connect(
+		sigc::bind(
+		sigc::mem_fun(
+		this,
+		&PageWidget::onCompileButtonPressed
+		),
+		true
+		)
+		);
+	this->m_RunButton.signal_clicked().connect(
+		sigc::bind(
+		sigc::mem_fun(
+		this,
+		&PageWidget::onRunButtonPressed
+		),
+		true
+		)
+		);
 
 	// Add the buttons into the button box.
-	this->m_ButtonBox.pack_start(this->m_QuitButton, Gtk::PACK_SHRINK);
-	this->m_ButtonBox.pack_end(this->m_SaveQuitButton, Gtk::PACK_SHRINK);
+	//this->m_ButtonBox.pack_start(this->m_QuitButton, Gtk::PACK_SHRINK);
+	//this->m_ButtonBox.pack_end(this->m_SaveQuitButton, Gtk::PACK_SHRINK);
+	this->m_ButtonBox.pack_start(this->m_RunButton, Gtk::PACK_SHRINK);
+	this->m_ButtonBox.pack_end(this->m_CompileButton, Gtk::PACK_SHRINK);
 	this->m_ButtonBox.set_border_width(15);
 
 	// Build the shader scrolled window, which will serve as a support for the shader text view.
@@ -122,12 +145,12 @@ void PageWidget::buildPage()
 	this->m_ScrolledWindow_Pixel.add(this->m_Textview_Pixel);
 
 	// Build the shader VBox.
-	this->m_VBox_Shader.pack_start(this->m_Label_Shader);
+	this->m_VBox_Shader.pack_start(this->m_Label_Shader, Gtk::PACK_SHRINK);
 	this->m_Label_Shader.get_allocation().set_height(5);
 	this->m_VBox_Shader.pack_end(this->m_ScrolledWindow_Shader);
 
 	// Build the pixel VBox.
-	this->m_VBox_Pixel.pack_start(this->m_Label_Pixel);
+	this->m_VBox_Pixel.pack_start(this->m_Label_Pixel, Gtk::PACK_SHRINK);
 	this->m_Label_Pixel.get_allocation().set_height(5);
 	this->m_VBox_Pixel.pack_end(this->m_ScrolledWindow_Pixel);
 
@@ -137,7 +160,7 @@ void PageWidget::buildPage()
 
 	// Add the scrolled windows and the button box into the main containers.
 	this->pack_start(this->m_HBox);
-	this->pack_start(this->m_ButtonBox);
+	this->pack_end(this->m_ButtonBox, Gtk::PACK_SHRINK);
 
 	// Show the child widgets.
 	this->show_all();
@@ -176,4 +199,26 @@ void PageWidget::onQuitButtonPressed(bool save)
 
 	(*this->m_Pages)[this->m_Name] = NULL;
 	this->m_Notebook->remove(*this);
+}
+
+void PageWidget::onCompileButtonPressed(bool)
+{
+	for (unsigned int i = 0; i < (unsigned int)m_Notebook->get_n_pages(); i++)
+	{
+		std::string currPage = ((PageWidget*)m_Notebook->get_nth_page(i))->getName();
+		for (unsigned int p = 0; p < MenuWidget::m_arrShaderPassDesc.size(); p++)
+			if (currPage == MenuWidget::m_arrShaderPassDesc[p].name)
+			{
+				MenuWidget::m_arrShaderPassDesc[p].vertexShader.src =
+					((PageWidget*)m_Notebook->get_nth_page(i))->m_Textview_Shader.get_buffer()->get_text();
+				MenuWidget::m_arrShaderPassDesc[p].pixelShader.src =
+					((PageWidget*)m_Notebook->get_nth_page(i))->m_Textview_Pixel.get_buffer()->get_text();
+			}
+	}
+	((MainWindow*)(get_ancestor(MainWindow::get_type())))->CompileShader();
+}
+
+void PageWidget::onRunButtonPressed(bool)
+{
+	std::cout << "IMPLEMENT ME THREE!" << std::endl;
 }

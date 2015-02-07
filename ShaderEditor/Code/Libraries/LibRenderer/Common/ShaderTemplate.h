@@ -45,6 +45,9 @@ namespace LibRendererDll
 		LIBRENDERER_DLL void Enable(ShaderInput& shaderInput) { Enable(&shaderInput); }
 		// Disable the shader
 		LIBRENDERER_DLL void Disable();
+
+		// Get the constant table
+		LIBRENDERER_DLL	const std::vector<ShaderInputDesc> GetConstantTable() { return m_arrInputDesc; }
 		
 	protected:
 		ShaderTemplate(ShaderProgram* const shaderProgram);

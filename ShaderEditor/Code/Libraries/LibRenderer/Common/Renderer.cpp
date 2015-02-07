@@ -72,3 +72,10 @@ void Renderer::DestroyInstance()
 		m_pInstance = nullptr;
 	}
 }
+
+void Renderer::ConvertOGLProjMatToD3D(Matrix44f& matProj)
+{
+	matProj[2][2] = matProj[2][2] * -1 - (matProj[2][2] + 1) / -2.f;
+	matProj[3][2] *= -1;
+	matProj[2][3] *= 0.5f;
+}
