@@ -38,3 +38,14 @@ void TextHelper::addStyledLabel(Gtk::Button &button, char* label, char* font_fam
 	
 	button.add(*button_label);
 }
+
+/**
+ * Method used to change the font of a label.
+ */
+void TextHelper::changeLabelFont(Gtk::Label* label, char* font_family, int size)
+{
+	Pango::FontDescription font_desc(font_family);
+	font_desc.set_size((int) Pango::SCALE * size);
+
+	label->modify_font(font_desc);
+}

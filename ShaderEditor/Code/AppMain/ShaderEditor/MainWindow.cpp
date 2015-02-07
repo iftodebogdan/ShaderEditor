@@ -477,12 +477,16 @@ void MainWindow::OnAddStepButtonClicked()
 	this->m_MenuWidget = new MenuWidget(this, &m_MenuContainer, m_MenuItems, &m_Notebook);
 }
 
+/**
+ * Remove step button click event handler.
+ */
 void MainWindow::OnRemoveStepButtonClicked()
 {
 	std::string removedPageName;
 	int nrPages, i;
 	PageWidget* widget;
 
+	// Close the notebook widget if it was opened.
 	removedPageName = this->m_MenuItems[this->m_MenuItems.size() - 1]["name"];
 	nrPages = this->m_Notebook.get_n_pages();
 	for (i = 0; i < nrPages; i++) {
@@ -493,7 +497,8 @@ void MainWindow::OnRemoveStepButtonClicked()
 			break;
 		}
 	}
-
+	
+	// Erase the menu item.
 	this->m_MenuItems.erase(this->m_MenuItems.size() - 1);
 
 	// Rebuild the menu bar.

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "HomeWindow.h"
 #include "MainWindow.h"
+#include "QAWindow.h"
 #include "Text.h"
 #include "pango/pangofc-font.h"
 
@@ -46,7 +47,6 @@ HomeWindow::HomeWindow() :
 			&HomeWindow::onQAButtonClicked
 		)
 	);
-
 
 	// Add the about button.
 	m_ButtonBox->add(m_AboutButton);
@@ -100,6 +100,13 @@ void HomeWindow::onStartButtonClicked()
  */
 void HomeWindow::onQAButtonClicked()
 {
+	QAWindow qAWindow;
+
+	hide();
+	
+	Gtk::Main::run(qAWindow);
+
+	return;
 }
 
 /**
@@ -107,6 +114,17 @@ void HomeWindow::onQAButtonClicked()
  */
 void HomeWindow::onAboutButtonClicked()
 {
+	Gtk::MessageDialog messageDialog(
+		*this, 
+		"This application, as its name says, is a tool which lets users to experiment with "
+		"pixel shaders. Its role is to offer a sandbox which makes the rendering of "
+		"shaders much more easier for users who already have some knowledge about 3D rendering."
+	);
+	messageDialog.set_secondary_text("The application was created & designed by Bogdan Iftode, Breta Ionut-Marcel and Popescu Darius.");
+
+	messageDialog.run();
+
+	messageDialog.hide();
 }
 
 /**

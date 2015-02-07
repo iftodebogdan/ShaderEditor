@@ -16,6 +16,8 @@ public:
 
 	// Method used to add a customized label on a button.
 	void addStyledLabel(Gtk::Button &button, char* label, char* font_family, int size);
+	// Method used to change the font of a label.
+	void changeLabelFont(Gtk::Label* label, char* font_family, int size);
 
 private:
 	TextHelper();
