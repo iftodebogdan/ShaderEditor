@@ -130,7 +130,7 @@ void PageWidget::buildPage()
 	// Add the buttons into the button box.
 	//this->m_ButtonBox.pack_start(this->m_QuitButton, Gtk::PACK_SHRINK);
 	//this->m_ButtonBox.pack_end(this->m_SaveQuitButton, Gtk::PACK_SHRINK);
-	this->m_ButtonBox.pack_start(this->m_RunButton, Gtk::PACK_SHRINK);
+	//this->m_ButtonBox.pack_start(this->m_RunButton, Gtk::PACK_SHRINK);
 	this->m_ButtonBox.pack_end(this->m_CompileButton, Gtk::PACK_SHRINK);
 	this->m_ButtonBox.set_border_width(15);
 
